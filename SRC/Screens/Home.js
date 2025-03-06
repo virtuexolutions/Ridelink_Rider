@@ -139,23 +139,23 @@ const Home = () => {
     setIsLoading(false);
   };
 
-  // useEffect(() => {
-  //   if (user_type === 'Rider') {
-  //     const db = getDatabase();
-  //     const requestsRef = ref(db, 'requests');
-  //     const unsubscribe = onValue(requestsRef, snapshot => {
-  //       if (snapshot.exists()) {
-  //         const data = snapshot.val();
-  //         const allRequests = Object.keys(data).map(key => ({
-  //           id: key,
-  //           ...data[key],
-  //         }));
-  //         rideRequestList();
-  //       }
-  //     });
-  //     return () => unsubscribe();
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (user_type === 'Rider') {
+      const db = getDatabase();
+      const requestsRef = ref(db, 'requests');
+      const unsubscribe = onValue(requestsRef, snapshot => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          const allRequests = Object.keys(data).map(key => ({
+            id: key,
+            ...data[key],
+          }));
+          rideRequestList();
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, []);
 
   useEffect(() => {
     updateLocation();
