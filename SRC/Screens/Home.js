@@ -1,6 +1,6 @@
-import { useIsFocused } from '@react-navigation/native';
-import { ScrollView } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import {useIsFocused} from '@react-navigation/native';
+import {ScrollView} from 'native-base';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -16,11 +16,11 @@ import {
 } from 'react-native';
 
 import Geolocation from 'react-native-geolocation-service';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Get, Post } from '../Axios/AxiosInterceptorFunction';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
@@ -29,26 +29,30 @@ import Header from '../Components/Header';
 import SearchbarComponent from '../Components/SearchbarComponent';
 import Userbox from '../Components/Userbox';
 import navigationService from '../navigationService';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-
-// import {
-//   getDatabase,
-//   onChildAdded,
-//   onValue,
-//   ref,
-// } from '@react-native-firebase/database';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import {
+  getDatabase,
+  onChildAdded,
+  onValue,
+  ref,
+} from '@react-native-firebase/database';
 
 const Home = () => {
   const token = useSelector(state => state.authReducer.token);
-  console.log("🚀 ~ Home ~ token:", token)
-  const { user_type } = useSelector(state => state.authReducer);
+  console.log('🚀 ~ Home ~ token:', token);
+  const {user_type} = useSelector(state => state.authReducer);
   const isFocused = useIsFocused();
   const [refreshing, setRefreshing] = useState(false);
   const [activebutton, setactivebutton] = useState('current');
   const [isLoading, setIsLoading] = useState(false);
   const [requestList, setRequestList] = useState([]);
+  console.log(
+    '🚀 ~ Home ~ requestList ------- dataaaaaaaaaaaaaaaaaaaaaaaa--------------------:',
+    requestList,
+  );
   const [modal_visible, setModalVisible] = useState(false);
   const [currentPosition, setCurrentPosition] = useState({});
+  console.log('🚀 ~ Home ~ currentPosition:', currentPosition);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [histry_list, setHistoryList] = useState([]);
 
@@ -127,12 +131,16 @@ const Home = () => {
     setIsLoading(true);
     try {
       const response = await Get(url, token);
-      console.log("🚀 ~ rideRequestList ~ response:", response?.data)
-      if (response?.data?.ride_info) {
-        setRequestList(response.data.ride_info?.reverse());
-      } else {
-        setRequestList([]);
+      console.log(
+        '🚀 ~ rideRequestList ~ response ------------------:',
+        response?.data,
+      );
+      if (response != undefined) {
+        setRequestList(response?.data?.data);
       }
+      // else {
+      //   setRequestList([]);
+      // }
     } catch (error) {
       console.error('Error festching ride requests:', error);
     }
@@ -140,27 +148,26 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (user_type === 'Rider') {
-      const db = getDatabase();
-      const requestsRef = ref(db, 'requests');
-      const unsubscribe = onValue(requestsRef, snapshot => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          const allRequests = Object.keys(data).map(key => ({
-            id: key,
-            ...data[key],
-          }));
-          rideRequestList();
-        }
-      });
-      return () => unsubscribe();
-    }
+    console.log('hellllllllllllllllllllllooooooooooooooooo fromfire base');
+    const db = getDatabase();
+    const requestsRef = ref(db, 'requests');
+    console.log('🚀 ~ useEffect ~ requestsRef:', requestsRef);
+    const unsubscribe = onValue(requestsRef, snapshot => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const allRequests = Object.keys(data).map(key => ({
+          id: key,
+          ...data[key],
+        }));
+        rideRequestList();
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
     updateLocation();
     rideRequestList();
-    userRequestHistory();
   }, [currentPosition]);
 
   const updateLocation = async () => {
@@ -177,24 +184,6 @@ const Home = () => {
         : Alert.alert('You are online now');
     }
   };
-
-  const userRequestHistory = async () => {
-    const url = `auth/customer/ride_list?type=${activebutton}`;
-    setHistoryLoading(truee);
-    const response = await Get(url, token);
-    setHistoryLoading(false);
-    if (response != undefined) {
-      setHistoryList(response?.data);
-    }
-  };
-
-  // const onRefresh = React.useCallback(() => {
-  //   setRefreshing(true);
-  //   setTimeout(() => {
-  //     setRefreshing(false);
-  //     // rideRequestList()
-  //   }, 2000);
-  // }, []);
 
   return (
     <SafeAreaView style={styles.safe_area}>
@@ -238,7 +227,7 @@ const Home = () => {
                     color: Color.themeBlack,
                     width: windowWidth * 0.42,
                   }}>
-                  Request A Ride, Hop In, And Go.
+                  {' Request A Ride, Hop In, And Go.'}
                 </CustomText>
                 <CustomText
                   style={{
@@ -247,7 +236,7 @@ const Home = () => {
                     width: windowWidth * 0.45,
                     fontWeight: 'bold',
                   }}>
-                  Go Anywhere With Ridelynk
+                  {' Go Anywhere With Ridelynk'}
                 </CustomText>
               </View>
               <CustomButton
@@ -293,181 +282,26 @@ const Home = () => {
               showsVerticalScrollIndicator={false}
               keyExtractor={item => item?.id}
               data={requestList}
-              contentContainerStyle={{ marginBottom: moderateScale(100, 0.6) }}
-              style={{ marginBottom: moderateScale(20, 0.6) }}
-              renderItem={({ item }) => {
+              // data={[1, 2, 3]}
+              contentContainerStyle={{marginBottom: moderateScale(100, 0.6)}}
+              style={{marginBottom: moderateScale(20, 0.6)}}
+              renderItem={({item}) => {
+                console.log('🚀 ~ Home ~ item:=====', item);
                 return (
                   <Userbox
-                    data={item}
-                    onPressDetails={() =>
+                    data={item?.ride_info}
+                    onPressDetails={() => {
+                      console.log('heloooooooo');
                       navigationService.navigate('RideRequest', {
                         type: '',
-                        data: item,
-                      })
-                    }
+                        data: item?.ride_info,
+                      });
+                    }}
                   />
                 );
               }}
             />
           )}
-          {/* {Object.keys(current_ride).length > 0 &&
-              current_ride.status != 'Completed' && (
-                <View
-                  style={[
-                    styles.latest_ride_view,
-                    {
-                      bottom: 20,
-                    },
-                  ]}>
-                  <View style={styles.latest_ride_subView}>
-                    <View style={styles.latest_ride_image_view}>
-                      <CustomImage
-                        source={{uri: `${baseUrl}/${history?.user?.photo}`}}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: windowWidth,
-                        }}
-                      />
-                    </View>
-                    <View
-                      style={{
-                        marginLeft: moderateScale(10, 0.6),
-                        width: windowWidth * 0.5,
-                      }}>
-                      <CustomText
-                        isBold
-                        style={{
-                          fontSize: moderateScale(16, 0.6),
-                          color: Color.black,
-                        }}>
-                        {current_ride?.user?.name}
-                      </CustomText>
-                      <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <CustomText
-                          isBold
-                          style={{
-                            fontSize: moderateScale(11, 0.6),
-                            color: Color.black,
-                          }}>
-                          status :
-                        </CustomText>
-                        <CustomText
-                          style={{
-                            fontSize: moderateScale(11, 0.6),
-                            color: Color.veryLightGray,
-                            marginLeft: moderateScale(8, 0.6),
-                          }}>
-                          {current_ride?.status}
-                        </CustomText>
-                      </View>
-                    </View>
-                    <CustomText
-                      isBold
-                      style={{fontSize: moderateScale(12, 0.6)}}>
-                      Date :
-                    </CustomText>
-                    <CustomText
-                      style={{
-                        fontSize: moderateScale(11, 0.6),
-                        marginLeft: moderateScale(10, 0.6),
-                      }}>
-                      {moment(current_ride?.created_at).format('MM-DD-YYYY')}
-                    </CustomText>
-                  </View>
-                  <View style={styles.text_view2}>
-                    <View>
-                      <View style={{flexDirection: 'row'}}>
-                        <Icon
-                          name="map-pin"
-                          as={Feather}
-                          color={Color.orange}
-                        />
-                        <CustomText
-                          isBold={true}
-                          style={{
-                            fontSize: 13,
-                            paddingHorizontal: moderateScale(5, 0.6),
-                          }}>
-                          pickupLocatoion
-                        </CustomText>
-                        <CustomText
-                          isBold
-                          style={[
-                            styles.text1,
-                            {
-                              position: 'absolute',
-                              color: 'black',
-                              paddingVertical: moderateScale(10, 0.6),
-                              top: 11,
-                              // marginLeft: moderateScale(-3, 0.6),
-                              transform: [{rotate: '-90deg'}],
-                            },
-                          ]}>
-                          - - -
-                        </CustomText>
-                      </View>
-                      <CustomText
-                        numberOfLines={1}
-                        style={{
-                          fontSize: 10,
-                          width: windowWidth * 0.8,
-                          marginLeft: moderateScale(18, 0.6),
-                        }}>
-                        {current_ride?.location_from}
-                      </CustomText>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          marginTop: moderateScale(7, 0.6),
-                        }}>
-                        <Icon
-                          name="map-pin"
-                          as={Feather}
-                          color={Color.cartheme}
-                        />
-                        <CustomText
-                          isBold={true}
-                          style={{
-                            fontSize: 13,
-                            paddingHorizontal: moderateScale(5, 0.6),
-                          }}>
-                          drop off location
-                        </CustomText>
-                      </View>
-                      <CustomText
-                        numberOfLines={1}
-                        style={{
-                          fontSize: 10,
-                          width: windowWidth * 0.8,
-                          marginLeft: moderateScale(18, 0.6),
-                        }}>
-                        {current_ride?.location_to}
-                      </CustomText>
-                    </View>
-                  </View>
-                  <CustomButton
-                    text={'Track Ride'}
-                    textColor={Color.white}
-                    width={windowWidth * 0.8}
-                    height={windowHeight * 0.06}
-                    marginTop={moderateScale(10, 0.3)}
-                    bgColor={Color.cartheme}
-                    borderColor={Color.white}
-                    borderWidth={1}
-                    borderRadius={moderateScale(30, 0.3)}
-                    isGradient
-                    onPress={() =>
-                      navigationService.navigate('TrackingScreen', {
-                        data: current_ride,
-                        description: current_ride,
-                        ride_id: current_ride?.id,
-                      })
-                    }
-                  />
-                </View>
-              )} */}
         </ScrollView>
       </View>
     </SafeAreaView>

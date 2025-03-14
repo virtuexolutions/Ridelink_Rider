@@ -1,28 +1,29 @@
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { useNavigation } from '@react-navigation/native';
-import { Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { moderateScale } from 'react-native-size-matters';
-import { useDispatch, useSelector } from 'react-redux';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import messaging from '@react-native-firebase/messaging';
+import {useNavigation} from '@react-navigation/native';
+import {Formik} from 'formik';
+import React, {useEffect, useState} from 'react';
+import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {moderateScale} from 'react-native-size-matters';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Post } from '../Axios/AxiosInterceptorFunction';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomStatusBar from '../Components/CustomStatusBar';
 import CustomText from '../Components/CustomText';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import { loginSchema } from '../Constant/schema';
-import { SetFCMToken, setUserToken } from '../Store/slices/auth-slice';
-import { setUserData } from '../Store/slices/common';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {loginSchema} from '../Constant/schema';
+import {SetFCMToken, setUserToken} from '../Store/slices/auth-slice';
+import {setUserData} from '../Store/slices/common';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
 const LoginScreen = props => {
   const dispatch = useDispatch();
   const token = useSelector(state => state.authReducer.token);
-  console.log("🚀 ~ ====================token:", token)
+  console.log('🚀 ~ ====================token:', token);
   const [username, setUserName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
@@ -31,18 +32,18 @@ const LoginScreen = props => {
   const [image, setImage] = useState({});
   const navigation = useNavigation();
   const [loginMethod, setLoginMethod] = useState('');
-  const { user_type } = useSelector(state => state.authReducer);
+  const {user_type} = useSelector(state => state.authReducer);
   const [device_token, setDeviceToken] = useState(null);
-  console.log("🚀 ~ device_token:", device_token)
+  console.log('🚀 ~ device_token ----------------------------:', device_token);
 
   const loginWithGoogle = async response1 => {
     console.log('🚀 ~ loginWithGoogle ~ body:', response1);
-    const body = { ...response1?.data };
+    const body = {...response1?.data};
     const url = 'google-login';
     const response = await Post(url, body, apiHeader(token));
     console.log('🚀 ~ loginWithGoogle ~ response:', response?.data?.token);
     if (response != undefined) {
-      dispatch(setUserToken({ token: response?.data?.token }));
+      dispatch(setUserToken({token: response?.data?.token}));
       dispatch(setUserData(response?.user_info));
     }
   };
@@ -53,30 +54,29 @@ const LoginScreen = props => {
       password: values.password,
       device_token: device_token,
     };
-
     const url = 'login';
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
     setIsLoading(false);
     if (response != undefined) {
-      dispatch(setUserToken({ token: response?.data?.token }));
+      dispatch(setUserToken({token: response?.data?.token}));
       dispatch(setUserData(response?.data?.user_info));
     }
   };
 
-  // useEffect(() => {
-  //   messaging()
-  //     .getToken()
-  //     .then(_token => {
-  //       console.log('🚀 Srrrrrrrrrrrrrrrrrr:', _token);
-  //       setDeviceToken(_token);
-  //       dispatch(SetFCMToken({fcmToken: _token}));
-  //     })
-  //     .catch(e => console.log('token error', e));
-  // }, []);
+  useEffect(() => {
+    messaging()
+      .getToken()
+      .then(_token => {
+        console.log('🚀 Srrrrrrrrrrrrrrrrrr:', _token);
+        setDeviceToken(_token);
+        dispatch(SetFCMToken({fcmToken: _token}));
+      })
+      .catch(e => console.log('token error', e));
+  }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{flex: 1}}>
       <CustomStatusBar
         backgroundColor={Color.white}
         barStyle={'dark-content'}
@@ -111,10 +111,7 @@ const LoginScreen = props => {
         <CustomText isBold style={styles.text}>
           Sign in
         </CustomText>
-        <View
-          style={[
-            styles.feild_container
-          ]}>
+        <View style={[styles.feild_container]}>
           <Formik
             initialValues={{
               email: '',
@@ -122,7 +119,7 @@ const LoginScreen = props => {
             }}
             validationSchema={loginSchema}
             onSubmit={login}>
-            {({ handleChange, handleSubmit, values, errors, touched }) => {
+            {({handleChange, handleSubmit, values, errors, touched}) => {
               return (
                 <>
                   <TextInputWithTitle
@@ -141,7 +138,7 @@ const LoginScreen = props => {
                     borderColor={Color.lightGrey}
                     marginTop={moderateScale(10, 0.3)}
                     placeholderColor={Color.darkGray}
-                    titleStlye={{ right: 10 }}
+                    titleStlye={{right: 10}}
                   />
                   {touched.email && errors.email && (
                     <CustomText
@@ -170,7 +167,7 @@ const LoginScreen = props => {
                     marginTop={moderateScale(10, 0.3)}
                     // color={Color.white}
                     placeholderColor={Color.darkGray}
-                    titleStlye={{ right: 10 }}
+                    titleStlye={{right: 10}}
                   />
                   {touched.password && errors.password && (
                     <CustomText
@@ -190,7 +187,7 @@ const LoginScreen = props => {
                     style={styles.forgotpassword}>
                     Forgot password ?
                   </CustomText>
-                  <View style={{ marginTop: moderateScale(10, 0.6) }} />
+                  <View style={{marginTop: moderateScale(10, 0.6)}} />
                   <CustomButton
                     text={
                       isLoading ? (
@@ -206,9 +203,7 @@ const LoginScreen = props => {
                     borderRadius={moderateScale(30, 0.3)}
                     width={windowWidth * 0.8}
                     height={windowHeight * 0.075}
-                    bgColor={
-                      Color.darkBlue
-                    }
+                    bgColor={Color.darkBlue}
                     textTransform={'capitalize'}
                     elevation={true}
                     onPress={handleSubmit}

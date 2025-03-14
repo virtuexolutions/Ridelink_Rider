@@ -1,30 +1,29 @@
 import moment from 'moment';
-import { Icon } from 'native-base';
+import {Icon} from 'native-base';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { moderateScale } from 'react-native-size-matters';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {moderateScale} from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { baseUrl } from '../Config';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import {baseUrl} from '../Config';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 import CustomButton from './CustomButton';
 import CustomImage from './CustomImage';
 import CustomText from './CustomText';
 
-const Userbox = ({ data, onPress, onPressDetails }) => {
+const Userbox = ({data, onPress, onPressDetails}) => {
   const userData = useSelector(state => state.commonReducer.userData);
 
-  const { user_type } = useSelector(state => state.authReducer);
   return (
     <TouchableOpacity onPress={onPress} style={styles.details_Style}>
       <View style={styles.text_Style}>
         <View style={styles.image_Style}>
           <CustomImage
-            style={{ width: '100%', height: '100%' }}
+            style={{width: '100%', height: '100%'}}
             source={
               userData?.photo
-                ? { uri: `${baseUrl}/${userData?.photo}` }
+                ? {uri: `${baseUrl}/${userData?.photo}`}
                 : require('../Assets/Images/user1.png')
             }
           />
@@ -45,7 +44,7 @@ const Userbox = ({ data, onPress, onPressDetails }) => {
             marginLeft: moderateScale(10, 0.6),
           },
         ]}>
-        <View style={{ flexDirection: 'row', left: moderateScale(2, 0.6) }}>
+        <View style={{flexDirection: 'row', left: moderateScale(2, 0.6)}}>
           <View style={styles.fromLocationStyle}>
             <View style={styles.toLocationStyle}></View>
           </View>
@@ -61,15 +60,15 @@ const Userbox = ({ data, onPress, onPressDetails }) => {
         </View>
         <View
           style={{
-            transform: [{ rotate: '90deg' }],
+            transform: [{rotate: '90deg'}],
             position: 'absolute',
             width: windowWidth * 0.1,
             top: moderateScale(25, 0.6),
             left: moderateScale(-4, 0.6),
           }}>
-          <CustomText style={{ color: Color.black }}>........</CustomText>
+          <CustomText style={{color: Color.black}}>........</CustomText>
         </View>
-        <View style={{ flexDirection: 'row', marginTop: moderateScale(20, 0.6) }}>
+        <View style={{flexDirection: 'row', marginTop: moderateScale(20, 0.6)}}>
           <Icon
             name="location-outline"
             as={Ionicons}
@@ -86,6 +85,7 @@ const Userbox = ({ data, onPress, onPressDetails }) => {
           </CustomText>
         </View>
       </View>
+
       <View style={styles.row}>
         <View style={styles.priceView}>
           <CustomText isBold style={styles.txt}>
@@ -108,30 +108,33 @@ const Userbox = ({ data, onPress, onPressDetails }) => {
           </CustomText>
         </View>
       </View>
+
       <View style={styles.buttonBox}>
         <CustomButton
           text={'Details'}
           fontSize={moderateScale(14, 0.3)}
-          textColor={Color.themeDarkGray}
+          textColor={Color.white}
           borderRadius={moderateScale(30, 0.3)}
-          width={windowWidth * 0.39}
+          width={windowWidth * 0.8}
           //   marginTop={moderateScale(10,.3)}
           height={windowHeight * 0.06}
-          bgColor={Color.white}
+          bgColor={Color.black}
           textTransform={'capitalize'}
           onPress={onPressDetails}
         />
-        <CustomButton
-          text={'History'}
-          fontSize={moderateScale(14, 0.3)}
-          textColor={Color.white}
-          borderRadius={moderateScale(30, 0.3)}
-          width={windowWidth * 0.39}
-          //   marginTop={moderateScale(10,.3)}
-          height={windowHeight * 0.06}
-          bgColor={Color.themeBlack}
-          textTransform={'capitalize'}
-        />
+        {/* {user_type != 'Rider' && (
+          <CustomButton
+            text={'History'}
+            fontSize={moderateScale(14, 0.3)}
+            textColor={Color.white}
+            borderRadius={moderateScale(30, 0.3)}
+            width={windowWidth * 0.39}
+            //   marginTop={moderateScale(10,.3)}
+            height={windowHeight * 0.06}
+            bgColor={Color.themeBlack}
+            textTransform={'capitalize'}
+          />
+        )} */}
       </View>
     </TouchableOpacity>
   );
@@ -211,7 +214,7 @@ const styles = StyleSheet.create({
     marginLeft: moderateScale(20, 0.6),
     // backgroundColor : 'red'
   },
-  h1: { fontSize: moderateScale(20, 0.6), color: Color.themeBlack },
+  h1: {fontSize: moderateScale(20, 0.6), color: Color.themeBlack},
   status: {
     fontSize: moderateScale(10, 0.6),
     color: Color.themeDarkGray,

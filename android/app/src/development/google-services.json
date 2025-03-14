@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "926398445960",
+    "firebase_url": "https://ridelink-be22c-default-rtdb.firebaseio.com",
+    "project_id": "ridelink-be22c",
+    "storage_bucket": "ridelink-be22c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926398445960:android:011894d95c5a4f16d9e23d",
+        "android_client_info": {
+          "package_name": "com.ridelink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtz3KEd4ev6FZiEBtvtMEY7oUyei5cI3s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926398445960:android:b58741a1a6d531c4d9e23d",
+        "android_client_info": {
+          "package_name": "com.ridelink_rider"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtz3KEd4ev6FZiEBtvtMEY7oUyei5cI3s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

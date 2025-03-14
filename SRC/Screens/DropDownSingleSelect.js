@@ -9,7 +9,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {windowWidth} from '../Utillity/utils';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -32,22 +32,20 @@ const DropDownSingleSelect = ({
   Colors,
   fontSize,
   dropdownStyle,
-  btnStyle
+  btnStyle,
 }) => {
-  const [data , setData] = useState([])
+  const [data, setData] = useState([]);
   // const themeColor = useSelector(state => state.authReducer.ThemeColor);
 
   useEffect(() => {
-    setData([])
-    array?.map((x , index)=>{
+    setData([]);
+    array?.map((x, index) => {
       // return console.log( "DDSINGLE SELECT ==>",typeof(array[0]) == 'object')
-      return(
-        typeof(array[0]) == 'object' ? setData((prev)=>[...prev , x?.name]) :setData(prev=>[...prev , x])
-      )
-    })
-    
-  }, [])
-  
+      return typeof array[0] == 'object'
+        ? setData(prev => [...prev, x?.name])
+        : setData(prev => [...prev, x]);
+    });
+  }, []);
 
   return (
     <View
@@ -58,12 +56,12 @@ const DropDownSingleSelect = ({
           marginBottom: 10,
         },
         myJobs && {
+          // backgroundColor:'red' ,
           backgroundColor: Color.themeInputText,
           width: width * 0.5,
           marginTop: 0,
           alignItems: 'center',
           borderRadius: 10,
-
           borderWidth: 0,
         },
 
@@ -96,7 +94,7 @@ const DropDownSingleSelect = ({
         buttonStyle={{
           ...styles.dropDownBtn,
           width: width * 0.89,
-          backgroundColor :'white',
+          backgroundColor: 'white',
           ...(btnStyle && btnStyle),
 
           ...(disabled && {backgroundColor: `${Color.veryLightGray}90`}),
@@ -110,19 +108,17 @@ const DropDownSingleSelect = ({
           }),
           ...(!iconName && {
             width: width,
-          
-          
-          
-          
-          
           }),
         }}
         buttonTextStyle={{
           ...styles.dropDownBtnText,
           ...(item !== '' && {color: Colors ? Colors : Color.themeBlack}),
           ...(backgroundColor && {
-            color: `${Color.black}`}),
-            ...(fontSize && {fontSize: fontSize ? fontSize : moderateScale(12, 0.3)})
+            color: `${Color.black}`,
+          }),
+          ...(fontSize && {
+            fontSize: fontSize ? fontSize : moderateScale(12, 0.3),
+          }),
         }}
         dropdownStyle={{
           width: width,
@@ -151,9 +147,10 @@ const DropDownSingleSelect = ({
                 name="chevron-small-down"
                 as={Entypo}
                 size={moderateScale(27, 0.3)}
-                color={'white'}
+                color={Color.mediumGray}
                 style={[
-                  styles.icon,{color:Color.black,},
+                  styles.icon,
+                  {color: Color.black},
                   extreme && {
                     position: 'absolute',
                     left: -8,
@@ -216,7 +213,6 @@ const styles = ScaledSheet.create({
   },
   icon: {
     marginTop: 3,
-    
   },
   icon2: {
     // color: themeColor[1],

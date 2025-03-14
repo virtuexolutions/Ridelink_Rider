@@ -30,7 +30,6 @@ const Header = props => {
   const notification = useSelector(state => state.commonReducer.notification);
   const cartData = useSelector(state => state.commonReducer.cart);
   const navigationN = useNavigation();
-  // const navigation = useNavigation();
 
   const [isModalVisible, setModalVisible] = useState(false);
   const {
@@ -88,7 +87,6 @@ const Header = props => {
         style={{
           height: moderateScale(30, 0.3),
           width: moderateScale(30, 0.3),
-          // borderRadius: moderateScale(5, 0.3),
           justifyContent: 'center',
           alignItems: 'center',
           // backgroundColor: showBack || showList ? 'white' : 'transparent',
@@ -131,7 +129,7 @@ const Header = props => {
                 size={moderateScale(28, 0.3)}
                 color={Color.black}
                 onPress={() => {
-                  console.log('hello mg ');
+                  console.log('hello mg ======================= ');
                   navigationN.toggleDrawer();
 
                   // dispatch(setUserLogOut())
@@ -142,7 +140,7 @@ const Header = props => {
                 }}
               />
             )}
-            ,
+            
           </>
         )}
       </View>
