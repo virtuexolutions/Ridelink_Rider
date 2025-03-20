@@ -39,20 +39,14 @@ import {
 
 const Home = () => {
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ Home ~ token:', token);
   const {user_type} = useSelector(state => state.authReducer);
   const isFocused = useIsFocused();
   const [refreshing, setRefreshing] = useState(false);
   const [activebutton, setactivebutton] = useState('current');
   const [isLoading, setIsLoading] = useState(false);
   const [requestList, setRequestList] = useState([]);
-  console.log(
-    '🚀 ~ Home ~ requestList ------- dataaaaaaaaaaaaaaaaaaaaaaaa--------------------:',
-    requestList,
-  );
   const [modal_visible, setModalVisible] = useState(false);
   const [currentPosition, setCurrentPosition] = useState({});
-  console.log('🚀 ~ Home ~ currentPosition:', currentPosition);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [histry_list, setHistoryList] = useState([]);
 
@@ -131,10 +125,6 @@ const Home = () => {
     setIsLoading(true);
     try {
       const response = await Get(url, token);
-      console.log(
-        '🚀 ~ rideRequestList ~ response ------------------:',
-        response?.data,
-      );
       if (response != undefined) {
         setRequestList(response?.data?.data);
       }
@@ -148,10 +138,11 @@ const Home = () => {
   };
 
   useEffect(() => {
-    console.log('hellllllllllllllllllllllooooooooooooooooo fromfire base');
+    console.log(
+      'helllllllllllllllllllllloooooosssssssooooooooooo fromfire base',
+    );
     const db = getDatabase();
     const requestsRef = ref(db, 'requests');
-    console.log('🚀 ~ useEffect ~ requestsRef:', requestsRef);
     const unsubscribe = onValue(requestsRef, snapshot => {
       if (snapshot.exists()) {
         const data = snapshot.val();
@@ -176,7 +167,6 @@ const Home = () => {
       lat: currentPosition?.latitude,
       lng: currentPosition?.longitude,
     };
-    console.log('🚀 ~ updateLocation ~ body:', body);
     const response = await Post(url, body, apiHeader(token));
     if (response != undefined) {
       Platform.OS == 'android'
@@ -286,16 +276,19 @@ const Home = () => {
               contentContainerStyle={{marginBottom: moderateScale(100, 0.6)}}
               style={{marginBottom: moderateScale(20, 0.6)}}
               renderItem={({item}) => {
-                console.log('🚀 ~ Home ~ item:=====', item);
                 return (
                   <Userbox
                     data={item?.ride_info}
                     onPressDetails={() => {
-                      console.log('heloooooooo');
-                      navigationService.navigate('RideRequest', {
-                        type: '',
-                        data: item?.ride_info,
-                      });
+                      item?.ride_info?.status == 'ontheway'
+                        ? navigationService.navigate('RideScreen', {
+                            data: item,
+                            rideontheway: true,
+                          })
+                        : navigationService.navigate('RideRequest', {
+                            type: '',
+                            data: item?.ride_info,
+                          });
                     }}
                   />
                 );

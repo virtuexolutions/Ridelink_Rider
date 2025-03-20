@@ -6,34 +6,38 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Header from '../Components/Header';
-import { Icon } from 'native-base';
+import {Icon} from 'native-base';
 // import { Header } from 'react-native/Libraries/NewAppScreen'
 import Entypo from 'react-native-vector-icons/Entypo';
 import CustomText from '../Components/CustomText';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-import { moderateScale } from 'react-native-size-matters';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import {moderateScale} from 'react-native-size-matters';
 import CustomButton from '../Components/CustomButton';
 import navigationService from '../navigationService';
-import { Post } from '../Axios/AxiosInterceptorFunction';
-import { useSelector } from 'react-redux';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 
-const ChooseDeclineReasonScreen = (prop) => {
-  const data = prop?.route?.params?.data
-  const { user_type } = useSelector(state => state.authReducer);
-  const token = useSelector(state => state.authReducer.token)
+const ChooseDeclineReasonScreen = prop => {
+  const data = prop?.route?.params?.data;
+  console.log(
+    '🚀 ~ ChooseDeclineReasonScreen ~ ===================== data:',
+    data?.ride_id,
+  );
+  const {user_type} = useSelector(state => state.authReducer);
+  const token = useSelector(state => state.authReducer.token);
   const array = [
-    { id: 1, reason: 'Price too High', checked: true },
-    { id: 2, reason: 'Long Wait Time', checked: true },
-    { id: 3, reason: 'Poor Vehicle Condition', checked: true },
-    { id: 4, reason: 'Safety Concerns', checked: true },
-    { id: 5, reason: 'Inconvenient Payment Options', checked: true },
-    { id: 6, reason: 'Negative Past Experience', checked: true },
-    { id: 7, reason: 'Preference for Ride-Hailing Apps', checked: true },
-    { id: 8, reason: 'Unfamiliarity with the Service', checked: true },
-    { id: 9, reason: 'Route Concerns', checked: true },
+    {id: 1, reason: 'Price too High', checked: true},
+    {id: 2, reason: 'Long Wait Time', checked: true},
+    {id: 3, reason: 'Poor Vehicle Condition', checked: true},
+    {id: 4, reason: 'Safety Concerns', checked: true},
+    {id: 5, reason: 'Inconvenient Payment Options', checked: true},
+    {id: 6, reason: 'Negative Past Experience', checked: true},
+    {id: 7, reason: 'Preference for Ride-Hailing Apps', checked: true},
+    {id: 8, reason: 'Unfamiliarity with the Service', checked: true},
+    {id: 9, reason: 'Route Concerns', checked: true},
   ];
   const [isLoading, setIsLoading] = useState(false);
   const [reason, setReason] = useState({});
@@ -43,13 +47,14 @@ const ChooseDeclineReasonScreen = (prop) => {
       status: 'cancel',
       reason: reason?.reason,
     };
-    const url = `auth/ride_cancel/${data?.id}`;
-    // setIsLoading(true);
+    //  return console.log("🚀 ~ rideCancel ~ body:", body)
+    const url = `auth/ride_cancel/${data?.ride_id}`;
+    setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
-    // setIsLoading(false);
-    // return console.log("🚀 ~ rideCancel ~ response:", response?.data)
+    setIsLoading(false);
+    console.log('🚀 ~ rideCancel ~ response:', response?.data);
     if (response != undefined) {
-      navigationService.navigate('Home')
+      navigationService.navigate('Home');
     }
   };
 
@@ -57,7 +62,7 @@ const ChooseDeclineReasonScreen = (prop) => {
     <SafeAreaView>
       <Header
         headerColor={'transparent'}
-        title={'Chooose Decline Reason'}
+        title={'Choose Decline Reason'}
         showBack={true}
       />
       <View style={styles.mainView}>
@@ -67,20 +72,27 @@ const ChooseDeclineReasonScreen = (prop) => {
               onPress={() => {
                 setReason(item);
               }}
-              style={[
-                styles.reasons,
-
-              ]}>
+              style={[styles.reasons]}>
               <CustomText
-                style={{ color: Color.grey, fontSize: moderateScale(12, 0.2) }}>
+                style={{color: Color.grey, fontSize: moderateScale(12, 0.2)}}>
                 {item?.reason}
               </CustomText>
-              <Icon color={reason?.id == item?.id ? Color.blue : Color.mediumGray} name={'check'} as={Entypo} />
+              <Icon
+                color={reason?.id == item?.id ? Color.blue : Color.mediumGray}
+                name={'check'}
+                as={Entypo}
+              />
             </TouchableOpacity>
           );
         })}
         <CustomButton
-          text={isLoading ? <ActivityIndicator size={'small'} color={Color.white} /> : 'Submit'}
+          text={
+            isLoading ? (
+              <ActivityIndicator size={'small'} color={Color.white} />
+            ) : (
+              'Submit'
+            )
+          }
           fontSize={moderateScale(15, 0.3)}
           textColor={Color.white}
           borderColor={Color.white}

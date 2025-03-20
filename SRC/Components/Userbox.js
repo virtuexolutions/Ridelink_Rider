@@ -111,7 +111,7 @@ const Userbox = ({data, onPress, onPressDetails}) => {
 
       <View style={styles.buttonBox}>
         <CustomButton
-          text={'Details'}
+          text={data?.status == 'ontheway' ? 'track your ride' : 'Details'}
           fontSize={moderateScale(14, 0.3)}
           textColor={Color.white}
           borderRadius={moderateScale(30, 0.3)}

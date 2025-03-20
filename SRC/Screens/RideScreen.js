@@ -1,5 +1,5 @@
-import { Icon } from 'native-base';
-import React, { useEffect, useRef, useState } from 'react';
+import {Icon} from 'native-base';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Alert,
   Linking,
@@ -11,47 +11,46 @@ import {
   VirtualizedList,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Post } from '../Axios/AxiosInterceptorFunction';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import navigationService from '../navigationService';
-import { customMapStyle } from '../Utillity/mapstyle';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {customMapStyle} from '../Utillity/mapstyle';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { object } from 'yup';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {object} from 'yup';
 import AdditionalTimeModal from '../Components/AdditionalTimeModal';
-import { getDistance, isValidCoordinate } from 'geolib';
+import {getDistance, isValidCoordinate} from 'geolib';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CountdownTimer from '../Components/CountdownTimer';
 import CustomImage from '../Components/CustomImage';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const RideScreen = ({ route }) => {
-  const { data, type } = route?.params;
+const RideScreen = ({route}) => {
+  const {data, type, rideontheway} = route?.params;
+  console.log('🚀 ~ rideontheway:', rideontheway);
   const rideData = route?.params?.data;
-  console.log('🚀 ~ rideData:', rideData);
   const rider_arrived_time = route?.params?.rider_arrived_time;
   const isFocused = useIsFocused();
   const mapRef = useRef(null);
   const navigation = useNavigation();
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ token:', token);
   const [additionalTime, setAdditionalTime] = useState(false);
   const [additionalTimeModal, setAdditionalTimeModal] = useState(false);
   const [isriderArrive, setIsRiderArrived] = useState(false);
   const [addTime, setAddTime] = useState(0);
   const [time, setTime] = useState(0);
-  const { user_type } = useSelector(state => state.authReducer);
+  const {user_type} = useSelector(state => state.authReducer);
   const [start_waiting, setStartWaiting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [arrive, setArrive] = useState(false);
@@ -64,7 +63,6 @@ const RideScreen = ({ route }) => {
     latitude: 37.43312021,
     longitude: -122.0876855,
   });
-  console.log('🚀 ~ currentPosition:', currentPosition);
   const apikey = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
   const origin = {
     lat:
@@ -125,7 +123,7 @@ const RideScreen = ({ route }) => {
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
       position => {
-        const { latitude, longitude } = position.coords;
+        const {latitude, longitude} = position.coords;
         setCurrentPosition(prevLocation => ({
           ...prevLocation,
           latitude,
@@ -214,35 +212,48 @@ const RideScreen = ({ route }) => {
     }
   };
 
-  const rideUpdate = async () => {
-    const url = `auth/rider/ride_update/${data?.id}`;
+  const rideUpdate = async status => {
+    //  return  console.log("🚀 ~ useEffect ~ status:", status)
+    const url = `auth/rider/ride_update/${data?.ride_id}`;
+    const body = {
+      status: status,
+    };
     const response = await Post(url, body, apiHeader(token));
     if (response != undefined) {
-      setStartWaiting(true);
+      start_waiting ? setPassengerArrive(true) : setStartWaiting(true);
     }
   };
 
-  // const onPressStartNavigation = async () => {
-  //   // updateStatus('OnGoing');
-  //   // setStartNavigation(true);
-  //   const pickup = {
-  //     latitude: parseFloat(data?.pickup_location_lat),
-  //     longitude: parseFloat(data?.pickup_location_lng),
-  //   };
-  //   const dropoff = {
-  //     latitude: parseFloat(data?.dropoff_location_lat),
-  //     longitude: parseFloat(data?.dropoff_location_lng),
-  //   };
-  //   if (data?.stop === null) {
-  //     const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving`;
-  //     Linking.openURL(url).catch(err => console.error('An error occurred', err));
+  const onPressStartNavigation = async () => {
+    console.log('inside fron fuction ===ddd===========', data?.pickup);
+    //  return rideUpdate('ontheway');
 
-  //   } {
-  //     const waypoints = data?.stop.map(stop => `${stop.lat},${stop.lng}`).join('|');
-  //     const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving&waypoints=${waypoints}`
-  //     Linking.openURL(url).catch(err => console.error('An error occurred', err));
-  //   }
-  // };
+    // updateStatus('OnGoing');
+    // setStartNavigation(true);
+    const pickup = {
+      latitude: parseFloat(data?.pickup_location_lat),
+      longitude: parseFloat(data?.pickup_location_lng),
+    };
+    const dropoff = {
+      latitude: parseFloat(data?.dropoff_location_lat),
+      longitude: parseFloat(data?.dropoff_location_lng),
+    };
+    if (data?.pickup === 'null') {
+      // console.log("inside fron fuction ===ddd===========")
+      const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving`;
+      Linking.openURL(url).catch(err =>
+        console.error('An error occurred', err),
+      );
+    } else {
+      const waypoints = data?.stop
+        .map(stop => `${stop.lat},${stop.lng}`)
+        .join('|');
+      const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving&waypoints=${waypoints}`;
+      Linking.openURL(url).catch(err =>
+        console.error('An error occurred', err),
+      );
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safe_are}>
@@ -250,8 +261,10 @@ const RideScreen = ({ route }) => {
         showBack={true}
         title={
           additionalTime
-            ? 'Wait For Additional Time' :
-            'Navigation to Pickup'
+            ? 'Wait For Additional Time'
+            : user_type === 'Rider'
+            ? 'Navigation to Pickup'
+            : 'Waiting Pickup'
         }
       />
       <View style={styles.main_view}>
@@ -390,36 +403,108 @@ const RideScreen = ({ route }) => {
           </View>
         </View> */}
 
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 0,
-            height: windowHeight * 0.2,
-            width: windowWidth,
-          }}>
-          <CustomButton
-            text={'DRIVE'}
-            fontSize={moderateScale(14, 0.3)}
-            textColor={Color.white}
-            borderRadius={moderateScale(30, 0.3)}
-            width={windowWidth * 0.85}
-            marginTop={moderateScale(10, 0.3)}
-            height={windowHeight * 0.07}
-            bgColor={Color.darkBlue}
-            borderWidth={1.5}
-            borderColor={Color.darkBlue}
-            textTransform={'capitalize'}
-            isBold
-            onPress={() => {
-              onPressStartNavigation()
-              // console.log('trying to navigate tracknng screen ');
-              // const url = `https://www.google.com/maps/dir/?api=1&origin=${currentPosition?.latitude},${currentPosition?.longitude}&destination=${destination?.lat},${destination?.lng}&travelmode=driving`;
-              // Linking.openURL(url).catch(err =>
-              //   console.error('An error occurred', err),
-              // );
-            }}
-          />
-        </View>
+        {passengerArrive === true && rideontheway ? (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              height: windowHeight * 0.2,
+              width: windowWidth,
+            }}>
+            <CustomButton
+              text={'DRIVE'}
+              fontSize={moderateScale(14, 0.3)}
+              textColor={Color.white}
+              borderRadius={moderateScale(30, 0.3)}
+              width={windowWidth * 0.85}
+              marginTop={moderateScale(10, 0.3)}
+              height={windowHeight * 0.07}
+              bgColor={Color.darkBlue}
+              borderWidth={1.5}
+              borderColor={Color.darkBlue}
+              textTransform={'capitalize'}
+              isBold
+              onPress={() => {
+                onPressStartNavigation();
+                // console.log('trying to navigate tracknng screen ');
+                // const url = `https://www.google.com/maps/dir/?api=1&origin=${currentPosition?.latitude},${currentPosition?.longitude}&destination=${destination?.lat},${destination?.lng}&travelmode=driving`;
+                // Linking.openURL(url).catch(err =>
+                //   console.error('An error occurred', err),
+                // );
+              }}
+            />
+          </View>
+        ) : (
+          <>
+            <View
+              style={{
+                alignItems: 'center',
+                width: windowWidth,
+                height: windowHeight * 0.2,
+                position: 'absolute',
+                bottom: 0,
+              }}>
+              {isriderArrive && !arrive ? (
+                <CustomButton
+                  onPress={() => {}}
+                  text={'ARRIVE LOCATION'}
+                  fontSize={moderateScale(14, 0.3)}
+                  textColor={Color.white}
+                  borderRadius={moderateScale(30, 0.3)}
+                  width={windowWidth * 0.85}
+                  marginTop={moderateScale(10, 0.3)}
+                  height={windowHeight * 0.07}
+                  bgColor={Color.darkBlue}
+                  textTransform={'capitalize'}
+                  isBold
+                />
+              ) : start_waiting == false ? (
+                <CustomButton
+                  style={{
+                    position: 'absolute',
+                    bottom: 100,
+                  }}
+                  text={'start waiting'}
+                  fontSize={moderateScale(14, 0.3)}
+                  textColor={Color.white}
+                  borderRadius={moderateScale(30, 0.3)}
+                  width={windowWidth * 0.85}
+                  marginTop={moderateScale(10, 0.3)}
+                  height={windowHeight * 0.07}
+                  bgColor={Color.darkBlue}
+                  textTransform={'capitalize'}
+                  isBold
+                  onPress={() => {
+                    rideUpdate('waiting');
+                    // setStartWaiting(true);
+                  }}
+                />
+              ) : (
+                <CustomButton
+                  text={'arrive '}
+                  fontSize={moderateScale(14, 0.3)}
+                  textColor={Color.white}
+                  borderRadius={moderateScale(30, 0.3)}
+                  width={windowWidth * 0.85}
+                  height={windowHeight * 0.07}
+                  bgColor={Color.darkBlue}
+                  borderWidth={1}
+                  borderColor={Color.blue}
+                  textTransform={'capitalize'}
+                  // style={{bottom: 60}}
+                  isBold
+                  onPress={() => {
+                    rideUpdate('arrive');
+                    // setPassengerArrive(true);
+                    console.log(
+                      'hwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww',
+                    );
+                  }}
+                />
+              )}
+            </View>
+          </>
+        )}
       </View>
       <AdditionalTimeModal
         setAdditionalTime={setAdditionalTime}

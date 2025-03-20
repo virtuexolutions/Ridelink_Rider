@@ -22,6 +22,7 @@ import {getDistance} from 'geolib';
 
 const RideRequest = ({route}) => {
   const {type, data} = route.params;
+  console.log("🚀 ~ RideRequest ~ data ============ datadatadatadatadatadata:", data?.ride_id)
   const mapRef = useRef(null);
   const token = useSelector(state => state.authReducer.token);
   const userData = useSelector(state => state.commonReducer.userData);
@@ -120,7 +121,7 @@ const RideRequest = ({route}) => {
   };
 
   const onPressSendRequest = async status => {
-    const url = `auth/rider/ride_update/${data?.id}`;
+    const url = `auth/rider/ride_update/${data?.ride_id}`;
     const body = {
       status: status,
       lat: currentPosition?.latitude,
@@ -134,7 +135,7 @@ const RideRequest = ({route}) => {
       navigationService.navigate('PassengerDetails', {
         type: '',
         data: data,
-        rider_arrived_time: response?.data?.ride_info?.rider_arrived_time,
+        rider_arrived_time: response?.data?.rider_arrived_time,
       });
     }
   };
