@@ -22,10 +22,6 @@ import Color from '../Assets/Utilities/Color';
 
 const ChooseDeclineReasonScreen = prop => {
   const data = prop?.route?.params?.data;
-  console.log(
-    '🚀 ~ ChooseDeclineReasonScreen ~ ===================== data:',
-    data?.ride_id,
-  );
   const {user_type} = useSelector(state => state.authReducer);
   const token = useSelector(state => state.authReducer.token);
   const array = [
@@ -44,15 +40,19 @@ const ChooseDeclineReasonScreen = prop => {
 
   const rideCancel = async () => {
     const body = {
+      ride_status: 'pending',
+      // ride_status: data?.status,
       status: 'cancel',
       reason: reason?.reason,
     };
-    //  return console.log("🚀 ~ rideCancel ~ body:", body)
     const url = `auth/ride_cancel/${data?.ride_id}`;
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
+    console.log(
+      '🚀 ~ rideCancel ~ body ======================== >>>>> >>>>> >>> :',
+      response?.data,
+    );
     setIsLoading(false);
-    console.log('🚀 ~ rideCancel ~ response:', response?.data);
     if (response != undefined) {
       navigationService.navigate('Home');
     }

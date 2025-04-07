@@ -18,7 +18,9 @@ import { baseUrl, imageUrl, profilePicUrl } from '../Config';
 import { useIsFocused } from '@react-navigation/native';
 
 const PassengerDetails = ({ route }) => {
-  const { type, data } = route.params;
+  const { type, data ,ride_status} = route.params;
+  // console.log("🚀 ~ ================== ??>>>> >????PassengerDetails ~ data:sssssssssssssss", ride_status)
+  console.log("🚀 ~ PassengerDetails ~ route.params:", route.params)
   const rider_arrived_time = route?.params?.rider_arrived_time
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   const isFocused = useIsFocused()
@@ -269,7 +271,7 @@ const PassengerDetails = ({ route }) => {
               </View>
               <View style={styles.amountView}>
                 <CustomText>Promo Code</CustomText>
-                <CustomText>$5.25</CustomText>
+                <CustomText>{'$ ' + data?.amount}</CustomText>
               </View>
               <View
                 style={[
@@ -313,6 +315,7 @@ const PassengerDetails = ({ route }) => {
                       data: data,
                       type: 'details',
                       rider_arrived_time: rider_arrived_time,
+                      ride_status :ride_status,
                     });
                   }
 

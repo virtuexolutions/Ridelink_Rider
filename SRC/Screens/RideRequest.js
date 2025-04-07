@@ -1,6 +1,12 @@
 import {Icon} from 'native-base';
 import React, {useEffect, useRef, useState} from 'react';
-import {SafeAreaView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import {moderateScale} from 'react-native-size-matters';
@@ -22,7 +28,10 @@ import {getDistance} from 'geolib';
 
 const RideRequest = ({route}) => {
   const {type, data} = route.params;
-  console.log("🚀 ~ RideRequest ~ data ============ datadatadatadatadatadata:", data?.ride_id)
+  console.log(
+    '🚀 ~ RideRequest ~ data ============ datadatadatadatadatadata:',
+    data?.ride_id,
+  );
   const mapRef = useRef(null);
   const token = useSelector(state => state.authReducer.token);
   const userData = useSelector(state => state.commonReducer.userData);
@@ -128,14 +137,16 @@ const RideRequest = ({route}) => {
       lng: currentPosition?.longitude,
       rider_arrived_time: time,
     };
-    setIsLoading(true);
+    // setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
+    // return  console.log("🚀 ~  response:================== here i m ", response?.data?.ride_info?.status)
     setIsLoading(false);
     if (response != undefined) {
       navigationService.navigate('PassengerDetails', {
         type: '',
         data: data,
         rider_arrived_time: response?.data?.rider_arrived_time,
+        ride_status: response?.data?.ride_info?.status,
       });
     }
   };
@@ -492,7 +503,13 @@ const RideRequest = ({route}) => {
                   marginBottom: moderateScale(20, 0.6),
                 }}>
                 <CustomButton
-                  text={'Accept'}
+                  text={
+                    isLoading ? (
+                      <ActivityIndicator size={'small'} color={'white'} />
+                    ) : (
+                      'Accept'
+                    )
+                  }
                   fontSize={moderateScale(14, 0.3)}
                   textColor={Color.white}
                   borderRadius={moderateScale(30, 0.3)}

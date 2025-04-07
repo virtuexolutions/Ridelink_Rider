@@ -8,7 +8,7 @@ import CustomImage from './CustomImage';
 import CustomButton from './CustomButton';
 import {Icon} from 'native-base';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { baseUrl } from '../Config';
+import {baseUrl} from '../Config';
 
 const PaymentMethodCard = ({
   isuserCard,
@@ -38,7 +38,10 @@ const PaymentMethodCard = ({
             <View style={styles.image_view}>
               {/* <CustomImage style={styles.image} source={require('../Assets/Images/ridelink.png')}
               /> */}
-              <CustomImage style={styles.image} source={{uri:`${baseUrl}/${image}`}} />
+              <CustomImage
+                style={styles.image}
+                source={{uri: `${baseUrl}/${image}`}}
+              />
             </View>
             <CustomText
               isBold
@@ -84,7 +87,7 @@ const PaymentMethodCard = ({
                   <CustomText isBold style={[styles.text1]}>
                     PickUp
                   </CustomText>
-                  <CustomText numberOfLines={1} style={[styles.text1]}>
+                  <CustomText numberOfLines={2} style={[styles.text1]}>
                     {pickuplocation}
                   </CustomText>
                 </View>
@@ -117,10 +120,10 @@ const PaymentMethodCard = ({
                   />
                 </View>
                 <View>
-                  <CustomText isBold style={[styles.text1]}>
+                  <CustomText numberOfLines={2} isBold style={[styles.text1]}>
                     DropOff
                   </CustomText>
-                  <CustomText numberOfLines={1} style={[styles.text1]}>
+                  <CustomText numberOfLines={2} style={[styles.text1]}>
                     {dropofflocation}
                   </CustomText>
                 </View>
@@ -131,8 +134,9 @@ const PaymentMethodCard = ({
       ) : (
         <>
           <CustomText style={styles.price}>
-            <CustomText style={{
-            }}>Fare : </CustomText>{`$${fare}`}</CustomText>
+            <CustomText style={{}}>Fare : </CustomText>
+            {`$${fare}`}
+          </CustomText>
           <CustomText style={styles.text}>Payment Method</CustomText>
           <View style={styles.payment_view}>
             <View style={styles.payment_subview}>
@@ -251,7 +255,7 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.15,
     borderRadius: windowHeight,
     // backgroundColor :'green' ,
-    overflow :'hidden', 
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
@@ -276,6 +280,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(9, 0.6),
     textAlign: 'left',
     marginLeft: moderateScale(10, 0.6),
+    width: windowWidth * 0.75,
   },
   icon_view: {
     width: moderateScale(15, 0.6),

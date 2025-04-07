@@ -1,5 +1,5 @@
 import {useIsFocused} from '@react-navigation/native';
-import {ScrollView} from 'native-base';
+import {Icon, ScrollView} from 'native-base';
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
@@ -8,65 +8,38 @@ import {
   I18nManager,
   ImageBackground,
   Platform,
-  RefreshControl,
   SafeAreaView,
   StyleSheet,
   ToastAndroid,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
+import {getDatabase, onValue, ref} from '@react-native-firebase/database';
 import Geolocation from 'react-native-geolocation-service';
 import {moderateScale} from 'react-native-size-matters';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
-import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
-import DeliveryBox from '../Components/DeliveryBox';
 import Header from '../Components/Header';
 import SearchbarComponent from '../Components/SearchbarComponent';
 import Userbox from '../Components/Userbox';
 import navigationService from '../navigationService';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {
-  getDatabase,
-  onChildAdded,
-  onValue,
-  ref,
-} from '@react-native-firebase/database';
 
 const Home = () => {
   const token = useSelector(state => state.authReducer.token);
-  const {user_type} = useSelector(state => state.authReducer);
+  const data = useSelector(state => state.commonReducer.userData);
   const isFocused = useIsFocused();
-  const [refreshing, setRefreshing] = useState(false);
-  const [activebutton, setactivebutton] = useState('current');
   const [isLoading, setIsLoading] = useState(false);
   const [requestList, setRequestList] = useState([]);
-  const [modal_visible, setModalVisible] = useState(false);
   const [currentPosition, setCurrentPosition] = useState({});
-  const [historyLoading, setHistoryLoading] = useState(false);
-  const [histry_list, setHistoryList] = useState([]);
-
-  const deliveryList = [
-    {
-      id: 1,
-      image: require('../Assets/Images/carimage.png'),
-      title: 'Ride',
-    },
-    {
-      id: 2,
-      image: require('../Assets/Images/parcelimage.png'),
-      title: 'Parcel Delivery',
-    },
-    {
-      id: 3,
-      image: require('../Assets/Images/catimage.png'),
-      title: 'Pets',
-    },
-  ];
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedService, setSelectedService] = useState([]);
 
   useEffect(() => {
     getCurrentLocation();
@@ -125,22 +98,20 @@ const Home = () => {
     setIsLoading(true);
     try {
       const response = await Get(url, token);
+
       if (response != undefined) {
-        setRequestList(response?.data?.data);
+        setRequestList(response?.data?.ride_info);
+      } else {
+        setRequestList([]);
       }
-      // else {
-      //   setRequestList([]);
-      // }
     } catch (error) {
-      console.error('Error festching ride requests:', error);
+      console.error('Error festchaaing ride requests:', error);
     }
     setIsLoading(false);
   };
 
   useEffect(() => {
-    console.log(
-      'helllllllllllllllllllllloooooosssssssooooooooooo fromfire base',
-    );
+    console.log('hellllllloooo fromfire base');
     const db = getDatabase();
     const requestsRef = ref(db, 'requests');
     const unsubscribe = onValue(requestsRef, snapshot => {
@@ -154,7 +125,7 @@ const Home = () => {
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
     updateLocation();
@@ -175,9 +146,109 @@ const Home = () => {
     }
   };
 
+  const serviceArray = ['delivery', 'ride', 'pet delivery'];
+
+  const profileUpdate = async () => {
+    const body = {
+      work_category: selectedService,
+    };
+
+    const url = 'auth/profile';
+    setIsLoading(true);
+    const response = await Post(url, body, apiHeader(token));
+    // return console.log("🚀 ~ profileUpdate ~ response:", response?.data)
+    setIsLoading(false);
+    if (response != undefined) {
+      setModalVisible(false);
+      dispatch(setUserData(response?.data?.user_info));
+      Platform.OS == 'android'
+        ? ToastAndroid.show('services added  Successfully', ToastAndroid.SHORT)
+        : alert(' services added Successfully');
+    }
+  };
   return (
     <SafeAreaView style={styles.safe_area}>
       <Header title={'Driver Online'} />
+      <TouchableOpacity
+        onPress={() => {
+          setModalVisible(!modalVisible);
+        }}
+        style={styles.service}>
+        <CustomText isBold style={styles.ser_text}>
+          select service for today
+        </CustomText>
+        <Icon
+          name="down"
+          as={AntDesign}
+          size={moderateScale(15, 0.6)}
+          color={Color.black}
+        />
+      </TouchableOpacity>
+      {modalVisible && (
+        <View style={styles.con}>
+          {serviceArray?.map((item, index) => (
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}>
+              <CustomText
+                onPress={() => {
+                  setSelectedService(prev =>
+                    prev.includes(item)
+                      ? prev?.filter(ser => ser !== item)
+                      : [...prev, item],
+                  );
+                }}
+                style={{
+                  fontSize: moderateScale(12, 0.6),
+                  color: Color.black,
+                  paddingHorizontal: moderateScale(5, 0.6),
+                }}>
+                {item}
+              </CustomText>
+              {selectedService.includes(item) && (
+                <Icon
+                  style={{
+                    paddingTop: moderateScale(2, 0.6),
+                  }}
+                  name="check"
+                  as={AntDesign}
+                  size={moderateScale(10, 0.6)}
+                  color={Color.blue}
+                />
+              )}
+            </View>
+          ))}
+          {selectedService?.length > 0 && (
+            <TouchableOpacity
+              onPress={() => {
+                // console.log('helooooooooooooooooooooooooooo ' )
+                profileUpdate();
+              }}
+              style={{
+                backgroundColor: Color.blue,
+                width: '100%',
+                alignItems: 'center',
+              }}>
+              {isLoading ? (
+                <ActivityIndicator size={'small'} color={Color.black} />
+              ) : (
+                <CustomText
+                  onPress={() => {
+                    profileUpdate();
+                  }}
+                  style={{
+                    fontSize: moderateScale(12, 0.6),
+                  }}>
+                  done
+                </CustomText>
+              )}
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+
       <SearchbarComponent
         SearchStyle={{
           width: windowWidth * 0.9,
@@ -250,7 +321,7 @@ const Home = () => {
           </ImageBackground>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView scrollEnabled={false} showsVerticalScrollIndicator={false}>
           {isLoading ? (
             <ActivityIndicator
               style={styles.indicatorStyle}
@@ -259,6 +330,7 @@ const Home = () => {
             />
           ) : (
             <FlatList
+              // keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={
                 <CustomText
                   style={{
@@ -276,19 +348,24 @@ const Home = () => {
               contentContainerStyle={{marginBottom: moderateScale(100, 0.6)}}
               style={{marginBottom: moderateScale(20, 0.6)}}
               renderItem={({item}) => {
+                console.log(
+                  'hghghhghghghghghghg =====sssss=============== >> >> > >ssss > >> >',
+                  item,
+                );
                 return (
                   <Userbox
                     data={item?.ride_info}
                     onPressDetails={() => {
-                      item?.ride_info?.status == 'ontheway'
-                        ? navigationService.navigate('RideScreen', {
-                            data: item,
-                            rideontheway: true,
-                          })
-                        : navigationService.navigate('RideRequest', {
-                            type: '',
-                            data: item?.ride_info,
-                          });
+                      // item?.ride_info?.status == 'ontheway'
+                      //   ? navigationService.navigate('RideScreen', {
+                      //       data: item,
+                      //       rideontheway: true,
+                      //     })
+                      // :
+                      navigationService.navigate('RideRequest', {
+                        type: '',
+                        data: item?.ride_info,
+                      });
                     }}
                   />
                 );
@@ -410,5 +487,31 @@ const styles = StyleSheet.create({
   date: {
     fontSize: moderateScale(11, 0.6),
     color: Color.veryLightGray,
+  },
+  service: {
+    flexDirection: 'row',
+    // backgroundColor: 'red',
+    width: windowWidth,
+    alignItems: 'center',
+    paddingHorizontal: moderateScale(22, 0.6),
+    paddingVertical: moderateScale(5, 0.6),
+    marginTop: moderateScale(10, 0.6),
+    justifyContent: 'space-between',
+  },
+  con: {
+    backgroundColor: Color.white,
+    height: windowHeight * 0.08,
+    // paddingHorizontal: moderateScale(10, 0.6),
+    borderWidth: 1,
+
+    borderColor: Color.lightGrey,
+    width: windowWidth * 0.28,
+    // alignItems :'center' ,
+    // justifyContent: 'center',
+    borderRadius: moderateScale(10, 0.6),
+    zIndex: 1,
+    position: 'absolute',
+    right: 20,
+    top: 115,
   },
 });

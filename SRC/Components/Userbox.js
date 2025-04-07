@@ -24,7 +24,7 @@ const Userbox = ({data, onPress, onPressDetails}) => {
             source={
               userData?.photo
                 ? {uri: `${baseUrl}/${userData?.photo}`}
-                : require('../Assets/Images/user1.png')
+                : require('../Assets/Images/user.png')
             }
           />
         </View>

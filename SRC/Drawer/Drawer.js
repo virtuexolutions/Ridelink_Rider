@@ -1,17 +1,16 @@
-import { DrawerActions, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
+import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import { windowHeight, windowWidth } from '../Utillity/utils';
-import navigationService from '../navigationService';
-import { useDispatch, useSelector } from 'react-redux';
-import { setUserLogOut } from '../Store/slices/common';
-import { setUserLogoutAuth, SetUserRole } from '../Store/slices/auth-slice';
 import { setUserToken } from '../Store/slices/auth';
+import { SetUserRole } from '../Store/slices/auth-slice';
+import { setUserLogOut } from '../Store/slices/common';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 // import ReferFriendModal from '../Screens/ReferFriendScreen'
 
 const Drawer = React.memo(() => {

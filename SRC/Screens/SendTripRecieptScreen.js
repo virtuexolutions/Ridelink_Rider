@@ -1,47 +1,33 @@
+import {Icon} from 'native-base';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
-import Header from '../Components/Header';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import Color from '../Assets/Utilities/Color';
 import {moderateScale} from 'react-native-size-matters';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Color from '../Assets/Utilities/Color';
+import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
-import {Icon} from 'native-base';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import Feather from 'react-native-vector-icons/Feather';
-import DropDownSingleSelect from './DropDownSingleSelect';
-import CustomButton from '../Components/CustomButton';
-import RNDateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
+import Header from '../Components/Header';
 import navigationService from '../navigationService';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 
 const SendTripRecieptScreen = ({route}) => {
-  const {type} = route.params;
-  console.log('🚀 ~ SendTripRecieptScreen ~ type:', type);
+  const {type, data} = route.params;
+  console.log(
+    '🚀 ~ SendTripRecieptScreen ~sss ==================== dta:',
+    data?.ride_info,
+  );
   const [selectedTime, setSelectedTime] = useState('');
   const [passsengers, setPassengers] = useState('');
   const [PaymentMethod, setPaymentMethod] = useState('');
   const [timeVisible, setTimeVisible] = useState(false);
 
-  const passengersArray = [
-    '1 passengers',
-    '2 passengers',
-    '3 passengers',
-    '4 passengers',
-    '5 passengers',
-  ];
-  const paymentArray = [
-    {id: '1', name: 'Online', value: 'stripe'},
-    {id: '1', name: 'Cash', value: 'cod'},
-  ];
   return (
     <SafeAreaView>
       <ScrollView
@@ -83,7 +69,7 @@ const SendTripRecieptScreen = ({route}) => {
                       color: Color.themeBlack,
                       fontWeight: 'bold',
                     }}>
-                    Fannie Street San Angelo, Texas
+                    {data?.ride_info?.location_from}
                   </CustomText>
                 </View>
               </View>
@@ -106,7 +92,7 @@ const SendTripRecieptScreen = ({route}) => {
                 <View style={{marginLeft: moderateScale(10, 0.6)}}>
                   <CustomText style={styles.text1}>Drop Off</CustomText>
                   <CustomText style={styles.text2}>
-                    Neville Street Salem, Colorado
+                    {data?.ride_info?.location_to}
                   </CustomText>
                 </View>
               </View>
@@ -261,15 +247,15 @@ const SendTripRecieptScreen = ({route}) => {
           <View style={styles.expensesContainer}>
             <View style={styles.amountView}>
               <CustomText>Trip Fare Breakdown</CustomText>
-              <CustomText>$50.25</CustomText>
+              <CustomText>{'$' + data?.ride_info?.amount}</CustomText>
             </View>
             <View style={styles.amountView}>
               <CustomText>Subtotal</CustomText>
-              <CustomText>$50.25</CustomText>
+              <CustomText>{'$' + data?.ride_info?.amount}</CustomText>
             </View>
             <View style={styles.amountView}>
               <CustomText>Promo Code</CustomText>
-              <CustomText>$5.25</CustomText>
+              <CustomText>{'$' + data?.ride_info?.amount}</CustomText>
             </View>
             <View
               style={[
@@ -284,8 +270,8 @@ const SendTripRecieptScreen = ({route}) => {
                 Total
               </CustomText>
               <CustomText isBold style={{fontSize: moderateScale(24, 0.4)}}>
-                $105.75
-              </CustomText>{' '}
+                {'$' + data?.ride_info?.amount}
+              </CustomText>
               {/* Resolved Design's calculations issues */}
             </View>
           </View>
@@ -321,6 +307,10 @@ const SendTripRecieptScreen = ({route}) => {
                 />
               </View>
               <CustomButton
+                onPress={() => {
+                  navigationService.navigate('Home');
+                  console.log(" helllllllllllllllo ooooooooooooooooooooooooooo")
+                }}
                 text={'Print'}
                 fontSize={moderateScale(24, 0.3)}
                 textColor={Color.white}
@@ -332,10 +322,13 @@ const SendTripRecieptScreen = ({route}) => {
                 height={windowHeight * 0.075}
                 bgColor={'#1877F2'}
                 textTransform={'capitalize'}
-                elevation
+                // elevation
                 isBold
               />
               <CustomButton
+                onPress={() => {
+                  navigationService.navigate('Home');
+                }}
                 text={'Share'}
                 fontSize={moderateScale(24, 0.3)}
                 textColor={Color.black}
@@ -347,7 +340,7 @@ const SendTripRecieptScreen = ({route}) => {
                 height={windowHeight * 0.075}
                 bgColor={Color.white}
                 textTransform={'capitalize'}
-                elevation
+                // elevation
                 isBold
               />
             </>
