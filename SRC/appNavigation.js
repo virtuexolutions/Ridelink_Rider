@@ -35,6 +35,7 @@ import AddYourCar from './Screens/AddYourCar';
 import History from './Screens/History';
 import ReferFriendScreen from './Screens/ReferFriendScreen';
 import MessagesScreen from './Screens/MessagesScreen';
+import DeliveryScreen from './Screens/DeliveryScreen';
 // import ReferFriendScreen from './Screens/ReferFriendScreen';
 // import LearningCenter from './Screens/LearningCenter';
 // import PrivacyPolicy from './Screens/PrivacyPolicy';
@@ -114,7 +115,7 @@ const AppNavigator = () => {
             name="ChooseDeclineReasonScreen"
             component={ChooseDeclineReasonScreen}
           />
-          {/* <RootNav.Screen name="LearningCenter" component={LearningCenter} /> */}
+          <RootNav.Screen name="DeliveryScreen" component={DeliveryScreen} />
         </RootNav.Navigator>
       </NavigationContainer>
     );

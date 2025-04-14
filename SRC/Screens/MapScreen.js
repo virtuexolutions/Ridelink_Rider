@@ -32,12 +32,10 @@ import CustomButton from '../Components/CustomButton';
 import CancelRide from '../Components/CancelRide';
 
 const MapScreen = props => {
+  console.log('🚀 ~ props:', props);
   const mapRef = useRef();
-  const ridedata = props?.route?.params?.ridedata;
-  console.log(
-    '🚀 ~ ridedata?.multiplePickups====================:',
-    ridedata?.multiplePickups,
-  );
+  const data = props?.route?.params?.ridedata;
+  console.log('🚀 ~ ridedata?.multiplePickups====================:', data);
   const paymentMethod = props?.route?.params?.paymentMethod;
   const nearestcab = props?.route?.params?.isEnabled;
   const fromrideScreen = props?.route?.params?.fromrideScreen;
@@ -50,7 +48,7 @@ const MapScreen = props => {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
 
-  const [price, setPrice] = useState(ridedata?.fare);
+  const [price, setPrice] = useState(data?.fare);
 
   const [declineModal, setDeclineModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,10 +57,6 @@ const MapScreen = props => {
   const [rideStatus, setRideStatus] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  console.log(
-    '🚀 ~ isVisible ===================================== canccel modal===============:',
-    isVisible,
-  );
   const [status, setStatus] = useState('');
   const [rideupdatedData, setRideuptedData] = useState(true);
   const [currentPosition, setCurrentPosition] = useState({
@@ -136,56 +130,32 @@ const MapScreen = props => {
     }
   };
 
-  const requestforRide = async () => {
-    const formData = new FormData();
-    const body = {
-      location_from: ridedata?.pickupLocation?.name,
-      location_to: ridedata?.dropoffLocation?.name,
-      dropoff_location_lat: ridedata?.dropoffLocation?.lat,
-      dropoff_location_lng: ridedata?.dropoffLocation?.lng,
-      pickup_location_lat: ridedata?.pickupLocation?.lat,
-      pickup_location_lng: ridedata?.pickupLocation?.lng,
-      distance: ridedata?.distance,
-      amount: ridedata?.fare,
-      payment_method: paymentMethod,
-      nearest_cab: nearestcab,
-      type: ridedata?.CabType?.name,
-      time: ridedata?.time,
+  const onPressStartNavigation = async () => {
+    // rideUpdate('ontheway');
+    const pickup = {
+      latitude: parseFloat(data?.pickup_location_lat),
+      longitude: parseFloat(data?.pickup_location_lng),
     };
-    ridedata?.multiplePickups?.forEach((item, index) => {
-      console.log('🚀 ~ ridedata?.multiplePickups?.forEach ~ item:', item);
-      formData.append(`pickup[${index}][lat]`, item?.lat);
-      formData.append(`pickup[${index}][lng]`, item?.lng);
-    });
-    for (let key in body) {
-      formData.append(key, body[key]);
-    }
-    const url = 'auth/bookride';
-    setIsLoading(true);
-    const response = await Post(url, formData, apiHeader(token));
-    setIsLoading(false);
-    if (response != undefined) {
-      setRideID(response?.data.data?.id);
-      setRideStatus(response?.data?.data?.status);
-      Alert.alert('Waiting', 'Please wait here for rider to find your Request');
+    const dropoff = {
+      latitude: parseFloat(data?.dropoff_location_lat),
+      longitude: parseFloat(data?.dropoff_location_lng),
+    };
+    if (data?.pickup === 'null') {
+      // console.log("inside fron fuction ===ddd===========")
+      const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving`;
+      Linking.openURL(url).catch(err =>
+        console.error('An error occurred', err),
+      );
+    } else {
+      const waypoints = data?.stop
+        .map(stop => `${stop.lat},${stop.lng}`)
+        .join('|');
+      const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving&waypoints=${waypoints}`;
+      Linking.openURL(url).catch(err =>
+        console.error('An error occurred', err),
+      );
     }
   };
-
-  // useEffect(() => {
-  //   const reference = database().ref(`/requests/${rideId}`);
-  //   const listener = reference.on('value', snapshot => {
-  //     if (snapshot.exists()) {
-  //       const data = snapshot.val();
-  //       if (data?.ride_info?.status && data?.ride_info?.status !== 'pending') {
-  //         setRideuptedData(data);
-  //         setModalVisible(true);
-  //         // setStatus(data.status);
-  //       }
-  //     }
-  //   });
-
-  //   return () => reference.off('value', listener);
-  // }, [rideId]);
 
   return (
     <SafeAreaView style={[styles.safe_are, styles.background_view]}>
@@ -198,18 +168,7 @@ const MapScreen = props => {
           longitude: currentPosition.longitude || 0,
           latitudeDelta: 0.0522,
           longitudeDelta: 0.0521,
-        }}
-        // initialCamera={{
-        //   center: {
-        //     latitude: currentPosition?.latitude || 0,
-        //     longitude: currentPosition?.longitude || 0,
-        //   },
-        //   pitch: 0,
-        //   zoom: 18,
-        //   heading: 0,
-        //   altitude: 1000,
-        // }}
-      ></MapView>
+        }}></MapView>
 
       <Pulse
         color={Color.black}
@@ -232,40 +191,6 @@ const MapScreen = props => {
         />
       </View>
       <View style={{position: 'absolute', bottom: 20}}>
-        {/* <AskLocation
-          main_view_style={{height: windowHeight * 0.17}}
-          heading={'Waiting For Replies'}
-          renderView={
-            <View style={styles.offer_view}>
-              <CustomText style={styles.text}>Your Offer</CustomText>
-              <View style={styles.payment_view}>
-                <TouchableOpacity
-                  onPress={() => setPrice(price - 5)}
-                  style={styles.icon_view}>
-                  <Icon
-                    name="minus"
-                    as={FontAwesome5}
-                    color={Color.white}
-                    size={moderateScale(10, 0.6)}
-                  />
-                </TouchableOpacity>
-                <CustomText isBold style={styles.price}>
-                  {'$'} {price}
-                </CustomText>
-                <TouchableOpacity
-                  onPress={() => setPrice(price + 5)}
-                  style={styles.icon_view}>
-                  <Icon
-                    name="plus"
-                    as={FontAwesome5}
-                    color={Color.white}
-                    size={moderateScale(10, 0.6)}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          }
-        /> */}
         <CustomButton
           width={windowWidth * 0.9}
           height={windowHeight * 0.07}
@@ -273,18 +198,15 @@ const MapScreen = props => {
           borderRadius={moderateScale(30, 0.3)}
           textColor={Color.white}
           textTransform={'none'}
-          // disabled={rideId == '' || fromrideScreen ? false : true}
           text={
             isLoading ? (
               <ActivityIndicator size={'small'} color={Color.white} />
             ) : (
-              'Request'
+              'Start Navigation To Pick Up'
             )
           }
           isBold
-          onPress={() => {
-            requestforRide();
-          }}
+          onPress={() => {}}
         />
       </View>
       <RequestModal
@@ -296,7 +218,7 @@ const MapScreen = props => {
         data={rideupdatedData}
         onPressAccept={() =>
           navigationService.navigate('RideScreen', {
-            data: rideupdatedData,
+            data: data,
             type: '',
           })
         }
@@ -308,7 +230,6 @@ const MapScreen = props => {
         onPressCancel={() => navigationService.navigate('Home')}
       />
       <CancelRide modalVisible={isVisible} setModalVisible={setIsVisible} />
-      {/* </ImageBackground> */}
     </SafeAreaView>
   );
 };

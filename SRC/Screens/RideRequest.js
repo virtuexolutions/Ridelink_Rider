@@ -28,10 +28,6 @@ import {getDistance} from 'geolib';
 
 const RideRequest = ({route}) => {
   const {type, data} = route.params;
-  console.log(
-    '🚀 ~ RideRequest ~ data ============ datadatadatadatadatadata:',
-    data?.ride_id,
-  );
   const mapRef = useRef(null);
   const token = useSelector(state => state.authReducer.token);
   const userData = useSelector(state => state.commonReducer.userData);
@@ -137,13 +133,12 @@ const RideRequest = ({route}) => {
       lng: currentPosition?.longitude,
       rider_arrived_time: time,
     };
-    // setIsLoading(true);
+    setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
-    // return  console.log("🚀 ~  response:================== here i m ", response?.data?.ride_info?.status)
     setIsLoading(false);
     if (response != undefined) {
       navigationService.navigate('PassengerDetails', {
-        type: '',
+        type: 'ride',
         data: data,
         rider_arrived_time: response?.data?.rider_arrived_time,
         ride_status: response?.data?.ride_info?.status,
@@ -151,6 +146,26 @@ const RideRequest = ({route}) => {
     }
   };
 
+  const acceptDelivery = async status => {
+    const url = `auth/rider/delivery_update/${data?.delivery_id}`;
+    const body = {
+      status: status,
+      lat: currentPosition?.latitude,
+      lng: currentPosition?.longitude,
+      rider_arrived_time: time,
+    };
+    setIsLoading(true);
+    const response = await Post(url, body, apiHeader(token));
+    setIsLoading(false);
+    if (response != undefined) {
+      navigationService.navigate('DeliveryScreen', {
+        type: 'delivery',
+        data: data,
+        rider_arrived_time: response?.data?.rider_arrived_time,
+        ride_status: response?.data?.ride_info?.status,
+      });
+    }
+  };
   useEffect(() => {
     if (currentPosition && data?.pickup_location_lat != null) {
       const dropLocation = {
@@ -475,6 +490,66 @@ const RideRequest = ({route}) => {
                 </View>
               </View>
             </View>
+            {/* <View style={styles.waiting_card}>
+              <View style={styles.seatView}>
+                <View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      paddingVertical: moderateScale(5, 0.6),
+                    }}>
+                    <Icon
+                      name="clock-o"
+                      as={FontAwesome}
+                      size={moderateScale(16, 0.6)}
+                      color={Color.darkBlue}
+                    />
+                    <View style={{alignItems: 'flex-start'}}>
+                      <CustomText style={[styles.text1]}>
+                        pickup from
+                      </CustomText>
+                      <CustomText isBold style={styles.text1}>
+                        {data?.location_from}
+                      </CustomText>
+                    </View>
+                  </View>
+                  <CustomText
+                    isBold
+                    style={[
+                      styles.text1,
+                      {
+                        position: 'absolute',
+                        color: Color.veryLightGray,
+                        top: 30,
+                        marginLeft: moderateScale(-8, 0.6),
+                        transform: [{rotate: '-90deg'}],
+                      },
+                    ]}>
+                    ------
+                  </CustomText>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      paddingVertical: moderateScale(10, 0.6),
+                    }}>
+                    <Icon
+                      name="map-marker"
+                      as={FontAwesome}
+                      size={moderateScale(16, 0.6)}
+                      color={Color.darkBlue}
+                    />
+                    <View style={{alignItems: 'flex-start'}}>
+                      <CustomText style={styles.text1}>
+                        {'DropOff Location'}
+                      </CustomText>
+                      <CustomText isBold style={styles.text1}>
+                        {data?.location_to}
+                      </CustomText>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View> */}
             {decline === true ? (
               <CustomButton
                 text={'Decline'}
@@ -519,7 +594,11 @@ const RideRequest = ({route}) => {
                   textTransform={'capitalize'}
                   elevation
                   loader={loading}
-                  onPress={() => time && onPressSendRequest('accept')}
+                  onPress={() =>
+                    time && type == 'delivery'
+                      ? acceptDelivery('accept')
+                      : onPressSendRequest('accept')
+                  }
                 />
                 <TouchableOpacity
                   onPress={() => {

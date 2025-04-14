@@ -496,13 +496,14 @@ const RequestScreen = () => {
                   CabType: cabType,
                   multiplePickups: multipleLocation,
                 },
-              })
-
+              });
             } else {
               Platform.OS == 'android'
-              ? ToastAndroid.show('required feild is empty ', ToastAndroid.SHORT)
-              : Alert.alert('required feild is empty');
-            
+                ? ToastAndroid.show(
+                    'required feild is empty ',
+                    ToastAndroid.SHORT,
+                  )
+                : Alert.alert('required feild is empty');
             }
           }}
         />

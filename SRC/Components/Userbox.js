@@ -13,6 +13,7 @@ import CustomImage from './CustomImage';
 import CustomText from './CustomText';
 
 const Userbox = ({data, onPress, onPressDetails}) => {
+  console.log('🚀 ~ Userbox ~ data:', data?.type);
   const userData = useSelector(state => state.commonReducer.userData);
 
   return (
@@ -30,7 +31,9 @@ const Userbox = ({data, onPress, onPressDetails}) => {
         </View>
         <View style={styles.container}>
           <CustomText style={styles.h1}>{/* {userData?.name} */}</CustomText>
-          <CustomText style={styles.status}>{data?.status}</CustomText>
+          <CustomText style={styles.status}>
+            {data?.type == 'delivery' ? 'delivery' : 'ride'}{' '}
+          </CustomText>
         </View>
         <CustomText style={styles.time}>
           {moment(data?.created_at).format('LT')}

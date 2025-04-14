@@ -40,7 +40,8 @@ const Home = () => {
   const [currentPosition, setCurrentPosition] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedService, setSelectedService] = useState([]);
-
+  const [deliveryData, setDeliveryData] = useState([]);
+  const [activebutton, setactivebutton] = useState('ride');
   useEffect(() => {
     getCurrentLocation();
   }, [isFocused]);
@@ -54,7 +55,7 @@ const Home = () => {
         const givenaddress = data.results[0].formatted_address;
         setAddress(givenaddress);
       } else {
-        console.log('No address found');
+        console.log('No ddddaddrsssess found');
       }
     } catch (error) {
       console.error('error from home screen ', error);
@@ -94,11 +95,12 @@ const Home = () => {
   };
 
   const rideRequestList = async () => {
-    const url = 'auth/rider/ride-request-list';
+    const url = `auth/rider/ride-request-list?type=${activebutton}`;
     setIsLoading(true);
+    console.log('🚀 ~ rideRequestList ~ url:', url);
     try {
       const response = await Get(url, token);
-
+      console.log('🚀 ~ rideRequestList ~ response:', response?.data);
       if (response != undefined) {
         setRequestList(response?.data?.ride_info);
       } else {
@@ -111,7 +113,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    console.log('hellllllloooo fromfire base');
+    console.log('helllllssslloooo fromfire base');
     const db = getDatabase();
     const requestsRef = ref(db, 'requests');
     const unsubscribe = onValue(requestsRef, snapshot => {
@@ -121,16 +123,27 @@ const Home = () => {
           id: key,
           ...data[key],
         }));
+
+        // if (
+        //   selectedService.includes('ride') &&
+        //   selectedService.includes('delivery')
+        // ) {
         rideRequestList();
+        //   deliveryRequest();
+        // } else if (selectedService.includes('ride')) {
+        //   rideRequestList();
+        // } else if (selectedService.includes('delivery')) {
+        //   deliveryRequest();
+        // }
       }
     });
     return () => unsubscribe();
-  }, [isFocused]);
+  }, [isFocused, activebutton]);
 
   useEffect(() => {
     updateLocation();
     rideRequestList();
-  }, [currentPosition]);
+  }, [currentPosition, selectedService]);
 
   const updateLocation = async () => {
     const url = 'auth/rider/update-location';
@@ -156,7 +169,6 @@ const Home = () => {
     const url = 'auth/profile';
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
-    // return console.log("🚀 ~ profileUpdate ~ response:", response?.data)
     setIsLoading(false);
     if (response != undefined) {
       setModalVisible(false);
@@ -320,8 +332,40 @@ const Home = () => {
             </View>
           </ImageBackground>
         </View>
-
-        <ScrollView scrollEnabled={false} showsVerticalScrollIndicator={false}>
+        <View style={styles.button_Box}>
+          <CustomButton
+            onPress={() => {
+              setactivebutton('ride');
+            }}
+            text={'ride'}
+            fontSize={moderateScale(14, 0.3)}
+            textColor={activebutton === 'ride' ? Color.white : Color.btn_Color}
+            borderRadius={moderateScale(30, 0.3)}
+            width={windowWidth * 0.42}
+            height={windowHeight * 0.053}
+            bgColor={activebutton === 'ride' ? Color.btn_Color : 'transparent'}
+            textTransform={'capitalize'}
+          />
+          <CustomButton
+            onPress={() => {
+              setactivebutton('delivery');
+            }}
+            text={'delivery'}
+            fontSize={moderateScale(14, 0.3)}
+            textColor={
+              activebutton === 'delivery' ? Color.white : Color.btn_Color
+            }
+            borderRadius={moderateScale(30, 0.3)}
+            width={windowWidth * 0.42}
+            //   marginTop={moderateScale(10,.3)}
+            height={windowHeight * 0.055}
+            bgColor={
+              activebutton === 'delivery' ? Color.btn_Color : 'transparent'
+            }
+            textTransform={'capitalize'}
+          />
+        </View>
+        <ScrollView showsVerticalScrollIndicator={false}>
           {isLoading ? (
             <ActivityIndicator
               style={styles.indicatorStyle}
@@ -348,24 +392,20 @@ const Home = () => {
               contentContainerStyle={{marginBottom: moderateScale(100, 0.6)}}
               style={{marginBottom: moderateScale(20, 0.6)}}
               renderItem={({item}) => {
-                console.log(
-                  'hghghhghghghghghghg =====sssss=============== >> >> > >ssss > >> >',
-                  item,
-                );
                 return (
                   <Userbox
                     data={item?.ride_info}
                     onPressDetails={() => {
-                      // item?.ride_info?.status == 'ontheway'
-                      //   ? navigationService.navigate('RideScreen', {
-                      //       data: item,
-                      //       rideontheway: true,
-                      //     })
-                      // :
-                      navigationService.navigate('RideRequest', {
-                        type: '',
-                        data: item?.ride_info,
-                      });
+                      item?.ride_info?.type == 'delivery'
+                        ? navigationService.navigate('PassengerDetails', {
+                            type: 'delivery',
+                            data: item?.ride_info,
+                            fromdelivery: true,
+                          })
+                        : navigationService.navigate('RideRequest', {
+                            type: 'ride',
+                            data: item?.ride_info,
+                          });
                     }}
                   />
                 );
@@ -410,7 +450,6 @@ const styles = StyleSheet.create({
   link_Image: {
     width: windowWidth * 0.88,
     height: '100%',
-    // borderRadius: moderateScale(17, 0.6),
     alignSelf: 'center',
   },
   second_Image: {
@@ -433,49 +472,9 @@ const styles = StyleSheet.create({
     gap: moderateScale(5, 0.6),
     paddingHorizontal: moderateScale(5, 0.6),
     backgroundColor: Color.lightGrey,
-    // backgroundColor:'green',
-    // position:'absolute'
+    marginTop: moderateScale(20, 0.6),
   },
-  card: {
-    width: windowWidth * 0.89,
-    height: windowHeight * 0.1,
-    borderRadius: windowWidth,
-    marginTop: moderateScale(15, 0.6),
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: moderateScale(15, 0.6),
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-    elevation: 3,
-    backgroundColor: Color.white,
-    alignSelf: 'center',
-  },
-  image_view: {
-    height: windowWidth * 0.15,
-    width: windowWidth * 0.15,
-    borderRadius: windowHeight,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  text_view: {
-    width: '60%',
-  },
-  icon_view: {
-    width: moderateScale(40, 0.6),
-    height: moderateScale(40, 0.6),
-    backgroundColor: Color.black,
-    borderRadius: windowHeight,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+
   text: {
     fontSize: moderateScale(14, 0.6),
     color: Color.black,
@@ -484,13 +483,9 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(12, 0.6),
     color: Color.grey,
   },
-  date: {
-    fontSize: moderateScale(11, 0.6),
-    color: Color.veryLightGray,
-  },
+
   service: {
     flexDirection: 'row',
-    // backgroundColor: 'red',
     width: windowWidth,
     alignItems: 'center',
     paddingHorizontal: moderateScale(22, 0.6),
@@ -501,13 +496,10 @@ const styles = StyleSheet.create({
   con: {
     backgroundColor: Color.white,
     height: windowHeight * 0.08,
-    // paddingHorizontal: moderateScale(10, 0.6),
     borderWidth: 1,
 
     borderColor: Color.lightGrey,
     width: windowWidth * 0.28,
-    // alignItems :'center' ,
-    // justifyContent: 'center',
     borderRadius: moderateScale(10, 0.6),
     zIndex: 1,
     position: 'absolute',
