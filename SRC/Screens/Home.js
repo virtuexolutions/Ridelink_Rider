@@ -1,6 +1,6 @@
-import {useIsFocused} from '@react-navigation/native';
-import {Icon, ScrollView} from 'native-base';
-import React, {useEffect, useState} from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import { Icon, ScrollView } from 'native-base';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -15,21 +15,21 @@ import {
   View,
 } from 'react-native';
 
-import {getDatabase, onValue, ref} from '@react-native-firebase/database';
+import { getDatabase, onValue, ref } from '@react-native-firebase/database';
 import Geolocation from 'react-native-geolocation-service';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import SearchbarComponent from '../Components/SearchbarComponent';
 import Userbox from '../Components/Userbox';
 import navigationService from '../navigationService';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
 const Home = () => {
   const token = useSelector(state => state.authReducer.token);
@@ -40,6 +40,7 @@ const Home = () => {
   const [currentPosition, setCurrentPosition] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedService, setSelectedService] = useState([]);
+  console.log("🚀 ~ Home ~ selectedService:", selectedService)
   const [deliveryData, setDeliveryData] = useState([]);
   const [activebutton, setactivebutton] = useState('ride');
   useEffect(() => {
@@ -95,7 +96,7 @@ const Home = () => {
   };
 
   const rideRequestList = async () => {
-    const url = `auth/rider/ride-request-list?type=${activebutton}`;
+    const url = `auth/rider/ride-request-list?type[0]=${selectedService?.[0]}`;
     setIsLoading(true);
     console.log('🚀 ~ rideRequestList ~ url:', url);
     try {
@@ -389,23 +390,23 @@ const Home = () => {
               keyExtractor={item => item?.id}
               data={requestList}
               // data={[1, 2, 3]}
-              contentContainerStyle={{marginBottom: moderateScale(100, 0.6)}}
-              style={{marginBottom: moderateScale(20, 0.6)}}
-              renderItem={({item}) => {
+              contentContainerStyle={{ marginBottom: moderateScale(100, 0.6) }}
+              style={{ marginBottom: moderateScale(20, 0.6) }}
+              renderItem={({ item }) => {
                 return (
                   <Userbox
                     data={item?.ride_info}
                     onPressDetails={() => {
                       item?.ride_info?.type == 'delivery'
                         ? navigationService.navigate('PassengerDetails', {
-                            type: 'delivery',
-                            data: item?.ride_info,
-                            fromdelivery: true,
-                          })
+                          type: 'delivery',
+                          data: item?.ride_info,
+                          fromdelivery: true,
+                        })
                         : navigationService.navigate('RideRequest', {
-                            type: 'ride',
-                            data: item?.ride_info,
-                          });
+                          type: 'ride',
+                          data: item?.ride_info,
+                        });
                     }}
                   />
                 );

@@ -1,7 +1,7 @@
-import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {getDistance} from 'geolib';
-import {Icon} from 'native-base';
-import React, {useEffect, useRef, useState} from 'react';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { getDistance } from 'geolib';
+import { Icon } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Linking,
@@ -10,24 +10,25 @@ import {
   View,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import AdditionalTimeModal from '../Components/AdditionalTimeModal';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import navigationService from '../navigationService';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
-const DeliveryScreen = ({route}) => {
-  const {data, type, ride_status} = route?.params;
+const DeliveryScreen = ({ route }) => {
+  const { data, type, ride_status } = route?.params;
+  console.log("🚀 ~ data:", data?.status)
   const rideData = route?.params?.data;
   const isFocused = useIsFocused();
   const mapRef = useRef(null);
@@ -36,9 +37,10 @@ const DeliveryScreen = ({route}) => {
   const [additionalTimeModal, setAdditionalTimeModal] = useState(false);
   const [isriderArrive, setIsRiderArrived] = useState(true);
   const [time, setTime] = useState(0);
-  const {user_type} = useSelector(state => state.authReducer);
+  const { user_type } = useSelector(state => state.authReducer);
   const [isLoading, setIsLoading] = useState(false);
   const [Updatedride, setUpdatedRide] = useState({});
+  const [updatedStatus, setUpdatesStatus] = useState('accept');
   const [currentPosition, setCurrentPosition] = useState({
     // latitude: 0,
     // longitude: 0,
@@ -50,11 +52,11 @@ const DeliveryScreen = ({route}) => {
     lat:
       type === 'details'
         ? currentPosition?.latitude
-        : parseFloat(data?.ride_info?.pickup_location_lat),
+        : parseFloat(data?.ride_info?.pickup_location_lat) || currentPosition?.latitude,
     lng:
       type === 'details'
         ? currentPosition?.longitude
-        : parseFloat(data?.ride_info?.pickup_location_lng),
+        : parseFloat(data?.ride_info?.pickup_location_lng) || currentPosition?.longitude,
   };
   const destination = {
     lat:
@@ -105,7 +107,7 @@ const DeliveryScreen = ({route}) => {
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
       position => {
-        const {latitude, longitude} = position.coords;
+        const { latitude, longitude } = position.coords;
         setCurrentPosition(prevLocation => ({
           ...prevLocation,
           latitude,
@@ -202,16 +204,21 @@ const DeliveryScreen = ({route}) => {
   };
 
   const rideUpdate = async status => {
+    console.log('statussssssssssssssssss', status)
     const url = `auth/rider/delivery_update/${data?.delivery_id}`;
     const body = {
       status: status,
     };
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
+    console.log("🚀 rideUpdate ~ useEffect ~ response:", response?.data)
     setIsLoading(false);
     if (response != undefined) {
+      setUpdatesStatus(response?.data?.ride_info?.status)
       if (response?.data?.ride_info?.status === 'complete') {
-        navigationService.navigate('RateScreen', {data: Updatedride});
+        navigationService.navigate('RateScreen', { data: Updatedride });
+      } else if (response?.data?.ride_info?.status === 'heading to pick up') {
+        onPressStartNavigation()
       }
       setUpdatedRide(response?.data);
     }
@@ -219,30 +226,31 @@ const DeliveryScreen = ({route}) => {
 
   const onPressStartNavigation = async () => {
     console.log('inside fron fuction ===ddd===========', data?.pickup);
-    rideUpdate('ontheway');
+    // rideUpdate('ontheway');
     const pickup = {
-      latitude: parseFloat(data?.pickup_location_lat),
-      longitude: parseFloat(data?.pickup_location_lng),
+      latitude: parseFloat(data?.pickup_location_lat || currentPosition?.latitude),
+      longitude: parseFloat(data?.pickup_location_lng || currentPosition?.longitude),
     };
     const dropoff = {
       latitude: parseFloat(data?.dropoff_location_lat),
       longitude: parseFloat(data?.dropoff_location_lng),
     };
-    if (data?.pickup === 'null') {
+    if (data?.pickup_location_lat && data?.pickup_location_lng) {
       // console.log("inside fron fuction ===ddd===========")
       const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving`;
       Linking.openURL(url).catch(err =>
         console.error('An error occurred', err),
       );
-    } else {
-      const waypoints = data?.stop
-        .map(stop => `${stop.lat},${stop.lng}`)
-        .join('|');
-      const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving&waypoints=${waypoints}`;
-      Linking.openURL(url).catch(err =>
-        console.error('An error occurred', err),
-      );
     }
+    //  else {
+    //   const waypoints = data?.stop
+    //     .map(stop => `${stop.lat},${stop.lng}`)
+    //     .join('|');
+    //   const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving&waypoints=${waypoints}`;
+    //   Linking.openURL(url).catch(err =>
+    //     console.error('An error occurred', err),
+    //   );
+    // }
   };
 
   return (
@@ -373,13 +381,13 @@ const DeliveryScreen = ({route}) => {
               position: 'absolute',
               bottom: 0,
             }}>
-            {Updatedride?.ride_info?.status == 'arrive' ? (
+            {Updatedride?.ride_info?.status === 'heading to pick up' && (
               <CustomButton
                 text={
                   isLoading ? (
                     <ActivityIndicator size={'small'} color={Color.white} />
                   ) : (
-                    'DRIVE'
+                    'Arrived'
                   )
                 }
                 fontSize={moderateScale(14, 0.3)}
@@ -394,16 +402,81 @@ const DeliveryScreen = ({route}) => {
                 textTransform={'capitalize'}
                 isBold
                 onPress={() => {
-                  onPressStartNavigation();
+                  // onPressStartNavigation();
+                  rideUpdate('Arrived at Pickup')
                 }}
               />
-            ) : Updatedride?.ride_info?.status == 'waiting' ? (
+            )
+            }
+            {Updatedride?.ride_info?.status == 'Arrived at Pickup' &&
               <CustomButton
                 text={
                   isLoading ? (
                     <ActivityIndicator size={'small'} color={Color.white} />
                   ) : (
-                    'arrive'
+                    'Parcel Picked'
+                  )
+                }
+                fontSize={moderateScale(14, 0.3)}
+                textColor={Color.white}
+                borderRadius={moderateScale(30, 0.3)}
+                width={windowWidth * 0.85}
+                height={windowHeight * 0.07}
+                bgColor={Color.darkBlue}
+                borderWidth={1}
+                borderColor={Color.blue}
+                textTransform={'capitalize'}
+                isBold
+                onPress={() => {
+                  rideUpdate('arrive');
+                }}
+              />
+            }
+
+            {/* {updatedStatus == 'acce' && 
+
+            } */}
+          </View>
+          {/* <View
+            style={{
+              alignItems: 'center',
+              width: windowWidth,
+              height: windowHeight * 0.2,
+              position: 'absolute',
+              bottom: 0,
+            }}>
+            {Updatedride?.ride_info?.status == 'heading to pick up' ? (
+              <CustomButton
+                text={
+                  isLoading ? (
+                    <ActivityIndicator size={'small'} color={Color.white} />
+                  ) : (
+                    'Arrived'
+                  )
+                }
+                fontSize={moderateScale(14, 0.3)}
+                textColor={Color.white}
+                borderRadius={moderateScale(30, 0.3)}
+                width={windowWidth * 0.85}
+                marginTop={moderateScale(10, 0.3)}
+                height={windowHeight * 0.07}
+                bgColor={Color.darkBlue}
+                borderWidth={1.5}
+                borderColor={Color.darkBlue}
+                textTransform={'capitalize'}
+                isBold
+                onPress={() => {
+                  // onPressStartNavigation();
+                  rideUpdate('Arrived at Pickup')
+                }}
+              />
+            ) : Updatedride?.ride_info?.status == 'Arrived at Pickup' ? (
+              <CustomButton
+                text={
+                  isLoading ? (
+                    <ActivityIndicator size={'small'} color={Color.white} />
+                  ) : (
+                    'Parcel Picked'
                   )
                 }
                 fontSize={moderateScale(14, 0.3)}
@@ -479,7 +552,7 @@ const DeliveryScreen = ({route}) => {
                 }}
               />
             )}
-          </View>
+          </View> */}
         </>
       </View>
     </SafeAreaView>
