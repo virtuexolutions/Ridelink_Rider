@@ -6,31 +6,33 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
 import Header from '../Components/Header';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {Icon} from 'native-base';
-import {Rating} from 'react-native-ratings';
+import { Icon } from 'native-base';
+import { Rating } from 'react-native-ratings';
 import CustomButton from '../Components/CustomButton';
 import navigationService from '../navigationService';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const RateScreen = props => {
-  const data = props?.route?.params?.data;
+  console.log("🚀 ~ props ========================= >> >> :", props)
+  const data = props?.route?.params?.ride_data;
+  console.log("🚀 ~ data============================= from delivery  >>>> :", data)
   return (
     <SafeAreaView>
       <View style={styles.mainContainer}>
         <Header
           showBack={true}
-          textstyle={{fontWeight: 'regular'}}
+          textstyle={{ fontWeight: 'regular' }}
           title={'Rate Passenger'}
         />
         <View style={styles.box}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={styles.image_Style}>
               <CustomImage
                 style={{
@@ -45,11 +47,11 @@ const RateScreen = props => {
               <CustomText style={styles.ride_status}>COMPLETE</CustomText>
             </TouchableOpacity>
           </View>
-          <View style={{marginTop: moderateScale(20, 0.6)}}>
-            <View style={{flexDirection: 'row'}}>
+          <View style={{ marginTop: moderateScale(20, 0.6) }}>
+            <View style={{ flexDirection: 'row' }}>
               <View style={styles.Circle}>
                 <Icon
-                  style={{color: Color.white}}
+                  style={{ color: Color.white }}
                   as={FontAwesome5}
                   name="car"
                   size={moderateScale(12, 0.6)}
@@ -58,18 +60,18 @@ const RateScreen = props => {
               <View style={styles.loca_con}>
                 <CustomText style={styles.text}>Pickup</CustomText>
                 <CustomText numberOfLines={2} style={styles.value}>
-                  {data?.ride_info?.location_from}
+                  {data?.type == 'delivery' ? data?.location_from : data?.ride_info?.location_from}
                 </CustomText>
               </View>
             </View>
             <View style={styles.rotate_View}>
-              <CustomText style={{color: Color.black}}>.........</CustomText>
+              <CustomText style={{ color: Color.black }}>.........</CustomText>
             </View>
             <View
-              style={{flexDirection: 'row', marginTop: moderateScale(20, 0.6)}}>
+              style={{ flexDirection: 'row', marginTop: moderateScale(20, 0.6) }}>
               <View style={styles.Circle}>
                 <Icon
-                  style={{color: Color.white}}
+                  style={{ color: Color.white }}
                   as={FontAwesome5}
                   name="car"
                   size={moderateScale(12, 0.6)}
@@ -78,18 +80,18 @@ const RateScreen = props => {
               <View style={styles.loca_con}>
                 <CustomText style={styles.text}>Drop Off</CustomText>
                 <CustomText numberOfLines={2} style={styles.value2}>
-                  {data?.ride_info?.location_to}
+                  {data?.type == 'delivery' ? data?.location_to : data?.ride_info?.location_to}
                 </CustomText>
               </View>
             </View>
           </View>
         </View>
         <View style={styles.amountBox}>
-          <View style={{gap: moderateScale(10, 0.6)}}>
+          <View style={{ gap: moderateScale(10, 0.6) }}>
             <View style={styles.row}>
               <CustomText style={styles.trip_t}>Trip Fare Breakdown</CustomText>
               <CustomText
-                style={styles.h1}>{`$${data?.ride_info?.amount}`}</CustomText>
+                style={styles.h1}>{`$${data?.type == 'delivery' ? data?.amount : data?.ride_info?.amount}`}</CustomText>
             </View>
             <View style={styles.row}>
               <CustomText
@@ -102,7 +104,7 @@ const RateScreen = props => {
                 Subtotal
               </CustomText>
               <CustomText
-                style={styles.h1}>{`$${data?.ride_info?.amount}`}</CustomText>
+                style={styles.h1}>{`$${data?.type == 'delivery' ? data?.amount : data?.ride_info?.amount}`}</CustomText>
             </View>
             <View style={styles.row}>
               <CustomText
@@ -115,7 +117,7 @@ const RateScreen = props => {
                 Promo Code
               </CustomText>
               <CustomText
-                style={styles.h1}>{`$${data?.ride_info?.amount}`}</CustomText>
+                style={styles.h1}>{`$${data?.type == 'delivery' ? data?.amount : data?.ride_info?.amount}`}</CustomText>
             </View>
           </View>
           <View style={styles.container1} />
@@ -124,7 +126,7 @@ const RateScreen = props => {
               Total
             </CustomText>
             <CustomText isBold style={styles.h1}>
-              {`$${data?.ride_info?.amount}`}
+              {`$${data?.type == 'delivery' ? data?.amount : data?.ride_info?.amount}`}
             </CustomText>
           </View>
         </View>
@@ -136,7 +138,7 @@ const RateScreen = props => {
           ratingColor={Color.yellow}
           imageSize={moderateScale(35, 0.3)}
           tintColor={Color.white}
-          style={{marginTop: moderateScale(30, 0.6)}}
+          style={{ marginTop: moderateScale(30, 0.6) }}
         />
         <View style={styles.btn_view}>
           <CustomButton
@@ -247,7 +249,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   rotate_View: {
-    transform: [{rotate: '90deg'}],
+    transform: [{ rotate: '90deg' }],
     position: 'absolute',
     width: windowWidth * 0.1,
     top: moderateScale(40, 0.6),
@@ -257,14 +259,14 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(10, 0.6),
     color: Color.themeBlack,
     fontWeight: 'bold',
-    width: '85%',
+    width: '80%',
   },
   trip_t: {
     fontSize: moderateScale(12, 0.6),
     color: Color.themeBlack,
     fontWeight: '600',
   },
-  row: {flexDirection: 'row', justifyContent: 'space-between'},
+  row: { flexDirection: 'row', justifyContent: 'space-between' },
   h1: {
     fontSize: moderateScale(12, 0.6),
     color: Color.themeBlack,
@@ -286,5 +288,5 @@ const styles = StyleSheet.create({
     bottom: moderateScale(30, 0.6),
     alignSelf: 'center',
   },
-  loca_con: {marginLeft: moderateScale(10, 0.6)},
+  loca_con: { marginLeft: moderateScale(10, 0.6) },
 });

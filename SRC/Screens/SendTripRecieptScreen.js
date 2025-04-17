@@ -1,5 +1,5 @@
-import {Icon} from 'native-base';
-import React, {useState} from 'react';
+import { Icon } from 'native-base';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -7,7 +7,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Color from '../Assets/Utilities/Color';
 import CustomButton from '../Components/CustomButton';
@@ -15,13 +15,13 @@ import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import navigationService from '../navigationService';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 
-const SendTripRecieptScreen = ({route}) => {
-  const {type, data} = route.params;
+const SendTripRecieptScreen = ({ route }) => {
+  const { type, data } = route.params;
   console.log(
     '🚀 ~ SendTripRecieptScreen ~sss ==================== dta:',
-    data?.ride_info,
+    data?.amount,
   );
   const [selectedTime, setSelectedTime] = useState('');
   const [passsengers, setPassengers] = useState('');
@@ -52,16 +52,16 @@ const SendTripRecieptScreen = ({route}) => {
               style={{
                 marginTop: moderateScale(10, 0.6),
               }}>
-              <View style={{flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row' }}>
                 <View style={styles.Circle}>
                   <Icon
-                    style={{color: Color.white}}
+                    style={{ color: Color.white }}
                     as={FontAwesome5}
                     name="car"
                     size={moderateScale(6, 0.6)}
                   />
                 </View>
-                <View style={{marginLeft: moderateScale(10, 0.6)}}>
+                <View style={{ marginLeft: moderateScale(10, 0.6) }}>
                   <CustomText style={styles.text1}>Pickup</CustomText>
                   <CustomText
                     style={{
@@ -69,7 +69,7 @@ const SendTripRecieptScreen = ({route}) => {
                       color: Color.themeBlack,
                       fontWeight: 'bold',
                     }}>
-                    {data?.ride_info?.location_from}
+                    {data?.type == 'delivery' ? data?.location_from : data?.ride_info?.location_from}
                   </CustomText>
                 </View>
               </View>
@@ -83,16 +83,16 @@ const SendTripRecieptScreen = ({route}) => {
                 }}>
                 <View style={styles.Circle}>
                   <Icon
-                    style={{color: Color.white}}
+                    style={{ color: Color.white }}
                     as={FontAwesome5}
                     name="car"
                     size={moderateScale(6, 0.6)}
                   />
                 </View>
-                <View style={{marginLeft: moderateScale(10, 0.6)}}>
+                <View style={{ marginLeft: moderateScale(10, 0.6) }}>
                   <CustomText style={styles.text1}>Drop Off</CustomText>
                   <CustomText style={styles.text2}>
-                    {data?.ride_info?.location_to}
+                    {data?.type == 'delivery' ? data?.location_to : data?.ride_info?.location_to}
                   </CustomText>
                 </View>
               </View>
@@ -105,23 +105,23 @@ const SendTripRecieptScreen = ({route}) => {
                   Payment Method
                 </CustomText>
                 <CustomText
-                  style={[styles.heading, {color: Color.veryLightGray}]}>
+                  style={[styles.heading, { color: Color.veryLightGray }]}>
                   **** *** **** 2482
                 </CustomText>
                 <View style={styles.text_view}>
-                  <View style={[styles.text_view, {width: '35%'}]}>
+                  <View style={[styles.text_view, { width: '35%' }]}>
                     <CustomText isBold style={styles.heading}>
                       Expires On :
                     </CustomText>
                     <CustomText
-                      style={[styles.heading, {color: Color.veryLightGray}]}>
+                      style={[styles.heading, { color: Color.veryLightGray }]}>
                       12 / 12{' '}
                     </CustomText>
                   </View>
-                  <View style={[styles.text_view, {width: '30%'}]}>
+                  <View style={[styles.text_view, { width: '30%' }]}>
                     <CustomText
                       isBold
-                      style={[styles.heading, {color: Color.red}]}>
+                      style={[styles.heading, { color: Color.red }]}>
                       $ 50.25
                     </CustomText>
                     <View style={styles.image_view}>
@@ -134,14 +134,14 @@ const SendTripRecieptScreen = ({route}) => {
                 </View>
               </View>
               <View
-                style={[styles.search_conatiner, {height: windowHeight * 0.1}]}>
+                style={[styles.search_conatiner, { height: windowHeight * 0.1 }]}>
                 <CustomText isBold style={styles.heading}>
                   Promo Code{' '}
                 </CustomText>
                 <TextInput
                   placeholder="013244879498"
                   placeholderTextColor={Color.veryLightGray}
-                  style={{borderBottomWidth: 0.5}}
+                  style={{ borderBottomWidth: 0.5 }}
                 />
               </View>
             </>
@@ -247,15 +247,15 @@ const SendTripRecieptScreen = ({route}) => {
           <View style={styles.expensesContainer}>
             <View style={styles.amountView}>
               <CustomText>Trip Fare Breakdown</CustomText>
-              <CustomText>{'$' + data?.ride_info?.amount}</CustomText>
+              <CustomText>{'$' + data?.type == 'delivery' ? data?.amount : data?.ride_info?.amount}</CustomText>
             </View>
             <View style={styles.amountView}>
               <CustomText>Subtotal</CustomText>
-              <CustomText>{'$' + data?.ride_info?.amount}</CustomText>
+              <CustomText>{'$' + data?.type == 'delivery' ? data?.amount : data?.ride_info?.amount}</CustomText>
             </View>
             <View style={styles.amountView}>
               <CustomText>Promo Code</CustomText>
-              <CustomText>{'$' + data?.ride_info?.amount}</CustomText>
+              <CustomText>{'$' + data?.type == 'delivery' ? data?.amount : data?.ride_info?.amount}</CustomText>
             </View>
             <View
               style={[
@@ -266,11 +266,11 @@ const SendTripRecieptScreen = ({route}) => {
                   marginTop: 15,
                 },
               ]}>
-              <CustomText isBold style={{fontSize: moderateScale(24, 0.4)}}>
+              <CustomText isBold style={{ fontSize: moderateScale(24, 0.4) }}>
                 Total
               </CustomText>
-              <CustomText isBold style={{fontSize: moderateScale(24, 0.4)}}>
-                {'$' + data?.ride_info?.amount}
+              <CustomText isBold style={{ fontSize: moderateScale(24, 0.4) }}>
+                {'$' + data?.type == 'delivery' ? data?.amount : data?.ride_info?.amount}
               </CustomText>
               {/* Resolved Design's calculations issues */}
             </View>
@@ -434,13 +434,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   vert_dots: {
-    transform: [{rotate: '90deg'}],
+    transform: [{ rotate: '90deg' }],
     // position: 'absolute',
     width: windowWidth * 0.15,
     top: moderateScale(10, 0.6),
     left: moderateScale(-12, 0.6),
   },
-  dots: {color: Color.black, letterSpacing: 3},
+  dots: { color: Color.black, letterSpacing: 3 },
   Circle: {
     width: windowWidth * 0.04,
     height: windowWidth * 0.04,

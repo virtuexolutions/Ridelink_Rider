@@ -1,8 +1,8 @@
-import {Pusher} from '@pusher/pusher-websocket-react-native';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {Icon} from 'native-base';
-import React, {useCallback, useEffect, useState} from 'react';
-import {KeyboardAvoidingView, SafeAreaView, View} from 'react-native';
+import { Pusher } from '@pusher/pusher-websocket-react-native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { Icon } from 'native-base';
+import React, { useCallback, useEffect, useState } from 'react';
+import { KeyboardAvoidingView, SafeAreaView, View } from 'react-native';
 import {
   Actions,
   Bubble,
@@ -11,27 +11,29 @@ import {
   InputToolbar,
   Send,
 } from 'react-native-gifted-chat';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
-import {baseUrl} from '../Config';
+import { baseUrl } from '../Config';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
-const MessagesScreen = ({route}) => {
+const MessagesScreen = ({ route }) => {
   const isfocused = useIsFocused();
-  const {data} = route.params;
+  const { data, from_delivery } = route.params;
+  console.log("🚀 ~ MessagesScreen ~ data:", data)
   const userRole = useSelector(state => state.commonReducer.selectedRole);
   const userData = useSelector(state => state.commonReducer.userData);
   const token = useSelector(state => state.authReducer.token);
+  console.log("🚀 ~ MessagesScreen ~ token:", token)
   const pusher = Pusher.getInstance();
   let myChannel = null;
   const navigation = useNavigation();
@@ -92,13 +94,14 @@ const MessagesScreen = ({route}) => {
 
     return () => {
       if (myChannel?.current) {
-        pusher.unsubscribe({channelName: `my-channel-${userData?.id}`});
+        pusher.unsubscribe({ channelName: `my-channel-${userData?.id}` });
       }
     };
   }, [isfocused]);
 
   const startChat = async body => {
     const url = 'auth/send_message';
+    console.log("🚀 ~ MessagesScreen ~ body:", body)
     try {
       const response = await Post(url, body, apiHeader(token));
       if (!response || response.error) {
@@ -156,7 +159,7 @@ const MessagesScreen = ({route}) => {
         GiftedChat.append(previousMessages, newMessage),
       );
       startChat({
-        chat_id: userData?.id,
+        user_id: userData?.id,
         target_id: data?.user?.id,
         ...newMessage,
       });
@@ -164,11 +167,11 @@ const MessagesScreen = ({route}) => {
     [messages],
   );
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       <Header headerColor={['white', 'white']} title={'Chat'} showBack={true} />
 
       <GiftedChat
-      showUserAvatar={true}
+        showUserAvatar={true}
         textInputStyle={{
           color: Color.black,
           marginTop: moderateScale(5, 0.3),

@@ -28,7 +28,6 @@ import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
 const DeliveryScreen = ({ route }) => {
   const { data, type, ride_status } = route?.params;
-  console.log("🚀 ~ data:", data?.status)
   const rideData = route?.params?.data;
   const isFocused = useIsFocused();
   const mapRef = useRef(null);
@@ -40,6 +39,7 @@ const DeliveryScreen = ({ route }) => {
   const { user_type } = useSelector(state => state.authReducer);
   const [isLoading, setIsLoading] = useState(false);
   const [Updatedride, setUpdatedRide] = useState({});
+  console.log("🚀 ~ Updatedride ===================dddddd=====>>ssss >>>>>> >>>:", Updatedride)
   const [updatedStatus, setUpdatesStatus] = useState('accept');
   const [currentPosition, setCurrentPosition] = useState({
     // latitude: 0,
@@ -52,19 +52,19 @@ const DeliveryScreen = ({ route }) => {
     lat:
       type === 'details'
         ? currentPosition?.latitude
-        : parseFloat(data?.ride_info?.pickup_location_lat) || currentPosition?.latitude,
+        : parseFloat(data?.delivery_info?.pickup_location_lat) || currentPosition?.latitude,
     lng:
       type === 'details'
         ? currentPosition?.longitude
-        : parseFloat(data?.ride_info?.pickup_location_lng) || currentPosition?.longitude,
+        : parseFloat(data?.delivery_info?.pickup_location_lng) || currentPosition?.longitude,
   };
   const destination = {
     lat:
       type === 'details' ? parseFloat(data?.pickup_location_lat) : 37.43312021,
-    // : parseFloat(data?.ride_info?.rider?.lat),
+    // : parseFloat(data?.delivery_info?.rider?.lat),
     lng:
       type === 'details' ? parseFloat(data?.pickup_location_lng) : -122.0876855,
-    // : parseFloat(data?.ride_info?.rider?.lng),
+    // : parseFloat(data?.delivery_info?.rider?.lng),
   };
 
   useEffect(() => {
@@ -214,27 +214,39 @@ const DeliveryScreen = ({ route }) => {
     console.log("🚀 rideUpdate ~ useEffect ~ response:", response?.data)
     setIsLoading(false);
     if (response != undefined) {
-      setUpdatesStatus(response?.data?.ride_info?.status)
-      if (response?.data?.ride_info?.status === 'complete') {
-        navigationService.navigate('RateScreen', { data: Updatedride });
-      } else if (response?.data?.ride_info?.status === 'heading to pick up') {
-        onPressStartNavigation()
+      setUpdatesStatus(response?.data?.delivery_info?.status)
+      console.log("🚀 ~ useEffect ~ response?.data?.delivery_info?.status:", response?.data?.delivery_info?.status)
+      if (response?.data?.delivery_info?.status === 'Delivered') {
+        navigationService.navigate('RateScreen', { ride_data: data });
+      } else if (response?.data?.delivery_info?.status === 'heading to pick up') {
+        const pickup = {
+          latitude: parseFloat(currentPosition?.latitude),
+          longitude: parseFloat(currentPosition?.longitude),
+        };
+        const dropoff = {
+          latitude: parseFloat(data?.pickup_location_lat),
+          longitude: parseFloat(data?.pickup_location_lng),
+        };
+        onPressStartNavigation(pickup, dropoff)
+      } else if (response?.data?.delivery_info?.status === 'Heading to Delivery Location') {
+        const pickup = {
+          latitude: parseFloat(data?.pickup_location_lat),
+          longitude: parseFloat(data?.pickup_location_lng),
+        };
+        const dropoff = {
+          latitude: parseFloat(data?.destination_location_lat),
+          longitude: parseFloat(data?.destination_location_lat),
+        };
+        onPressStartNavigation(pickup, dropoff)
       }
       setUpdatedRide(response?.data);
     }
   };
 
-  const onPressStartNavigation = async () => {
+  const onPressStartNavigation = async (pickup, dropoff) => {
     console.log('inside fron fuction ===ddd===========', data?.pickup);
     // rideUpdate('ontheway');
-    const pickup = {
-      latitude: parseFloat(data?.pickup_location_lat || currentPosition?.latitude),
-      longitude: parseFloat(data?.pickup_location_lng || currentPosition?.longitude),
-    };
-    const dropoff = {
-      latitude: parseFloat(data?.dropoff_location_lat),
-      longitude: parseFloat(data?.dropoff_location_lng),
-    };
+
     if (data?.pickup_location_lat && data?.pickup_location_lng) {
       // console.log("inside fron fuction ===ddd===========")
       const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving`;
@@ -360,6 +372,7 @@ const DeliveryScreen = ({ route }) => {
                 onPress={() => {
                   navigationService.navigate('MessagesScreen', {
                     data: rideData,
+                    from_delivery: true
                   });
                 }}
                 style={styles.icons}
@@ -381,7 +394,35 @@ const DeliveryScreen = ({ route }) => {
               position: 'absolute',
               bottom: 0,
             }}>
-            {Updatedride?.ride_info?.status === 'heading to pick up' && (
+            {updatedStatus === 'accept' &&
+              <CustomButton
+                style={{
+                  position: 'absolute',
+                  bottom: 100,
+                }}
+                text={
+                  isLoading ? (
+                    <ActivityIndicator size={'small'} color={Color.white} />
+                  ) : (
+                    'start navigation to pick up '
+                  )
+                }
+                fontSize={moderateScale(14, 0.3)}
+                textColor={Color.white}
+                borderRadius={moderateScale(30, 0.3)}
+                width={windowWidth * 0.85}
+                marginTop={moderateScale(10, 0.3)}
+                height={windowHeight * 0.07}
+                bgColor={Color.darkBlue}
+                textTransform={'capitalize'}
+                isBold
+                onPress={() => {
+                  rideUpdate('heading to pick up ');
+                }}
+              />
+
+            }
+            {updatedStatus === 'heading to pick up' && (
               <CustomButton
                 text={
                   isLoading ? (
@@ -408,7 +449,7 @@ const DeliveryScreen = ({ route }) => {
               />
             )
             }
-            {Updatedride?.ride_info?.status == 'Arrived at Pickup' &&
+            {updatedStatus == 'Arrived at Pickup' &&
               <CustomButton
                 text={
                   isLoading ? (
@@ -428,14 +469,120 @@ const DeliveryScreen = ({ route }) => {
                 textTransform={'capitalize'}
                 isBold
                 onPress={() => {
-                  rideUpdate('arrive');
+                  rideUpdate('Parcel Picked');
+                }}
+              />
+            }
+            {updatedStatus == 'Parcel Picked' &&
+              <CustomButton
+                style={{
+                  position: 'absolute',
+                  bottom: 100,
+                }}
+                text={
+                  isLoading ? (
+                    <ActivityIndicator size={'small'} color={Color.white} />
+                  ) : (
+                    'Parcel Picked'
+                  )
+                }
+                fontSize={moderateScale(14, 0.3)}
+                textColor={Color.white}
+                borderRadius={moderateScale(30, 0.3)}
+                width={windowWidth * 0.85}
+                marginTop={moderateScale(10, 0.3)}
+                height={windowHeight * 0.07}
+                bgColor={Color.darkBlue}
+                textTransform={'capitalize'}
+                isBold
+                onPress={() => {
+                  rideUpdate('Parcel Picked');
+                }}
+              />
+            }
+            {updatedStatus == 'Parcel Picked' &&
+              <CustomButton
+                style={{
+                  position: 'absolute',
+                  bottom: 100,
+                }}
+                text={
+                  isLoading ? (
+                    <ActivityIndicator size={'small'} color={Color.white} />
+                  ) : (
+                    'Heading to Delivery Location'
+                  )
+                }
+                fontSize={moderateScale(14, 0.3)}
+                textColor={Color.white}
+                borderRadius={moderateScale(30, 0.3)}
+                width={windowWidth * 0.85}
+                marginTop={moderateScale(10, 0.3)}
+                height={windowHeight * 0.07}
+                bgColor={Color.darkBlue}
+                textTransform={'capitalize'}
+                isBold
+                onPress={() => {
+                  rideUpdate('Heading to Delivery Location');
                 }}
               />
             }
 
-            {/* {updatedStatus == 'acce' && 
+            {updatedStatus == 'Heading to Delivery Location' &&
+              <CustomButton
+                style={{
+                  position: 'absolute',
+                  bottom: 100,
+                }}
+                text={
+                  isLoading ? (
+                    <ActivityIndicator size={'small'} color={Color.white} />
+                  ) : (
+                    'Arrived at Delivery'
+                  )
+                }
+                fontSize={moderateScale(14, 0.3)}
+                textColor={Color.white}
+                borderRadius={moderateScale(30, 0.3)}
+                width={windowWidth * 0.85}
+                marginTop={moderateScale(10, 0.3)}
+                height={windowHeight * 0.07}
+                bgColor={Color.darkBlue}
+                textTransform={'capitalize'}
+                isBold
+                onPress={() => {
+                  rideUpdate('Arrived at Delivery');
+                }}
+              />
+            }
 
-            } */}
+            {updatedStatus == 'Arrived at Delivery' &&
+              <CustomButton
+                style={{
+                  position: 'absolute',
+                  bottom: 100,
+                }}
+                text={
+                  isLoading ? (
+                    <ActivityIndicator size={'small'} color={Color.white} />
+                  ) : (
+                    'Delivered'
+                  )
+                }
+                fontSize={moderateScale(14, 0.3)}
+                textColor={Color.white}
+                borderRadius={moderateScale(30, 0.3)}
+                width={windowWidth * 0.85}
+                marginTop={moderateScale(10, 0.3)}
+                height={windowHeight * 0.07}
+                bgColor={Color.darkBlue}
+                textTransform={'capitalize'}
+                isBold
+                onPress={() => {
+                  rideUpdate('Delivered');
+                }}
+              />
+            }
           </View>
           {/* <View
             style={{
@@ -445,7 +592,7 @@ const DeliveryScreen = ({ route }) => {
               position: 'absolute',
               bottom: 0,
             }}>
-            {Updatedride?.ride_info?.status == 'heading to pick up' ? (
+            {Updatedride?.delivery_info?.status == 'heading to pick up' ? (
               <CustomButton
                 text={
                   isLoading ? (
@@ -470,7 +617,7 @@ const DeliveryScreen = ({ route }) => {
                   rideUpdate('Arrived at Pickup')
                 }}
               />
-            ) : Updatedride?.ride_info?.status == 'Arrived at Pickup' ? (
+            ) : Updatedride?.delivery_info?.status == 'Arrived at Pickup' ? (
               <CustomButton
                 text={
                   isLoading ? (
@@ -493,7 +640,7 @@ const DeliveryScreen = ({ route }) => {
                   rideUpdate('arrive');
                 }}
               />
-            ) : Updatedride?.ride_info?.status == 'ontheway' ? (
+            ) : Updatedride?.delivery_info?.status == 'ontheway' ? (
               <View
                 style={{
                   position: 'absolute',
