@@ -1,5 +1,5 @@
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import messaging from '@react-native-firebase/messaging';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {useNavigation} from '@react-navigation/native';
 import {Formik} from 'formik';
 import React, {useEffect, useState} from 'react';
@@ -23,25 +23,17 @@ import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 const LoginScreen = props => {
   const dispatch = useDispatch();
   const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ ====================token:', token);
-  const [username, setUserName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [imagePicker, setImagePicker] = useState(false);
   const [image, setImage] = useState({});
   const navigation = useNavigation();
   const [loginMethod, setLoginMethod] = useState('');
-  const {user_type} = useSelector(state => state.authReducer);
   const [device_token, setDeviceToken] = useState(null);
-  console.log('🚀 ~ device_token ----------------------------:', device_token);
 
   const loginWithGoogle = async response1 => {
-    console.log('🚀 ~ loginWithGoogle ~ body:', response1);
     const body = {...response1?.data};
     const url = 'google-login';
     const response = await Post(url, body, apiHeader(token));
-    console.log('🚀 ~ loginWithGoogle ~ response:', response?.data?.token);
     if (response != undefined) {
       dispatch(setUserToken({token: response?.data?.token}));
       dispatch(setUserData(response?.user_info));
@@ -225,18 +217,10 @@ const LoginScreen = props => {
                 offlineAccess: true,
                 webClientId:
                   '679685403786-posjs7qgk9l5n3f4c13ni6soaf9dv0bb.apps.googleusercontent.com',
-                // androidClientId :'308425731760-d3vg1qt7htafihdc77f2bgcvnp74old0.apps.googleusercontent.com',
-                // webClientId:'256104968520-jh3nmrqlqf4df43156b7upehat6og4o7.apps.googleusercontent.com',
-                // webClientId : '308425731760-757gotl6fio8ume97da60jgbsd5hc2oc.apps.googleusercontent.com'
-                // iosClientId: 'ADD_YOUR_iOS_CLIENT_ID_HERE',
               });
 
               GoogleSignin.hasPlayServices()
                 .then(hasPlayService => {
-                  console.log(
-                    '========================== << < << ',
-                    hasPlayService,
-                  );
                   if (hasPlayService) {
                     GoogleSignin.signIn()
                       .then(userInfo => {
@@ -269,9 +253,7 @@ const LoginScreen = props => {
             textTransform={'capitalize'}
           />
           <CustomButton
-            onPress={() => {
-              // onPhoneNumberPressed();
-            }}
+            onPress={() => {}}
             text={'connect with number'}
             fontSize={moderateScale(13, 0.3)}
             textColor={Color.themeBlack}
@@ -308,25 +290,11 @@ const LoginScreen = props => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-    alignItems: 'center',
-  },
   text: {
     fontSize: moderateScale(24, 0.6),
     color: Color.themeBlack,
     paddingVertical: moderateScale(10, 0.6),
     paddingTop: windowHeight * 0.02,
-  },
-  input_container: {
-    borderWidth: 1,
-    borderColor: Color.mediumGray,
-    borderRadius: 20,
-    height: windowHeight * 0.4,
-    width: windowWidth * 0.9,
-    alignItems: 'center',
-    paddingTop: moderateScale(15, 0.6),
-    paddingHorizontal: moderateScale(10, 0.6),
   },
   feild_container: {
     borderWidth: 0.5,

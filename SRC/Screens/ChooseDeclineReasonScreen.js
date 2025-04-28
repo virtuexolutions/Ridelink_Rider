@@ -1,28 +1,25 @@
+import {Icon} from 'native-base';
+import React, {useState} from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
 import Header from '../Components/Header';
-import {Icon} from 'native-base';
-// import { Header } from 'react-native/Libraries/NewAppScreen'
-import Entypo from 'react-native-vector-icons/Entypo';
-import CustomText from '../Components/CustomText';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale} from 'react-native-size-matters';
-import CustomButton from '../Components/CustomButton';
-import navigationService from '../navigationService';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import Entypo from 'react-native-vector-icons/Entypo';
 import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import CustomButton from '../Components/CustomButton';
+import CustomText from '../Components/CustomText';
+import navigationService from '../navigationService';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
 const ChooseDeclineReasonScreen = prop => {
   const data = prop?.route?.params?.data;
-  const {user_type} = useSelector(state => state.authReducer);
   const token = useSelector(state => state.authReducer.token);
   const array = [
     {id: 1, reason: 'Price too High', checked: true},
@@ -48,10 +45,6 @@ const ChooseDeclineReasonScreen = prop => {
     const url = `auth/ride_cancel/${data?.ride_id}`;
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
-    console.log(
-      '🚀 ~ rideCancel ~ body ======================== >>>>> >>>>> >>> :',
-      response?.data,
-    );
     setIsLoading(false);
     if (response != undefined) {
       navigationService.navigate('Home');
@@ -104,9 +97,6 @@ const ChooseDeclineReasonScreen = prop => {
           marginTop={moderateScale(32, 0.3)}
           onPress={() => {
             rideCancel();
-            // navigationService.navigate('RecieptScreen', {
-            //   type: 'fromDecline',
-            // });
           }}
         />
       </View>
@@ -122,12 +112,10 @@ const styles = StyleSheet.create({
     height: windowHeight * 0.9,
   },
   reasons: {
-    // overflow:'hidden',
     width: windowWidth,
     paddingHorizontal: 15,
     marginTop: moderateScale(21, 0.2),
     alignItems: 'center',
-    // paddingLeftt: moderateScale(22,0.2),
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

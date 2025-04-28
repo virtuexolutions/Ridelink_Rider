@@ -1,19 +1,18 @@
 import moment from 'moment';
-import {Icon} from 'native-base';
+import { Icon } from 'native-base';
 import React from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import {moderateScale} from 'react-native-size-matters';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { moderateScale } from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {baseUrl} from '../Config';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { baseUrl } from '../Config';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import CustomButton from './CustomButton';
 import CustomImage from './CustomImage';
 import CustomText from './CustomText';
 
 const Userbox = ({data, onPress, onPressDetails}) => {
-  console.log('🚀 ~ Userbox ~ data:', data?.type);
   const userData = useSelector(state => state.commonReducer.userData);
 
   return (
@@ -119,25 +118,11 @@ const Userbox = ({data, onPress, onPressDetails}) => {
           textColor={Color.white}
           borderRadius={moderateScale(30, 0.3)}
           width={windowWidth * 0.8}
-          //   marginTop={moderateScale(10,.3)}
           height={windowHeight * 0.06}
           bgColor={Color.black}
           textTransform={'capitalize'}
           onPress={onPressDetails}
         />
-        {/* {user_type != 'Rider' && (
-          <CustomButton
-            text={'History'}
-            fontSize={moderateScale(14, 0.3)}
-            textColor={Color.white}
-            borderRadius={moderateScale(30, 0.3)}
-            width={windowWidth * 0.39}
-            //   marginTop={moderateScale(10,.3)}
-            height={windowHeight * 0.06}
-            bgColor={Color.themeBlack}
-            textTransform={'capitalize'}
-          />
-        )} */}
       </View>
     </TouchableOpacity>
   );
@@ -150,7 +135,6 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.88,
     height: windowHeight * 0.28,
     borderRadius: moderateScale(17, 0.6),
-    // backgroundColor:'green',
     borderRadius: moderateScale(17, 0.6),
     borderWidth: 1.8,
     borderColor: Color.boxgrey,
@@ -168,7 +152,6 @@ const styles = StyleSheet.create({
   text_Style: {
     flexDirection: 'row',
     alignItems: 'center',
-    // backgroundColor:'green'
   },
   fromLocationStyle: {
     width: windowWidth * 0.038,
@@ -183,11 +166,8 @@ const styles = StyleSheet.create({
     height: windowWidth * 0.02,
     borderRadius: (windowWidth * 0.02) / 2,
     backgroundColor: Color.white,
-    // left:moderateScale(2,0.6)
   },
   locationStyle: {
-    // backgroundColor:'green',
-    // alignItems:'center',
     width: windowWidth * 0.55,
     height: windowHeight * 0.08,
     marginLeft: moderateScale(40, 0.6),
@@ -198,8 +178,6 @@ const styles = StyleSheet.create({
     gap: moderateScale(5, 0.6),
     alignSelf: 'center',
     marginTop: moderateScale(10, 0.6),
-    // backgroundColor:'green',
-    // paddingHorizontal:moderateScale(10,0.6)
   },
   priceView: {
     flexDirection: 'row',
@@ -215,7 +193,6 @@ const styles = StyleSheet.create({
   container: {
     width: windowWidth * 0.55,
     marginLeft: moderateScale(20, 0.6),
-    // backgroundColor : 'red'
   },
   h1: {fontSize: moderateScale(20, 0.6), color: Color.themeBlack},
   status: {

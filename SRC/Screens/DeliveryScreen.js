@@ -1,7 +1,7 @@
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { getDistance } from 'geolib';
-import { Icon } from 'native-base';
-import React, { useEffect, useRef, useState } from 'react';
+import {useIsFocused} from '@react-navigation/native';
+import {getDistance} from 'geolib';
+import {Icon} from 'native-base';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Linking,
@@ -10,34 +10,28 @@ import {
   View,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Post } from '../Axios/AxiosInterceptorFunction';
-import AdditionalTimeModal from '../Components/AdditionalTimeModal';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import navigationService from '../navigationService';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
-const DeliveryScreen = ({ route }) => {
-  const { data, type, ride_status } = route?.params;
-  console.log("🚀 ~ data:", data?.status)
+const DeliveryScreen = ({route}) => {
+  const {data, type, ride_status} = route?.params;
   const rideData = route?.params?.data;
   const isFocused = useIsFocused();
   const mapRef = useRef(null);
   const token = useSelector(state => state.authReducer.token);
-  const [additionalTime, setAdditionalTime] = useState(false);
-  const [additionalTimeModal, setAdditionalTimeModal] = useState(false);
   const [isriderArrive, setIsRiderArrived] = useState(true);
-  const [time, setTime] = useState(0);
-  const { user_type } = useSelector(state => state.authReducer);
   const [isLoading, setIsLoading] = useState(false);
   const [Updatedride, setUpdatedRide] = useState({});
   const [updatedStatus, setUpdatesStatus] = useState('accept');
@@ -52,11 +46,13 @@ const DeliveryScreen = ({ route }) => {
     lat:
       type === 'details'
         ? currentPosition?.latitude
-        : parseFloat(data?.ride_info?.pickup_location_lat) || currentPosition?.latitude,
+        : parseFloat(data?.ride_info?.pickup_location_lat) ||
+          currentPosition?.latitude,
     lng:
       type === 'details'
         ? currentPosition?.longitude
-        : parseFloat(data?.ride_info?.pickup_location_lng) || currentPosition?.longitude,
+        : parseFloat(data?.ride_info?.pickup_location_lng) ||
+          currentPosition?.longitude,
   };
   const destination = {
     lat:
@@ -107,7 +103,7 @@ const DeliveryScreen = ({ route }) => {
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
       position => {
-        const { latitude, longitude } = position.coords;
+        const {latitude, longitude} = position.coords;
         setCurrentPosition(prevLocation => ({
           ...prevLocation,
           latitude,
@@ -204,32 +200,33 @@ const DeliveryScreen = ({ route }) => {
   };
 
   const rideUpdate = async status => {
-    console.log('statussssssssssssssssss', status)
     const url = `auth/rider/delivery_update/${data?.delivery_id}`;
     const body = {
       status: status,
     };
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
-    console.log("🚀 rideUpdate ~ useEffect ~ response:", response?.data)
     setIsLoading(false);
     if (response != undefined) {
-      setUpdatesStatus(response?.data?.ride_info?.status)
+      setUpdatesStatus(response?.data?.ride_info?.status);
       if (response?.data?.ride_info?.status === 'complete') {
-        navigationService.navigate('RateScreen', { data: Updatedride });
+        navigationService.navigate('RateScreen', {data: Updatedride});
       } else if (response?.data?.ride_info?.status === 'heading to pick up') {
-        onPressStartNavigation()
+        onPressStartNavigation();
       }
       setUpdatedRide(response?.data);
     }
   };
 
   const onPressStartNavigation = async () => {
-    console.log('inside fron fuction ===ddd===========', data?.pickup);
     // rideUpdate('ontheway');
     const pickup = {
-      latitude: parseFloat(data?.pickup_location_lat || currentPosition?.latitude),
-      longitude: parseFloat(data?.pickup_location_lng || currentPosition?.longitude),
+      latitude: parseFloat(
+        data?.pickup_location_lat || currentPosition?.latitude,
+      ),
+      longitude: parseFloat(
+        data?.pickup_location_lng || currentPosition?.longitude,
+      ),
     };
     const dropoff = {
       latitude: parseFloat(data?.dropoff_location_lat),
@@ -402,13 +399,11 @@ const DeliveryScreen = ({ route }) => {
                 textTransform={'capitalize'}
                 isBold
                 onPress={() => {
-                  // onPressStartNavigation();
-                  rideUpdate('Arrived at Pickup')
+                  rideUpdate('Arrived at Pickup');
                 }}
               />
-            )
-            }
-            {Updatedride?.ride_info?.status == 'Arrived at Pickup' &&
+            )}
+            {Updatedride?.ride_info?.status == 'Arrived at Pickup' && (
               <CustomButton
                 text={
                   isLoading ? (
@@ -431,11 +426,7 @@ const DeliveryScreen = ({ route }) => {
                   rideUpdate('arrive');
                 }}
               />
-            }
-
-            {/* {updatedStatus == 'acce' && 
-
-            } */}
+            )}
           </View>
           {/* <View
             style={{
@@ -571,13 +562,8 @@ const styles = StyleSheet.create({
     width: windowWidth,
     height: windowHeight,
     backgroundColor: Color.white,
-    // backgroundColor :'red'
   },
-  map_view: {
-    height: windowHeight * 0.7,
-    width: windowWidth,
-    borderRadius: moderateScale(40, 0.6),
-  },
+
   map: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: Color.grey,
@@ -587,60 +573,15 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
   },
-  waiting_card: {
-    width: windowWidth * 0.9,
-    height: windowHeight * 0.25,
-    backgroundColor: Color.white,
-    alignSelf: 'center',
-    borderRadius: moderateScale(20, 0.6),
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 12,
-    },
-    shadowOpacity: 0.58,
-    shadowRadius: 16.0,
-    elevation: 24,
-    paddingHorizontal: moderateScale(15, 0.6),
-    paddingVertical: moderateScale(15, 0.6),
-    bottom: 70,
-  },
   text_view: {
     fontSize: moderateScale(15, 0.6),
     textAlign: 'center',
   },
-  row_view: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  location_text_view: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    height: moderateScale(40, 0.6),
-    borderWidth: 0.6,
-    borderColor: Color.lightGrey,
-    borderRadius: moderateScale(10, 0.6),
-    marginTop: moderateScale(20, 0.6),
-  },
-  text: {
-    fontSize: moderateScale(12, 0.6),
-    color: Color.veryLightGray,
-    marginLeft: moderateScale(10, 0.6),
-  },
-  text2: {
-    fontSize: moderateScale(12, 0.6),
-    color: Color.black,
-    marginLeft: moderateScale(5, 0.6),
-    fontWeight: '600',
-  },
+
   latest_ride_view: {
     position: 'absolute',
-    // bottom: 0,
     left: 0,
     right: 0,
-    // backgroundColor :'red' ,
     backgroundColor: Color.white,
     alignItems: 'center',
     width: windowWidth * 0.95,
@@ -670,17 +611,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'green ',
   },
-  text_view2: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: windowWidth * 0.8,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: moderateScale(10, 0.6),
-  },
-  text1: {
-    fontSize: moderateScale(9, 0.6),
-  },
   icons: {
     backgroundColor: Color.darkBlue,
     height: windowHeight * 0.034,
@@ -689,6 +619,5 @@ const styles = StyleSheet.create({
     borderRadius: (windowHeight * 0.034) / 2,
     paddingTop: moderateScale(7, 0.6),
     marginHorizontal: moderateScale(2.6),
-    // borderWidth: 0.3,
   },
 });

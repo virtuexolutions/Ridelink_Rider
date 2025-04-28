@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Color from '../Assets/Utilities/Color';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import {
   ActivityIndicator,
   ScrollView,
@@ -17,18 +17,17 @@ import TextInputWithTitle from '../Components/TextInputWithTitle';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import navigationService from '../navigationService';
-import { Icon } from 'native-base';
-import { ScaledSheet, moderateScale } from 'react-native-size-matters';
-import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
-import { Formik } from 'formik';
-import { changePasswordSchema } from '../Constant/schema';
-import { Post } from '../Axios/AxiosInterceptorFunction';
+import {Icon} from 'native-base';
+import {ScaledSheet, moderateScale} from 'react-native-size-matters';
+import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
+import {Formik} from 'formik';
+import {changePasswordSchema} from '../Constant/schema';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 
 const ChangePassword = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
-  const { user_type } = useSelector(state => state.authReducer);
   const token = useSelector(state => state.authReducer.token);
 
   const handleReset = async values => {
@@ -72,7 +71,6 @@ const ChangePassword = () => {
         <CustomText style={styles.headert}>change password</CustomText>
       </View>
       <View style={styles.main_container}>
-        {/* <CustomText style={styles.txt5}>Change Password</CustomText> */}
         <Formik
           validationSchema={changePasswordSchema}
           initialValues={{
@@ -81,7 +79,7 @@ const ChangePassword = () => {
             confirmNewPassword: '',
           }}
           onSubmit={handleReset}>
-          {({ handleChange, handleSubmit, values, errors, touched }) => {
+          {({handleChange, handleSubmit, values, errors, touched}) => {
             return (
               <View style={styles.text_input}>
                 <TextInputWithTitle
@@ -167,9 +165,7 @@ const ChangePassword = () => {
                   width={windowWidth * 0.8}
                   height={windowHeight * 0.065}
                   marginTop={moderateScale(20, 0.3)}
-                  bgColor={
-                    Color.darkBlue
-                  }
+                  bgColor={Color.darkBlue}
                   isBold
                   elevation
                 />
@@ -191,14 +187,7 @@ const styles = ScaledSheet.create({
     backgroundColor: 'white',
     justifyContent: 'center',
   },
-  txt5: {
-    textAlign: 'center',
-    fontSize: moderateScale(24, 0.6),
-    fontWeight: 'bold',
-    width: windowWidth * 0.85,
-    color: Color.themeBlack,
-    marginVertical: moderateScale(25, 0.3),
-  },
+
   text_input: {
     alignItems: 'center',
     borderWidth: 1,
@@ -215,9 +204,6 @@ const styles = ScaledSheet.create({
     borderRadius: moderateScale(5, 0.6),
     borderWidth: 0.5,
     borderColor: '#FFFFFF',
-    // position: 'absolute',
-    // left: moderateScale(10, 0.6),
-    // top: moderateScale(10, 0.6),
     zIndex: 1,
     margin: 5,
     alignItems: 'center',
@@ -228,7 +214,6 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(10, 0.6),
     color: 'red',
     alignSelf: 'flex-start',
-    // backgroundColor: 'red',
   },
   header: {
     flexDirection: 'row',

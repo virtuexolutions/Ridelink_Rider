@@ -1,6 +1,6 @@
-import { useIsFocused } from '@react-navigation/native';
-import { Icon, ScrollView } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import {useIsFocused} from '@react-navigation/native';
+import {Icon, ScrollView} from 'native-base';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -15,32 +15,34 @@ import {
   View,
 } from 'react-native';
 
-import { getDatabase, onValue, ref } from '@react-native-firebase/database';
+import {getDatabase, onValue, ref} from '@react-native-firebase/database';
 import Geolocation from 'react-native-geolocation-service';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Get, Post } from '../Axios/AxiosInterceptorFunction';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import SearchbarComponent from '../Components/SearchbarComponent';
 import Userbox from '../Components/Userbox';
 import navigationService from '../navigationService';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
 const Home = () => {
   const token = useSelector(state => state.authReducer.token);
   const data = useSelector(state => state.commonReducer.userData);
+  console.log("🚀 ~ Home ~ data:", data)
+
+  console.log("🚀 ~ Home ~ token:", token)
   const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(false);
   const [requestList, setRequestList] = useState([]);
   const [currentPosition, setCurrentPosition] = useState({});
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedService, setSelectedService] = useState([]);
-  console.log("🚀 ~ Home ~ selectedService:", selectedService)
   const [deliveryData, setDeliveryData] = useState([]);
   const [activebutton, setactivebutton] = useState('ride');
   useEffect(() => {
@@ -236,7 +238,6 @@ const Home = () => {
           {selectedService?.length > 0 && (
             <TouchableOpacity
               onPress={() => {
-                // console.log('helooooooooooooooooooooooooooo ' )
                 profileUpdate();
               }}
               style={{
@@ -319,7 +320,6 @@ const Home = () => {
                 textColor={Color.btn_Color}
                 borderRadius={moderateScale(30, 0.3)}
                 width={windowWidth * 0.3}
-                //   marginTop={moderateScale(10,.3)}
                 height={windowHeight * 0.05}
                 bgColor={Color.lightGrey}
                 textTransform={'capitalize'}
@@ -358,7 +358,6 @@ const Home = () => {
             }
             borderRadius={moderateScale(30, 0.3)}
             width={windowWidth * 0.42}
-            //   marginTop={moderateScale(10,.3)}
             height={windowHeight * 0.055}
             bgColor={
               activebutton === 'delivery' ? Color.btn_Color : 'transparent'
@@ -375,7 +374,6 @@ const Home = () => {
             />
           ) : (
             <FlatList
-              // keyExtractor={(item, index) => index.toString()}
               ListEmptyComponent={
                 <CustomText
                   style={{
@@ -389,24 +387,23 @@ const Home = () => {
               showsVerticalScrollIndicator={false}
               keyExtractor={item => item?.id}
               data={requestList}
-              // data={[1, 2, 3]}
-              contentContainerStyle={{ marginBottom: moderateScale(100, 0.6) }}
-              style={{ marginBottom: moderateScale(20, 0.6) }}
-              renderItem={({ item }) => {
+              contentContainerStyle={{marginBottom: moderateScale(100, 0.6)}}
+              style={{marginBottom: moderateScale(20, 0.6)}}
+              renderItem={({item}) => {
                 return (
                   <Userbox
                     data={item?.ride_info}
                     onPressDetails={() => {
                       item?.ride_info?.type == 'delivery'
                         ? navigationService.navigate('PassengerDetails', {
-                          type: 'delivery',
-                          data: item?.ride_info,
-                          fromdelivery: true,
-                        })
+                            type: 'delivery',
+                            data: item?.ride_info,
+                            fromdelivery: true,
+                          })
                         : navigationService.navigate('RideRequest', {
-                          type: 'ride',
-                          data: item?.ride_info,
-                        });
+                            type: 'ride',
+                            data: item?.ride_info,
+                          });
                     }}
                   />
                 );
@@ -453,15 +450,6 @@ const styles = StyleSheet.create({
     height: '100%',
     alignSelf: 'center',
   },
-  second_Image: {
-    height: windowHeight * 0.32,
-    width: windowWidth * 0.52,
-    right: moderateScale(25, 0.6),
-    top: moderateScale(15, 0.6),
-  },
-  container_Style: {
-    paddingVertical: moderateScale(40, 0.6),
-  },
   button_Box: {
     width: windowWidth * 0.88,
     height: moderateScale(50, 0.6),
@@ -498,7 +486,6 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
     height: windowHeight * 0.08,
     borderWidth: 1,
-
     borderColor: Color.lightGrey,
     width: windowWidth * 0.28,
     borderRadius: moderateScale(10, 0.6),

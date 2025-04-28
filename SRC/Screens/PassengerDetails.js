@@ -1,5 +1,6 @@
-import { Icon } from 'native-base';
-import React, { useState } from 'react';
+import {useIsFocused} from '@react-navigation/native';
+import {Icon} from 'native-base';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -8,13 +9,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
@@ -22,23 +24,24 @@ import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import PaymentMethodCard from '../Components/PaymentMethodCard';
 import navigationService from '../navigationService';
-import { windowHeight, windowWidth } from '../Utillity/utils';
-import { useSelector } from 'react-redux';
-import { useIsFocused } from '@react-navigation/native';
-import { color } from 'native-base/lib/typescript/theme/styled-system';
+import {windowHeight, windowWidth} from '../Utillity/utils';
+import {baseUrl} from '../Config';
 
-const PassengerDetails = ({ route }) => {
-  const { type, data, ride_status, fromdelivery } = route.params;
-  console.log("🚀 ~ PassengerDetails ~ data:", data)
+const PassengerDetails = ({route}) => {
+  const {type, data, ride_status, fromdelivery} = route.params;
+  console.log(
+    '🚀 ~ PassengerDetails ~ datassssssssssssssssssssssssssssssssssssssssssss:',
+    `${baseUrl}${data?.photo}`,
+  );
   const rider_arrived_time = route?.params?.rider_arrived_time;
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-  const isFocused = useIsFocused();
-  const [paymentMethod, setPaymentMethod] = useState('Card');
-  const [isPaymentCom, setPaymentCom] = useState(false);
-  const [isEnabled, setIsEnabled] = useState(false);
-  const { user_type } = useSelector(state => state.authReducer);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [ridedata, setRideData] = useState('');
+  // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  // const isFocused = useIsFocused();
+  // const [paymentMethod, setPaymentMethod] = useState('Card');
+  // const [isPaymentCom, setPaymentCom] = useState(false);
+  // const [isEnabled, setIsEnabled] = useState(false);
+  // const {user_type} = useSelector(state => state.authReducer);
+  // const [modalVisible, setModalVisible] = useState(false);
+  // const [ridedata, setRideData] = useState('');
   const [selectedData, setSelectedData] = useState('pickup');
   return (
     <SafeAreaView style={styles.safearea_view}>
@@ -104,45 +107,19 @@ const PassengerDetails = ({ route }) => {
                   {
                     height:
                       selectedData == 'pickup'
-                        ? windowHeight * 0.5
-                        : windowHeight * 0.35,
+                        ? windowHeight * 0.55
+                        : windowHeight * 0.4,
                   },
                 ]}>
-                <CustomText
-                  isBold
-                  style={{
-                    fontSize: moderateScale(11, 0.6),
-                    backgroundColor: Color.lightGrey,
-                    paddingHorizontal: moderateScale(8, 0.6),
-                    paddingVertical: moderateScale(2, 0.6),
-                    borderRadius: moderateScale(5, 0.6),
-                  }}>
+                <CustomText isBold style={styles.txt}>
                   {selectedData == 'pickup'
                     ? 'pickup location Details'
                     : 'dropoff location Details '}
                 </CustomText>
-                <View
-                  style={{
-                    height: windowHeight * 0.15,
-                    marginVertical: moderateScale(10, 0.6),
-                    paddingHorizontal: moderateScale(5, 0.6),
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingBottom: moderateScale(4, 0.6),
-                    }}>
+                <View style={styles.con}>
+                  <View style={styles.row_con1}>
                     <Icon
-                      style={{
-                        backgroundColor: Color.black,
-                        borderRadius: (windowWidth * 0.04) / 2,
-                        height: windowWidth * 0.04,
-                        width: windowWidth * 0.04,
-                        textAlign: 'center',
-                        paddingTop: moderateScale(2, 0.6),
-                        marginHorizontal: moderateScale(5, 0.6),
-                      }}
+                      style={styles.icon_con}
                       name="battery-charging"
                       as={MaterialCommunityIcons}
                       size={moderateScale(12, 0.6)}
@@ -265,18 +242,16 @@ const PassengerDetails = ({ route }) => {
                         style={{
                           height: windowHeight * 0.12,
                           width: windowWidth * 0.6,
-                          // backgroundColor :'red',
                           borderRadius: 10,
                           overflow: 'hidden',
                         }}>
                         <CustomImage
                           style={{}}
                           source={
-                            data?.image
-                              ? { uri: data?.image }
+                            data?.photo
+                              ? {uri: `${baseUrl}${data?.photo}`}
                               : require('../Assets/Images/parcelimage.png')
                           }
-                        //  source={{uri : data?.image}}
                         />
                       </View>
                     </>
@@ -321,13 +296,13 @@ const PassengerDetails = ({ route }) => {
                   isBold
                   style={[
                     styles.heading,
-                    { marginLeft: moderateScale(10, 0.6) },
+                    {marginLeft: moderateScale(10, 0.6)},
                   ]}>
                   Booking Time
                 </CustomText>
               </View>
               <CustomText
-                style={[styles.heading, { color: Color.veryLightGray }]}>
+                style={[styles.heading, {color: Color.veryLightGray}]}>
                 03 : 00 pm
               </CustomText>
             </View>
@@ -353,13 +328,13 @@ const PassengerDetails = ({ route }) => {
                   isBold
                   style={[
                     styles.heading,
-                    { marginLeft: moderateScale(10, 0.6) },
+                    {marginLeft: moderateScale(10, 0.6)},
                   ]}>
                   Passenger
                 </CustomText>
               </View>
               <CustomText
-                style={[styles.heading, { color: Color.veryLightGray }]}>
+                style={[styles.heading, {color: Color.veryLightGray}]}>
                 3 Passengers
               </CustomText>
             </View>
@@ -385,13 +360,13 @@ const PassengerDetails = ({ route }) => {
                   isBold
                   style={[
                     styles.heading,
-                    { marginLeft: moderateScale(10, 0.6) },
+                    {marginLeft: moderateScale(10, 0.6)},
                   ]}>
                   payment Method
                 </CustomText>
               </View>
               <CustomText
-                style={[styles.heading, { color: Color.veryLightGray }]}>
+                style={[styles.heading, {color: Color.veryLightGray}]}>
                 Online
               </CustomText>
             </View>
@@ -440,23 +415,23 @@ const PassengerDetails = ({ route }) => {
                 Payment Method
               </CustomText>
               <CustomText
-                style={[styles.heading, { color: Color.veryLightGray }]}>
+                style={[styles.heading, {color: Color.veryLightGray}]}>
                 **** *** **** 2482
               </CustomText>
               <View style={styles.text_view}>
-                <View style={[styles.text_view, { width: '35%' }]}>
+                <View style={[styles.text_view, {width: '35%'}]}>
                   <CustomText isBold style={styles.heading}>
                     Expires On :
                   </CustomText>
                   <CustomText
-                    style={[styles.heading, { color: Color.veryLightGray }]}>
+                    style={[styles.heading, {color: Color.veryLightGray}]}>
                     12 / 12{' '}
                   </CustomText>
                 </View>
-                <View style={[styles.text_view, { width: '30%' }]}>
+                <View style={[styles.text_view, {width: '30%'}]}>
                   <CustomText
                     isBold
-                    style={[styles.heading, { color: Color.red }]}>
+                    style={[styles.heading, {color: Color.red}]}>
                     $ 50.25
                   </CustomText>
                   {data?.payment_method === 'visa' ? (
@@ -479,7 +454,7 @@ const PassengerDetails = ({ route }) => {
             </View>
 
             <View
-              style={[styles.search_conatiner, { height: windowHeight * 0.1 }]}>
+              style={[styles.search_conatiner, {height: windowHeight * 0.1}]}>
               <CustomText isBold style={styles.heading}>
                 Promo Code
               </CustomText>
@@ -487,7 +462,7 @@ const PassengerDetails = ({ route }) => {
                 editable={false}
                 placeholder="013244879498"
                 placeholderTextColor={Color.veryLightGray}
-                style={{ borderBottomWidth: 0.5 }}
+                style={{borderBottomWidth: 0.5}}
               />
             </View>
             <View style={styles.expensesContainer}>
@@ -513,10 +488,10 @@ const PassengerDetails = ({ route }) => {
                     marginTop: 15,
                   },
                 ]}>
-                <CustomText isBold style={{ fontSize: moderateScale(24, 0.4) }}>
+                <CustomText isBold style={{fontSize: moderateScale(24, 0.4)}}>
                   Total
                 </CustomText>
-                <CustomText isBold style={{ fontSize: moderateScale(24, 0.4) }}>
+                <CustomText isBold style={{fontSize: moderateScale(24, 0.4)}}>
                   {'$ ' + data?.amount}
                 </CustomText>
                 {/* Resolved Design's calculations issues */}
@@ -530,11 +505,7 @@ const PassengerDetails = ({ route }) => {
               borderRadius={moderateScale(30, 0.3)}
               textColor={Color.white}
               textTransform={'none'}
-              text={
-                type === 'delivery'
-                  ? 'NEXT'
-                  : 'START NAVIGATION TO PICKUP'
-              }
+              text={type === 'delivery' ? 'NEXT' : 'START NAVIGATION TO PICKUP'}
               marginBottom={moderateScale(40, 0.6)}
               isBold
               onPress={() => {
@@ -572,7 +543,6 @@ const styles = StyleSheet.create({
   main_view: {
     width: windowWidth,
     height: windowHeight,
-    // backgroundColor :'red',
     paddingHorizontal: moderateScale(20, 0.6),
     paddingVertical: moderateScale(20, 0.6),
   },
@@ -593,36 +563,7 @@ const styles = StyleSheet.create({
     shadowRadius: 9.11,
     elevation: 14,
   },
-  map_view: {
-    width: windowWidth * 0.9,
-    height: moderateScale(55, 0.6),
-    backgroundColor: Color.white,
-    borderRadius: windowWidth,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 7,
-    },
-    shadowOpacity: 0.41,
-    shadowRadius: 9.11,
-    elevation: 14,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingHorizontal: moderateScale(10, 0.6),
-  },
-  map_icon_view: {
-    width: moderateScale(25, 0.6),
-    height: moderateScale(25, 0.6),
-    backgroundColor: '#1877F2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: windowWidth,
-    marginRight: moderateScale(10, 0.6),
-  },
-  heading: {
-    fontSize: moderateScale(12, 0.6),
-  },
+
   text_view: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -638,7 +579,6 @@ const styles = StyleSheet.create({
   },
   expensesContainer: {
     width: windowWidth * 0.9,
-    // backgroundColor:'green',
   },
   amountView: {
     paddingHorizontal: moderateScale(12, 0.2),
@@ -647,9 +587,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
   },
-  statusImageView: {
-    alignItems: 'center',
-  },
+
   logo: {
     tintColor: 'red',
     opacity: 1,
@@ -657,8 +595,6 @@ const styles = StyleSheet.create({
   detail_con: {
     marginTop: moderateScale(20, 0.6),
     width: windowWidth * 0.89,
-    // padding : moderateScale(10,.6) ,
-
     borderRadius: moderateScale(10, 0.6),
     paddingVertical: moderateScale(10, 0.6),
     paddingHorizontal: moderateScale(10, 0.6),
@@ -693,7 +629,6 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.6,
   },
   row_icon: {
-    // backgroundColor: Color.black,
     borderRadius: (windowWidth * 0.04) / 2,
     height: windowWidth * 0.04,
     width: windowWidth * 0.04,
@@ -731,5 +666,31 @@ const styles = StyleSheet.create({
     elevation: 24,
     bottom: 20,
     marginTop: moderateScale(10, 0.6),
+  },
+  txt: {
+    fontSize: moderateScale(11, 0.6),
+    backgroundColor: Color.lightGrey,
+    paddingHorizontal: moderateScale(8, 0.6),
+    paddingVertical: moderateScale(2, 0.6),
+    borderRadius: moderateScale(5, 0.6),
+  },
+  con: {
+    height: windowHeight * 0.15,
+    marginVertical: moderateScale(10, 0.6),
+    paddingHorizontal: moderateScale(5, 0.6),
+  },
+  row_con1: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: moderateScale(4, 0.6),
+  },
+  icon_con: {
+    backgroundColor: Color.black,
+    borderRadius: (windowWidth * 0.04) / 2,
+    height: windowWidth * 0.04,
+    width: windowWidth * 0.04,
+    textAlign: 'center',
+    paddingTop: moderateScale(2, 0.6),
+    marginHorizontal: moderateScale(5, 0.6),
   },
 });

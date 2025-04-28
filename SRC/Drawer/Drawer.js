@@ -1,22 +1,19 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { moderateScale } from 'react-native-size-matters';
-import { useDispatch, useSelector } from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import React, {useState} from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {moderateScale} from 'react-native-size-matters';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import { setUserToken } from '../Store/slices/auth';
-import { SetUserRole } from '../Store/slices/auth-slice';
-import { setUserLogOut } from '../Store/slices/common';
-import { windowHeight, windowWidth } from '../Utillity/utils';
-// import ReferFriendModal from '../Screens/ReferFriendScreen'
+import {setUserToken} from '../Store/slices/auth';
+import {SetUserRole} from '../Store/slices/auth-slice';
+import {setUserLogOut} from '../Store/slices/common';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 
 const Drawer = React.memo(() => {
   const dispatch = useDispatch();
-  const { user_type } = useSelector(state => state.authReducer);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const navigation = useNavigation();
   const adminData = [
     {
@@ -112,7 +109,7 @@ const Drawer = React.memo(() => {
           <View style={styles.image_view}>
             <CustomImage
               style={styles.image}
-            // source={require('../Assets/Images/user_image2.png')}
+              // source={require('../Assets/Images/user_image2.png')}
             />
           </View>
           <View

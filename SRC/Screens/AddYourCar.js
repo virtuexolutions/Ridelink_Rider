@@ -44,7 +44,6 @@ const AddYourCar = props => {
   const [image, setImage] = useState({});
   const navigation = useNavigation();
   const [loginMethod, setLoginMethod] = useState('');
-  const {user_type} = useSelector(state => state.authReducer);
   const carType = ['Mini', 'Standered Ac', 'Luxury Ac'];
 
   const onSubmit = async values => {

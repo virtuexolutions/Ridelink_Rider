@@ -1,50 +1,24 @@
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {isValidCoordinate} from 'geolib';
 import {Icon} from 'native-base';
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  SafeAreaView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import {ActivityIndicator, SafeAreaView, StyleSheet, View} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import MapViewDirections from 'react-native-maps-directions';
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import Pulse from 'react-native-pulse';
 import {moderateScale} from 'react-native-size-matters';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import CustomButton from '../Components/CustomButton';
 import DeclineModal from '../Components/DeclineModal';
 import RequestModal from '../Components/RequestModal';
 import navigationService from '../navigationService';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import CustomButton from '../Components/CustomButton';
-// import database, {
-//   firebase,
-//   getDatabase,
-//   onChildAdded,
-//   ref,
-// } from '@react-native-firebase/database';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 import CancelRide from '../Components/CancelRide';
 
 const MapScreen = props => {
   console.log('🚀 ~ props:', props);
   const mapRef = useRef();
   const data = props?.route?.params?.ridedata;
-  console.log('🚀 ~ ridedata?.multiplePickups====================:', data);
-  const paymentMethod = props?.route?.params?.paymentMethod;
-  const nearestcab = props?.route?.params?.isEnabled;
-  const fromrideScreen = props?.route?.params?.fromrideScreen;
-  const {user_type} = useSelector(state => state.authReducer);
-  console.log('🚀 ~ user_type:', user_type);
-
-  const token = useSelector(state => state.authReducer.token);
-  console.log('🚀 ~ token:', token, user_type);
-  const fcmToken = useSelector(state => state.authReducer.fcmToken);
   const isFocused = useIsFocused();
   const navigation = useNavigation();
 
@@ -53,7 +27,6 @@ const MapScreen = props => {
   const [declineModal, setDeclineModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [rideId, setRideID] = useState('');
-  console.log('🚀 ~ rideId:', rideId);
   const [rideStatus, setRideStatus] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
