@@ -33,6 +33,7 @@ import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
 const Home = () => {
   const token = useSelector(state => state.authReducer.token);
+  console.log("🚀 ~ Home ~ token:", token)
   const data = useSelector(state => state.commonReducer.userData);
   console.log("🚀 ~ Home ~ data:", data)
 
@@ -45,9 +46,15 @@ const Home = () => {
   const [selectedService, setSelectedService] = useState([]);
   const [deliveryData, setDeliveryData] = useState([]);
   const [activebutton, setactivebutton] = useState('ride');
+  console.log("🚀 ~ Home ~ activebutton:", activebutton)
   useEffect(() => {
     getCurrentLocation();
   }, [isFocused]);
+
+
+  useEffect(() => {
+    setactivebutton(selectedService[0] === 'delivery' ? 'delivery' : 'ride')
+  }, [selectedService])
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`;
@@ -116,9 +123,10 @@ const Home = () => {
   };
 
   useEffect(() => {
-    console.log('helllllssslloooo fromfire base');
+    console.log('helllllssslloooo from firebase');
     const db = getDatabase();
     const requestsRef = ref(db, 'requests');
+
     const unsubscribe = onValue(requestsRef, snapshot => {
       if (snapshot.exists()) {
         const data = snapshot.val();
@@ -126,22 +134,51 @@ const Home = () => {
           id: key,
           ...data[key],
         }));
-
-        // if (
-        //   selectedService.includes('ride') &&
-        //   selectedService.includes('delivery')
-        // ) {
-        rideRequestList();
-        //   deliveryRequest();
-        // } else if (selectedService.includes('ride')) {
-        //   rideRequestList();
-        // } else if (selectedService.includes('delivery')) {
-        //   deliveryRequest();
-        // }
+        console.log("🚀 ~ allRequests ~ allRequests:", allRequests)
+        if (
+          selectedService.includes('ride') &&
+          selectedService.includes('delivery')
+        ) {
+          rideRequestList();
+        } else if (selectedService.includes('ride')) {
+          rideRequestList();
+        } else if (selectedService.includes('delivery')) {
+          rideRequestList();
+        }
       }
     });
+
     return () => unsubscribe();
-  }, [isFocused, activebutton]);
+  }, [isFocused, activebutton, selectedService]);
+
+        
+  // useEffect(() => {
+  //   console.log('helllllssslloooo fromfire base');
+  //   const db = getDatabase();
+  //   const requestsRef = ref(db, 'requests');
+  //   const unsubscribe = onValue(requestsRef, snapshot => {
+  //     if (snapshot.exists()) {
+  //       const data = snapshot.val();
+  //       const allRequests = Object.keys(data).map(key => ({
+  //         id: key,
+  //         ...data[key],
+  //       }));
+
+  //       // if (
+  //       //   selectedService.includes('ride') &&
+  //       //   selectedService.includes('delivery')
+  //       // ) {
+  //       rideRequestList();
+  //       //   deliveryRequest();
+  //       // } else if (selectedService.includes('ride')) {
+  //       //   rideRequestList();
+  //       // } else if (selectedService.includes('delivery')) {
+  //       //   deliveryRequest();
+  //       // }
+  //     }
+  //   });
+  //   return () => unsubscribe();
+  // }, [isFocused, activebutton]);
 
   useEffect(() => {
     updateLocation();
@@ -209,6 +246,7 @@ const Home = () => {
               }}>
               <CustomText
                 onPress={() => {
+                  // setactivebutton(item === 'ride' ? 'ride' : 'delivery')
                   setSelectedService(prev =>
                     prev.includes(item)
                       ? prev?.filter(ser => ser !== item)

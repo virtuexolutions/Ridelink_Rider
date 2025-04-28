@@ -29,7 +29,6 @@ import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 const RideScreen = ({route}) => {
   console.log("🚀 ~ route:", route)
   const {data, type, ride_status} = route?.params;
-  console.log("🚀 ~ data:", data)
   const rideData = route?.params?.data;
   const rider_arrived_time = route?.params?.rider_arrived_time;
   const isFocused = useIsFocused();
