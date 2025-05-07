@@ -27,7 +27,6 @@ import navigationService from '../navigationService';
 import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
 const RideScreen = ({route}) => {
-  console.log("🚀 ~ route:", route)
   const {data, type, ride_status} = route?.params;
   const rideData = route?.params?.data;
   const rider_arrived_time = route?.params?.rider_arrived_time;
@@ -54,7 +53,7 @@ const RideScreen = ({route}) => {
     latitude: 37.43312021,
     longitude: -122.0876855,
   });
-  const apikey = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
+  const apikey = 'AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8';
   const origin = {
     lat:
       type === 'details'
@@ -83,7 +82,7 @@ const RideScreen = ({route}) => {
       const checkDistanceBetween = getDistance(currentPosition, dropLocation);
       let km = Math.round(checkDistanceBetween / 1000);
       const getTravelTime = async () => {
-        const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
+        const GOOGLE_MAPS_API_KEY = 'AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8';
         try {
           const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${currentPosition?.latitude},${currentPosition?.longitude}&destinations=${dropLocation.latitude},${dropLocation.longitude}&key=${GOOGLE_MAPS_API_KEY}`;
           const response = await fetch(url);
@@ -287,7 +286,7 @@ const RideScreen = ({route}) => {
             pinColor={Color.black}
           />
           <MapViewDirections
-            apikey={'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM'}
+            apikey={'AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8'}
             origin={{
               latitude: origin?.lat,
               longitude: origin?.lng,

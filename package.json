@@ -65,6 +65,7 @@
     "react-native-pager-view": "^6.7.0",
     "react-native-pulse": "^1.0.7",
     "react-native-ratings": "^8.1.0",
+    "react-native-raw-bottom-sheet": "^3.0.0",
     "react-native-reanimated": "^3.17.0",
     "react-native-safe-area-context": "^5.2.0",
     "react-native-screens": "^4.9.1",

@@ -181,7 +181,7 @@ const RideRequest = ({ route }) => {
       const distanceInMiles = km / 1.60934;
       setDistance(km);
       const getTravelTime = async () => {
-        const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
+        const GOOGLE_MAPS_API_KEY = 'AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8';
         try {
           const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${currentPosition?.latitude},${currentPosition?.longitude}&destinations=${dropLocation.latitude},${dropLocation.longitude}&key=${GOOGLE_MAPS_API_KEY}`;
           const response = await fetch(url);
@@ -228,7 +228,7 @@ const RideRequest = ({ route }) => {
             destination={destination}
             strokeColor={Color.themeBlack}
             strokeWidth={10}
-            apikey="AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM"
+            apikey="AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8"
           />
           <Marker
             coordinate={destination}

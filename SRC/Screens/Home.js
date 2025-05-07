@@ -33,11 +33,11 @@ import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
 const Home = () => {
   const token = useSelector(state => state.authReducer.token);
-  console.log("🚀 ~ Home ~ token:", token)
+  console.log('🚀 ~ Home ~ token:', token);
   const data = useSelector(state => state.commonReducer.userData);
-  console.log("🚀 ~ Home ~ data:", data)
+  console.log('🚀 ~ Home ~ data:', data);
 
-  console.log("🚀 ~ Home ~ token:", token)
+  console.log('🚀 ~ Home ~ token:', token);
   const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(false);
   const [requestList, setRequestList] = useState([]);
@@ -46,15 +46,13 @@ const Home = () => {
   const [selectedService, setSelectedService] = useState([]);
   const [deliveryData, setDeliveryData] = useState([]);
   const [activebutton, setactivebutton] = useState('ride');
-  console.log("🚀 ~ Home ~ activebutton:", activebutton)
   useEffect(() => {
     getCurrentLocation();
   }, [isFocused]);
 
-
   useEffect(() => {
-    setactivebutton(selectedService[0] === 'delivery' ? 'delivery' : 'ride')
-  }, [selectedService])
+    setactivebutton(selectedService[0] === 'delivery' || 'Pets delivery' ? 'delivery' : 'ride');
+  }, [selectedService]);
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${GOOGLE_MAPS_API_KEY}`;
@@ -107,7 +105,7 @@ const Home = () => {
   const rideRequestList = async () => {
     const url = `auth/rider/ride-request-list?type[0]=${selectedService?.[0]}`;
     setIsLoading(true);
-    console.log('🚀 ~ rideRequestList ~ url:', url);
+    console.log('🚀 ~ rideRequestList ~ url:  >>>>>', url);
     try {
       const response = await Get(url, token);
       console.log('🚀 ~ rideRequestList ~ response:', response?.data);
@@ -134,7 +132,7 @@ const Home = () => {
           id: key,
           ...data[key],
         }));
-        console.log("🚀 ~ allRequests ~ allRequests:", allRequests)
+        console.log('🚀 ~ allRequests ~ allRequests:', allRequests);
         if (
           selectedService.includes('ride') &&
           selectedService.includes('delivery')
@@ -151,7 +149,6 @@ const Home = () => {
     return () => unsubscribe();
   }, [isFocused, activebutton, selectedService]);
 
-        
   // useEffect(() => {
   //   console.log('helllllssslloooo fromfire base');
   //   const db = getDatabase();
@@ -199,7 +196,7 @@ const Home = () => {
     }
   };
 
-  const serviceArray = ['delivery', 'ride', 'pet delivery'];
+  const serviceArray = ['delivery', 'ride', 'Pets Delivery'];
 
   const profileUpdate = async () => {
     const body = {
@@ -239,6 +236,7 @@ const Home = () => {
       {modalVisible && (
         <View style={styles.con}>
           {serviceArray?.map((item, index) => (
+            // console.log('itemmmmmmmmmmmmmmm hereeeeeeeeee ================= >>>>>> >>' ,item)
             <View
               style={{
                 flexDirection: 'row',
@@ -426,13 +424,14 @@ const Home = () => {
               keyExtractor={item => item?.id}
               data={requestList}
               contentContainerStyle={{marginBottom: moderateScale(100, 0.6)}}
-              style={{marginBottom: moderateScale(20, 0.6)}}
+              style={{marginBottom: moderateScale(70, 0.6)}}
               renderItem={({item}) => {
                 return (
                   <Userbox
                     data={item?.ride_info}
                     onPressDetails={() => {
-                      item?.ride_info?.type == 'delivery'
+                      item?.ride_info?.type == 'delivery' ||
+                      item?.ride_info?.type == 'Pets Delivery'
                         ? navigationService.navigate('PassengerDetails', {
                             type: 'delivery',
                             data: item?.ride_info,

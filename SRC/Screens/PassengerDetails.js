@@ -1,4 +1,3 @@
-import {useIsFocused} from '@react-navigation/native';
 import {Icon} from 'native-base';
 import React, {useState} from 'react';
 import {
@@ -16,22 +15,21 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import PaymentMethodCard from '../Components/PaymentMethodCard';
+import {baseUrl} from '../Config';
 import navigationService from '../navigationService';
 import {windowHeight, windowWidth} from '../Utillity/utils';
-import {baseUrl} from '../Config';
 
 const PassengerDetails = ({route}) => {
   const {type, data, ride_status, fromdelivery} = route.params;
   console.log(
-    '🚀 ~ PassengerDetails ~ datassssssssssssssssssssssssssssssssssssssssssss:',
-    `${baseUrl}${data?.photo}`,
+    '🚀 ~ PassengerDetails ~ data==============:',
+    ` ${baseUrl}${data?.photo}`,
   );
   const rider_arrived_time = route?.params?.rider_arrived_time;
   // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
@@ -53,6 +51,7 @@ const PassengerDetails = ({route}) => {
         }
       />
       <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           alignItems: 'center',
         }}
@@ -240,13 +239,17 @@ const PassengerDetails = ({route}) => {
                       </CustomText>
                       <View
                         style={{
-                          height: windowHeight * 0.12,
-                          width: windowWidth * 0.6,
+                          height: windowHeight * 0.1,
+                          width: windowWidth * 0.33,
                           borderRadius: 10,
-                          overflow: 'hidden',
+                          overflow :'hidden'
                         }}>
                         <CustomImage
-                          style={{}}
+                          style={{
+                          overflow :'hidden' ,
+                            height: '100%',
+                            width: '100%',
+                          }}
                           source={
                             data?.photo
                               ? {uri: `${baseUrl}${data?.photo}`}
@@ -454,7 +457,7 @@ const PassengerDetails = ({route}) => {
             </View>
 
             <View
-              style={[styles.search_conatiner, {height: windowHeight * 0.1}]}>
+              style={[styles.search_conatiner, {height: windowHeight * 0.09}]}>
               <CustomText isBold style={styles.heading}>
                 Promo Code
               </CustomText>
@@ -506,7 +509,7 @@ const PassengerDetails = ({route}) => {
               textColor={Color.white}
               textTransform={'none'}
               text={type === 'delivery' ? 'NEXT' : 'START NAVIGATION TO PICKUP'}
-              marginBottom={moderateScale(40, 0.6)}
+              marginBottom={moderateScale(60, 0.6)}
               isBold
               onPress={() => {
                 if (type === 'fromDecline' || fromdelivery) {

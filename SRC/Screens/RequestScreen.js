@@ -190,8 +190,8 @@ const RequestScreen = () => {
       setFare(calculatedFare);
       setDistance(km);
       const getTravelTime = async () => {
-        // const apikey ='AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM'
-        const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
+        // const apikey ='AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8'
+        const GOOGLE_MAPS_API_KEY = 'AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8';
         try {
           const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${pickupLocation.lat},${pickupLocation.lng}&destinations=${dropLocation.lat},${dropLocation.lng}&key=${GOOGLE_MAPS_API_KEY}`;
           const response = await fetch(url);
@@ -293,7 +293,7 @@ const RequestScreen = () => {
   //     }),
   //   }))
   //   ?.sort((a, b) => a.distance - b.distance);
-  const apikey = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
+  const apikey = 'AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8';
 
   const handleMultipleStopsUpdate = updatedStops => {
     setMultipleLocation(updatedStops);

@@ -19,10 +19,6 @@ import { windowHeight, windowWidth } from '../Utillity/utils';
 
 const SendTripRecieptScreen = ({ route }) => {
   const { type, data } = route.params;
-  console.log(
-    '🚀 ~ SendTripRecieptScreen ~sss ==================== dta:',
-    data?.amount,
-  );
   const [selectedTime, setSelectedTime] = useState('');
   const [passsengers, setPassengers] = useState('');
   const [PaymentMethod, setPaymentMethod] = useState('');
@@ -31,6 +27,7 @@ const SendTripRecieptScreen = ({ route }) => {
   return (
     <SafeAreaView>
       <ScrollView
+      showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: moderateScale(24, 0.2),
         }}>
@@ -69,7 +66,7 @@ const SendTripRecieptScreen = ({ route }) => {
                       color: Color.themeBlack,
                       fontWeight: 'bold',
                     }}>
-                    {data?.type == 'delivery' ? data?.location_from : data?.ride_info?.location_from}
+                    {data?.type == 'Pets Delivery' || 'delivery' ? data?.location_from : data?.ride_info?.location_from}
                   </CustomText>
                 </View>
               </View>
@@ -92,7 +89,7 @@ const SendTripRecieptScreen = ({ route }) => {
                 <View style={{ marginLeft: moderateScale(10, 0.6) }}>
                   <CustomText style={styles.text1}>Drop Off</CustomText>
                   <CustomText style={styles.text2}>
-                    {data?.type == 'delivery' ? data?.location_to : data?.ride_info?.location_to}
+                    {data?.type == 'Pets Delivery' || 'delivery'? data?.location_to : data?.ride_info?.location_to}
                   </CustomText>
                 </View>
               </View>
@@ -247,15 +244,15 @@ const SendTripRecieptScreen = ({ route }) => {
           <View style={styles.expensesContainer}>
             <View style={styles.amountView}>
               <CustomText>Trip Fare Breakdown</CustomText>
-              <CustomText>{'$' + data?.type == 'delivery' ? data?.amount : data?.ride_info?.amount}</CustomText>
+              <CustomText>{'$' + data?.type == 'Pets Delivery' || 'delivery' ? data?.amount : data?.ride_info?.amount}</CustomText>
             </View>
             <View style={styles.amountView}>
               <CustomText>Subtotal</CustomText>
-              <CustomText>{'$' + data?.type == 'delivery' ? data?.amount : data?.ride_info?.amount}</CustomText>
+              <CustomText>{'$' +data?.type == 'Pets Delivery' || 'delivery' ? data?.amount : data?.ride_info?.amount}</CustomText>
             </View>
             <View style={styles.amountView}>
               <CustomText>Promo Code</CustomText>
-              <CustomText>{'$' + data?.type == 'delivery' ? data?.amount : data?.ride_info?.amount}</CustomText>
+              <CustomText>{'$' + data?.type == 'Pets Delivery' || 'delivery' ? data?.amount : data?.ride_info?.amount}</CustomText>
             </View>
             <View
               style={[
@@ -270,7 +267,7 @@ const SendTripRecieptScreen = ({ route }) => {
                 Total
               </CustomText>
               <CustomText isBold style={{ fontSize: moderateScale(24, 0.4) }}>
-                {'$' + data?.type == 'delivery' ? data?.amount : data?.ride_info?.amount}
+                {'$' + data?.type == 'Pets Delivery' || 'delivery'? data?.amount : data?.ride_info?.amount}
               </CustomText>
               {/* Resolved Design's calculations issues */}
             </View>
@@ -311,7 +308,7 @@ const SendTripRecieptScreen = ({ route }) => {
                   navigationService.navigate('Home');
                   console.log(" helllllllllllllllo ooooooooooooooooooooooooooo")
                 }}
-                text={'Print'}
+                text={'thanks '}
                 fontSize={moderateScale(24, 0.3)}
                 textColor={Color.white}
                 borderWidth={1.5}

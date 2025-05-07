@@ -36,8 +36,8 @@ const RequestModal = ({
       let km = Math.round(checkDistanceBetween / 1000);
       setDistance(km);
       const getTravelTime = async () => {
-        // const apikey ='AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM'
-        const GOOGLE_MAPS_API_KEY = 'AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM';
+        // const apikey ='AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8'
+        const GOOGLE_MAPS_API_KEY = 'AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8';
         try {
           const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${riderOrigin.lat},${riderOrigin.lng}&destinations=${riderDistination.lat},${riderDistination.lng}&key=${GOOGLE_MAPS_API_KEY}`;
           const response = await fetch(url);

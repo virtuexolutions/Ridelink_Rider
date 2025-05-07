@@ -20,7 +20,7 @@
       android:supportsRtl="true">
      <meta-data
        android:name="com.google.android.geo.API_KEY"
-       android:value="AIzaSyAa9BJa70uf_20IoTJfAiK_3wz5Vr_I7wM"/>
+       android:value="AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8"/>
          <meta-data
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         android:value="true" />
