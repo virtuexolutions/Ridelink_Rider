@@ -1,27 +1,19 @@
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Icon} from 'native-base';
 import React, {useRef} from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import Color from '../Assets/Utilities/Color';
-import Header from '../Components/Header';
+import {SafeAreaView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Rating} from 'react-native-ratings';
 import {moderateScale} from 'react-native-size-matters';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Color from '../Assets/Utilities/Color';
+import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {Icon} from 'native-base';
-import {Rating} from 'react-native-ratings';
-import CustomButton from '../Components/CustomButton';
+import Header from '../Components/Header';
 import navigationService from '../navigationService';
-import {useSelector} from 'react-redux';
-import ReviewModal from '../Components/ReviewModal';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 
 const RateScreen = props => {
-  const data = props?.route?.params?.ride_data;
+  const data = props?.route?.params?.data;
   const rbRef = useRef();
   return (
     <SafeAreaView>
@@ -60,9 +52,8 @@ const RateScreen = props => {
               <View style={styles.loca_con}>
                 <CustomText style={styles.text}>Pickup</CustomText>
                 <CustomText numberOfLines={2} style={styles.value}>
-                  {data?.type == 'Pets Delivery' || 'delivery'
-                    ? data?.location_from
-                    : data?.ride_info?.location_from}
+                  {data?.location_from}
+
                 </CustomText>
               </View>
             </View>
@@ -82,7 +73,7 @@ const RateScreen = props => {
               <View style={styles.loca_con}>
                 <CustomText style={styles.text}>Drop Off</CustomText>
                 <CustomText numberOfLines={2} style={styles.value2}>
-                  {data?.type == 'Pets Delivery' || 'delivery'
+                  {data?.type == 'Pets Delivery' || 'Parcel Delivery'
                     ? data?.location_to
                     : data?.ride_info?.location_to}
                 </CustomText>
@@ -95,7 +86,7 @@ const RateScreen = props => {
             <View style={styles.row}>
               <CustomText style={styles.trip_t}>Trip Fare Breakdown</CustomText>
               <CustomText style={styles.h1}>{`$${
-                data?.type == 'Pets Delivery' || 'delivery'
+                data?.type == 'Pets Delivery' || 'Parcel Delivery'
                   ? data?.amount
                   : data?.ride_info?.amount
               }`}</CustomText>
@@ -111,7 +102,7 @@ const RateScreen = props => {
                 Subtotal
               </CustomText>
               <CustomText style={styles.h1}>{`$${
-                data?.type == 'Pets Delivery' || 'delivery'
+                data?.type == 'Pets Delivery' || 'Parcel Delivery'
                   ? data?.amount
                   : data?.ride_info?.amount
               }`}</CustomText>
@@ -127,7 +118,7 @@ const RateScreen = props => {
                 Promo Code
               </CustomText>
               <CustomText style={styles.h1}>{`$${
-                data?.type == 'Pets Delivery' || 'delivery'
+                data?.type == 'Pets Delivery' || 'Parcel Delivery'
                   ? data?.amount
                   : data?.ride_info?.amount
               }`}</CustomText>
@@ -140,7 +131,7 @@ const RateScreen = props => {
             </CustomText>
             <CustomText isBold style={styles.h1}>
               {`$${
-                data?.type == 'Pets Delivery' || 'delivery'
+                data?.type == 'Pets Delivery' || 'Parcel Delivery'
                   ? data?.amount
                   : data?.ride_info?.amount
               }`}

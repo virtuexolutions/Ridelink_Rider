@@ -87,6 +87,8 @@ const AppNavigator = () => {
           <RootNav.Screen name="RateScreen" component={RateScreen} />
           <RootNav.Screen name="AddYourCar" component={AddYourCar} />
           <RootNav.Screen name="MessagesScreen" component={MessagesScreen} />
+          <RootNav.Screen name="Home" component={Home} />
+
 
           {/* <RootNav.Screen name="History" component={History} /> */}
           {/* <RootNav.Screen name="PrivacyPolicy" component={PrivacyPolicy} /> */}
