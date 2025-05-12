@@ -1,18 +1,19 @@
 import moment from 'moment';
-import { Icon } from 'native-base';
+import {Icon} from 'native-base';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { moderateScale } from 'react-native-size-matters';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {moderateScale} from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { baseUrl } from '../Config';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import {baseUrl} from '../Config';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 import CustomButton from './CustomButton';
 import CustomImage from './CustomImage';
 import CustomText from './CustomText';
 
 const Userbox = ({data, onPress, onPressDetails}) => {
+  console.log('🚀 ~ Userbox ~ data:', data);
   const userData = useSelector(state => state.commonReducer.userData);
 
   return (
@@ -30,9 +31,7 @@ const Userbox = ({data, onPress, onPressDetails}) => {
         </View>
         <View style={styles.container}>
           <CustomText style={styles.h1}>{/* {userData?.name} */}</CustomText>
-          <CustomText style={styles.status}>
-            {data?.type == 'delivery' ? 'delivery' : 'ride'}{' '}
-          </CustomText>
+          <CustomText style={styles.status}>{data?.type}</CustomText>
         </View>
         <CustomText style={styles.time}>
           {moment(data?.created_at).format('LT')}

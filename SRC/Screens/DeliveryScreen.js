@@ -1,7 +1,7 @@
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { getDistance } from 'geolib';
-import { Icon } from 'native-base';
-import React, { useEffect, useRef, useState } from 'react';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {getDistance} from 'geolib';
+import {Icon} from 'native-base';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Linking,
@@ -10,24 +10,28 @@ import {
   View,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Post } from '../Axios/AxiosInterceptorFunction';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 import AdditionalTimeModal from '../Components/AdditionalTimeModal';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import navigationService from '../navigationService';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
-const DeliveryScreen = ({ route }) => {
-  const { data, type, ride_status } = route?.params;
+const DeliveryScreen = ({route}) => {
+  const {data, type, ride_status} = route?.params;
+  console.log(
+    '🚀 ~ data ========================= >>>> from delivery Screen :',
+    data,
+  );
   const rideData = route?.params?.data;
   const isFocused = useIsFocused();
   const mapRef = useRef(null);
@@ -36,10 +40,13 @@ const DeliveryScreen = ({ route }) => {
   const [additionalTimeModal, setAdditionalTimeModal] = useState(false);
   const [isriderArrive, setIsRiderArrived] = useState(true);
   const [time, setTime] = useState(0);
-  const { user_type } = useSelector(state => state.authReducer);
+  const {user_type} = useSelector(state => state.authReducer);
   const [isLoading, setIsLoading] = useState(false);
   const [Updatedride, setUpdatedRide] = useState({});
-  console.log("🚀 ~ Updatedride ===================dddddd=====>>ssss >>>>>> >>>:", Updatedride)
+  console.log(
+    '🚀 ~ Updatedride ===================dddddd=====>>ssss >>>>>> >>>:',
+    Updatedride,
+  );
   const [updatedStatus, setUpdatesStatus] = useState('accept');
   const [currentPosition, setCurrentPosition] = useState({
     // latitude: 0,
@@ -52,11 +59,13 @@ const DeliveryScreen = ({ route }) => {
     lat:
       type === 'details'
         ? currentPosition?.latitude
-        : parseFloat(data?.delivery_info?.pickup_location_lat) || currentPosition?.latitude,
+        : parseFloat(data?.delivery_info?.pickup_location_lat) ||
+          currentPosition?.latitude,
     lng:
       type === 'details'
         ? currentPosition?.longitude
-        : parseFloat(data?.delivery_info?.pickup_location_lng) || currentPosition?.longitude,
+        : parseFloat(data?.delivery_info?.pickup_location_lng) ||
+          currentPosition?.longitude,
   };
   const destination = {
     lat:
@@ -107,7 +116,7 @@ const DeliveryScreen = ({ route }) => {
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
       position => {
-        const { latitude, longitude } = position.coords;
+        const {latitude, longitude} = position.coords;
         setCurrentPosition(prevLocation => ({
           ...prevLocation,
           latitude,
@@ -204,21 +213,26 @@ const DeliveryScreen = ({ route }) => {
   };
 
   const rideUpdate = async status => {
-    console.log('statussssssssssssssssss', status)
+    console.log('statussssssssssssssssss', status);
     const url = `auth/rider/delivery_update/${data?.delivery_id}`;
     const body = {
       status: status,
     };
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
-    console.log("🚀 rideUpdate ~ useEffect ~ response:", response?.data)
+    console.log('🚀 rideUpdate ~ useEffect ~ response:', response?.data);
     setIsLoading(false);
     if (response != undefined) {
-      setUpdatesStatus(response?.data?.delivery_info?.status)
-      console.log("🚀 ~ useEffect ~ response?.data?.delivery_info?.status:", response?.data?.delivery_info?.status)
+      setUpdatesStatus(response?.data?.delivery_info?.status);
+      console.log(
+        '🚀 ~ useEffect ~ response?.data?.delivery_info?.status:',
+        response?.data?.delivery_info?.status,
+      );
       if (response?.data?.delivery_info?.status === 'Delivered') {
-        navigationService.navigate('RateScreen', { ride_data: data });
-      } else if (response?.data?.delivery_info?.status === 'heading to pick up') {
+        navigationService.navigate('RateScreen', {data: data});
+      } else if (
+        response?.data?.delivery_info?.status === 'heading to pick up'
+      ) {
         const pickup = {
           latitude: parseFloat(currentPosition?.latitude),
           longitude: parseFloat(currentPosition?.longitude),
@@ -227,17 +241,19 @@ const DeliveryScreen = ({ route }) => {
           latitude: parseFloat(data?.pickup_location_lat),
           longitude: parseFloat(data?.pickup_location_lng),
         };
-        onPressStartNavigation(pickup, dropoff)
-      } else if (response?.data?.delivery_info?.status === 'Heading to Delivery Location') {
+        onPressStartNavigation(pickup, dropoff);
+      } else if (
+        response?.data?.delivery_info?.status === 'Heading to Delivery Location'
+      ) {
         const pickup = {
           latitude: parseFloat(data?.pickup_location_lat),
           longitude: parseFloat(data?.pickup_location_lng),
         };
         const dropoff = {
           latitude: parseFloat(data?.destination_location_lat),
-          longitude: parseFloat(data?.destination_location_lat),
+          longitude: parseFloat(data?.destination_location_lng),
         };
-        onPressStartNavigation(pickup, dropoff)
+        onPressStartNavigation(pickup, dropoff);
       }
       setUpdatedRide(response?.data);
     }
@@ -372,7 +388,7 @@ const DeliveryScreen = ({ route }) => {
                 onPress={() => {
                   navigationService.navigate('MessagesScreen', {
                     data: rideData,
-                    from_delivery: true
+                    from_delivery: true,
                   });
                 }}
                 style={styles.icons}
@@ -394,7 +410,7 @@ const DeliveryScreen = ({ route }) => {
               position: 'absolute',
               bottom: 0,
             }}>
-            {updatedStatus === 'accept' &&
+            {updatedStatus === 'accept' && (
               <CustomButton
                 style={{
                   position: 'absolute',
@@ -420,8 +436,7 @@ const DeliveryScreen = ({ route }) => {
                   rideUpdate('heading to pick up ');
                 }}
               />
-
-            }
+            )}
             {updatedStatus === 'heading to pick up' && (
               <CustomButton
                 text={
@@ -444,12 +459,11 @@ const DeliveryScreen = ({ route }) => {
                 isBold
                 onPress={() => {
                   // onPressStartNavigation();
-                  rideUpdate('Arrived at Pickup')
+                  rideUpdate('Arrived at Pickup');
                 }}
               />
-            )
-            }
-            {updatedStatus == 'Arrived at Pickup' &&
+            )}
+            {updatedStatus == 'Arrived at Pickup' && (
               <CustomButton
                 text={
                   isLoading ? (
@@ -472,8 +486,8 @@ const DeliveryScreen = ({ route }) => {
                   rideUpdate('Parcel Picked');
                 }}
               />
-            }
-            {updatedStatus == 'Parcel Picked' &&
+            )}
+            {updatedStatus == 'Parcel Picked' && (
               <CustomButton
                 style={{
                   position: 'absolute',
@@ -499,8 +513,8 @@ const DeliveryScreen = ({ route }) => {
                   rideUpdate('Parcel Picked');
                 }}
               />
-            }
-            {updatedStatus == 'Parcel Picked' &&
+            )}
+            {updatedStatus == 'Parcel Picked' && (
               <CustomButton
                 style={{
                   position: 'absolute',
@@ -526,9 +540,9 @@ const DeliveryScreen = ({ route }) => {
                   rideUpdate('Heading to Delivery Location');
                 }}
               />
-            }
+            )}
 
-            {updatedStatus == 'Heading to Delivery Location' &&
+            {updatedStatus == 'Heading to Delivery Location' && (
               <CustomButton
                 style={{
                   position: 'absolute',
@@ -554,9 +568,9 @@ const DeliveryScreen = ({ route }) => {
                   rideUpdate('Arrived at Delivery');
                 }}
               />
-            }
+            )}
 
-            {updatedStatus == 'Arrived at Delivery' &&
+            {updatedStatus == 'Arrived at Delivery' && (
               <CustomButton
                 style={{
                   position: 'absolute',
@@ -582,7 +596,7 @@ const DeliveryScreen = ({ route }) => {
                   rideUpdate('Delivered');
                 }}
               />
-            }
+            )}
           </View>
           {/* <View
             style={{

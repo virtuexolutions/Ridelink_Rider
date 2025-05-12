@@ -11,10 +11,19 @@ import {setUserToken} from '../Store/slices/auth';
 import {SetUserRole} from '../Store/slices/auth-slice';
 import {setUserLogOut} from '../Store/slices/common';
 import {windowHeight, windowWidth} from '../Utillity/utils';
+import {baseUrl} from '../Config';
+import Entypo from 'react-native-vector-icons/Entypo';
+import {Icon} from 'native-base';
 
 const Drawer = React.memo(() => {
   const dispatch = useDispatch();
+  const userData = useSelector(state => state.commonReducer.userData);
+  const token = useSelector(state => state.authReducer.token);
+
   const navigation = useNavigation();
+  const [isActive, setIsActive] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const adminData = [
     {
       id: 1,
@@ -90,43 +99,89 @@ const Drawer = React.memo(() => {
       },
     },
   ];
+  const profileUpdate = async () => {
+    const body = {
+      work_category: selectedService,
+    };
+
+    const url = 'auth/profile';
+    setIsLoading(true);
+    const response = await Post(url, body, apiHeader(token));
+    setIsLoading(false);
+    if (response != undefined) {
+      setModalVisible(false);
+      dispatch(setUserData(response?.data?.user_info));
+      Platform.OS == 'android'
+        ? ToastAndroid.show('services added  Successfully', ToastAndroid.SHORT)
+        : alert(' services added Successfully');
+    }
+  };
 
   return (
     <ScreenBoiler
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}>
-      <View
-        style={{
-          height: windowHeight,
-          backgroundColor: Color.white,
-          borderTopRightRadius: moderateScale(120, 0.6),
-          borderBottomRightRadius: moderateScale(120, 0.6),
-          paddingVertical: moderateScale(60, 0.6),
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
+      <View style={styles.con}>
         <View style={styles.profile_view}>
           <View style={styles.image_view}>
             <CustomImage
               style={styles.image}
-              // source={require('../Assets/Images/user_image2.png')}
+              source={
+                userData?.photo
+                  ? {uri: `${baseUrl}${userData?.photo}`}
+                  : require('../Assets/Images/user.png')
+              }
             />
           </View>
-          <View
-            style={{
-              width: moderateScale(15, 0.6),
-              height: moderateScale(15, 0.6),
-              backgroundColor: '#04FF3F',
-              borderRadius: windowWidth,
-              top: -12,
-              left: 10,
-            }}
-          />
+          <View style={styles.name} />
           <CustomText isBold style={styles.heading_text}>
-            PAT H. JHONSON
+            {userData?.name}
           </CustomText>
           <CustomText style={styles.text}>Diver : Car Name</CustomText>
         </View>
+        <TouchableOpacity
+          onPress={() => {
+            setIsActive(!isActive);
+          }}
+          style={{
+            flexDirection: 'row',
+            width: '88%',
+            marginTop: moderateScale(10, 0.6),
+            justifyContent: 'space-between',
+          }}>
+          <CustomText
+            style={[
+              styles.text,
+              {
+                fontSize: moderateScale(13, 0.6),
+              },
+            ]}>
+            active
+          </CustomText>
+          <TouchableOpacity
+            onPress={() => {
+              setIsActive(!isActive);
+            }}
+            style={{
+              borderWidth: 1,
+              borderColor: Color.black,
+              borderRadius: moderateScale(4, 0.6),
+              height: windowHeight * 0.022,
+              width: windowWidth * 0.05,
+            }}>
+            {isActive && (
+              <Icon
+                onPress={() => {
+                  setIsActive(!isActive);
+                }}
+                as={Entypo}
+                size={moderateScale(15, 0.6)}
+                color={Color.black}
+                name="check"
+              />
+            )}
+          </TouchableOpacity>
+        </TouchableOpacity>
         <View
           style={{
             height: '60%',
@@ -246,7 +301,9 @@ const styles = StyleSheet.create({
   image_view: {
     width: moderateScale(60, 0.6),
     height: moderateScale(60, 0.6),
-    borderRadius: windowHeight,
+    borderRadius: 35,
+    borderWidth: 1,
+    borderColor: Color.grey,
   },
   image: {
     width: '100%',
@@ -264,5 +321,22 @@ const styles = StyleSheet.create({
     height: '20%',
     width: '100%',
     paddingHorizontal: moderateScale(20, 0.6),
+  },
+  name: {
+    width: moderateScale(15, 0.6),
+    height: moderateScale(15, 0.6),
+    backgroundColor: '#04FF3F',
+    borderRadius: windowWidth,
+    top: -12,
+    left: 10,
+  },
+  con: {
+    height: windowHeight,
+    backgroundColor: Color.white,
+    borderTopRightRadius: moderateScale(120, 0.6),
+    borderBottomRightRadius: moderateScale(120, 0.6),
+    paddingVertical: moderateScale(60, 0.6),
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });

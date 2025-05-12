@@ -51,7 +51,11 @@ const Home = () => {
   }, [isFocused]);
 
   useEffect(() => {
-    setactivebutton(selectedService[0] === 'delivery' || 'Pets delivery' ? 'delivery' : 'ride');
+    setactivebutton(
+      selectedService[0] === 'Parcel Delivery' || 'Pets delivery'
+        ? 'delivery'
+        : 'ride',
+    );
   }, [selectedService]);
 
   const getAddressFromCoordinates = async (latitude, longitude) => {
@@ -120,6 +124,7 @@ const Home = () => {
     setIsLoading(false);
   };
 
+  const serviceArray = ['Parcel Delivery', 'ride', 'Pets Delivery'];
   useEffect(() => {
     console.log('helllllssslloooo from firebase');
     const db = getDatabase();
@@ -135,12 +140,15 @@ const Home = () => {
         console.log('🚀 ~ allRequests ~ allRequests:', allRequests);
         if (
           selectedService.includes('ride') &&
-          selectedService.includes('delivery')
+          selectedService.includes('Parcel Delivery') &&
+          selectedService.includes('Pets Delivery')
         ) {
           rideRequestList();
         } else if (selectedService.includes('ride')) {
           rideRequestList();
-        } else if (selectedService.includes('delivery')) {
+        } else if (selectedService.includes('Parcel Delivery')) {
+          rideRequestList();
+        } else if (selectedService.includes('Pets Delivery')) {
           rideRequestList();
         }
       }
@@ -195,8 +203,6 @@ const Home = () => {
         : Alert.alert('You are online now');
     }
   };
-
-  const serviceArray = ['delivery', 'ride', 'Pets Delivery'];
 
   const profileUpdate = async () => {
     const body = {
@@ -426,11 +432,12 @@ const Home = () => {
               contentContainerStyle={{marginBottom: moderateScale(100, 0.6)}}
               style={{marginBottom: moderateScale(70, 0.6)}}
               renderItem={({item}) => {
+                console.log("🚀 ~ Home ~ item:", item)
                 return (
                   <Userbox
                     data={item?.ride_info}
                     onPressDetails={() => {
-                      item?.ride_info?.type == 'delivery' ||
+                      item?.ride_info?.type == 'Parcel Delivery' ||
                       item?.ride_info?.type == 'Pets Delivery'
                         ? navigationService.navigate('PassengerDetails', {
                             type: 'delivery',

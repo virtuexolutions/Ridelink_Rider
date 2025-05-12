@@ -1,30 +1,30 @@
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { getDistance } from 'geolib';
-import { Icon } from 'native-base';
-import React, { useEffect, useRef, useState } from 'react';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {getDistance} from 'geolib';
+import {Icon} from 'native-base';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Linking,
   SafeAreaView,
   StyleSheet,
-  View
+  View,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Post } from '../Axios/AxiosInterceptorFunction';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 import AdditionalTimeModal from '../Components/AdditionalTimeModal';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import navigationService from '../navigationService';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
 const RideScreen = ({route}) => {
   const {data, type, ride_status} = route?.params;
@@ -47,6 +47,7 @@ const RideScreen = ({route}) => {
   const [fare, setFare] = useState(0);
   const [distance, setDistance] = useState(0);
   const [Updatedride, setUpdatedRide] = useState({});
+  console.log('🚀 ~ Updatedride:', Updatedride);
   const [currentPosition, setCurrentPosition] = useState({
     // latitude: 0,
     // longitude: 0,
@@ -219,7 +220,9 @@ const RideScreen = ({route}) => {
     setIsLoading(false);
     if (response != undefined) {
       if (response?.data?.ride_info?.status === 'complete') {
-        navigationService.navigate('RateScreen', {data: Updatedride});
+        navigationService.navigate('RateScreen', {
+          data: Updatedride?.ride_info,
+        });
       }
       setUpdatedRide(response?.data);
     }
