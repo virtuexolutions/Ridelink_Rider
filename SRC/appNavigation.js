@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, { useEffect, useState } from 'react';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import navigationService from './navigationService';
-import {useSelector} from 'react-redux';
-import {createDrawerNavigator} from '@react-navigation/drawer';
+import { useSelector } from 'react-redux';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import Drawer from './Drawer/Drawer';
 import LoginScreen from './Screens/LoginScreen';
 import Signup from './Screens/Signup';
@@ -24,12 +24,12 @@ import RideRequest from './Screens/RideRequest';
 import PassengerDetails from './Screens/PassengerDetails';
 import GoOnlineScreen from './Screens/GoOnlineScreen';
 import SendTripRecieptScreen from './Screens/SendTripRecieptScreen';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import Walletscreen from './Screens/Walletscreen';
 import Earningsscreen from './Screens/Earningsscreen';
 import ChooseDeclineReasonScreen from './Screens/ChooseDeclineReasonScreen';
 import Profile from './Screens/Profile';
-import {enableScreens} from 'react-native-screens';
+import { enableScreens } from 'react-native-screens';
 import MyWallet from './Screens/MyWallet';
 import AddYourCar from './Screens/AddYourCar';
 import History from './Screens/History';
@@ -56,8 +56,8 @@ const AppNavigator = () => {
       walkThrough == false
         ? 'WalkThroughScreen'
         : token == null
-        ? 'LoginScreen'
-        : 'MyDrawer';
+          ? 'LoginScreen'
+          : 'MyDrawer';
 
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
@@ -65,7 +65,7 @@ const AppNavigator = () => {
           initialRouteName={firstScreen}
           // initialRouteName={'Walletscreen'}
           // initialRouteName={'RateScreen'}
-          screenOptions={{headerShown: false}}>
+          screenOptions={{ headerShown: false }}>
           <RootNav.Screen name="MyDrawer" component={MyDrawer} />
           <RootNav.Screen
             name="WalkThroughScreen"

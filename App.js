@@ -23,7 +23,7 @@ import {
 } from './SRC/Utillity/utils';
 import AppNavigator from './SRC/appNavigation';
 import { Alert, TouchableOpacity, View } from 'react-native';
-import navigationService from './SRC/navigationService';
+// import navigationService from './SRC/navigationService';
 import CustomImage from './SRC/Components/CustomImage';
 import CustomText from './SRC/Components/CustomText';
 import { moderateScale } from 'react-native-size-matters';
@@ -198,7 +198,6 @@ const MainContainer = () => {
   if (isloading == true) {
     return <SplashScreen />;
   }
-  // return <ChooseDeclineReasonScreen/>;
   return <AppNavigator />;
 };
 
