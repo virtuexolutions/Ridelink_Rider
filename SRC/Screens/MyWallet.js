@@ -7,24 +7,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import CustomText from '../Components/CustomText';
-import LinearGradient from 'react-native-linear-gradient';
-import {Icon} from 'native-base';
-import Feather from 'react-native-vector-icons/Feather';
+import { Icon } from 'native-base';
 import CustomImage from '../Components/CustomImage';
 import PaymentCard from '../Components/PaymentCard';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {Get} from '../Axios/AxiosInterceptorFunction';
-import {useSelector} from 'react-redux';
-import {useIsFocused} from '@react-navigation/native';
-import Header from '../Components/Header';
+import { useSelector } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
 
-const MyWallet = ({navigation}) => {
+const MyWallet = ({ navigation }) => {
   const isFoucsed = useIsFocused();
   const token = useSelector(state => state.authReducer.token);
   const [loading, setLoading] = useState(false);
@@ -149,7 +145,7 @@ const MyWallet = ({navigation}) => {
                   backgroundColor: Color.white,
                 },
               ]}>
-              <CustomText style={[styles.tab_bar_text, {color: Color.black}]}>
+              <CustomText style={[styles.tab_bar_text, { color: Color.black }]}>
                 Cash
               </CustomText>
             </TouchableOpacity>
@@ -163,7 +159,7 @@ const MyWallet = ({navigation}) => {
                   backgroundColor: 'transparent',
                 },
               ]}>
-              <CustomText style={[styles.tab_bar_text, {color: Color.white}]}>
+              <CustomText style={[styles.tab_bar_text, { color: Color.white }]}>
                 Discount
               </CustomText>
             </TouchableOpacity>
@@ -207,7 +203,7 @@ const MyWallet = ({navigation}) => {
           data={paymentHistoryList}
           ListEmptyComponent={
             <CustomText
-              style={{color: 'red', marginTop: moderateScale(10, 0.6)}}>
+              style={{ color: 'red', marginTop: moderateScale(10, 0.6) }}>
               no data found yet
             </CustomText>
             // <View
@@ -350,8 +346,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4.84,
     elevation: 5,
   },
-  tab_bar_text: {fontSize: moderateScale(12, 0.3), color: Color.black},
-  selected_tab_text: {fontSize: moderateScale(12, 0.3), color: Color.white},
+  tab_bar_text: { fontSize: moderateScale(12, 0.3), color: Color.black },
+  selected_tab_text: { fontSize: moderateScale(12, 0.3), color: Color.white },
   back: {
     width: moderateScale(35, 0.6),
     height: moderateScale(35, 0.6),

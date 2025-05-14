@@ -36,6 +36,7 @@ import History from './Screens/History';
 import ReferFriendScreen from './Screens/ReferFriendScreen';
 import MessagesScreen from './Screens/MessagesScreen';
 import DeliveryScreen from './Screens/DeliveryScreen';
+import PlaceHolderScreen from './Screens/PlaceHolderScreen';
 // import ReferFriendScreen from './Screens/ReferFriendScreen';
 // import LearningCenter from './Screens/LearningCenter';
 // import PrivacyPolicy from './Screens/PrivacyPolicy';
@@ -62,6 +63,7 @@ const AppNavigator = () => {
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
         <RootNav.Navigator
+          // initialRouteName={'PlaceHolderScreen'}
           initialRouteName={firstScreen}
           // initialRouteName={'Walletscreen'}
           // initialRouteName={'RateScreen'}
@@ -87,6 +89,7 @@ const AppNavigator = () => {
           <RootNav.Screen name="RateScreen" component={RateScreen} />
           <RootNav.Screen name="AddYourCar" component={AddYourCar} />
           <RootNav.Screen name="MessagesScreen" component={MessagesScreen} />
+          <RootNav.Screen name="PlaceHolderScreen" component={PlaceHolderScreen} />
           <RootNav.Screen name="Home" component={Home} />
 
 

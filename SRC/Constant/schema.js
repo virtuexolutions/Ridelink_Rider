@@ -72,10 +72,16 @@ export const editProfileSchema = Yup.object({
   email: Yup.string(),
   phoneNumber: Yup.number(),
 });
+const currentYear = new Date().getFullYear();
 
 export const addYourCarSchema = Yup.object({
-  carName: Yup.string().required('Car Name is required'),
-  carModel: Yup.string().required('Car Model is required'),
-  carNumber: Yup.string().required('Car Number is required'),
-  carSeats: Yup.string().required('Car Seat is required'),
+  year: Yup.number()
+    .required('Car year is required')
+    .min(currentYear - 15, `Car must not be older than 15 years`)
+    .max(currentYear, 'Car year cannot be in the future'),
+  make: Yup.string().required('Car make is required'),
+  model: Yup.string().required('Car model is required'),
+  capacity: Yup.number().required('Capacity is required'),
+  registration: Yup.mixed().required('Car registration file is required'),
+  insurance: Yup.mixed().required('Car insurance file is required'),
 });

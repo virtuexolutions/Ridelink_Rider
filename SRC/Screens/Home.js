@@ -1,6 +1,6 @@
-import {useIsFocused} from '@react-navigation/native';
-import {Icon, ScrollView} from 'native-base';
-import React, {useEffect, useState} from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import { Icon, ScrollView } from 'native-base';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -15,21 +15,21 @@ import {
   View,
 } from 'react-native';
 
-import {getDatabase, onValue, ref} from '@react-native-firebase/database';
+import { getDatabase, onValue, ref } from '@react-native-firebase/database';
 import Geolocation from 'react-native-geolocation-service';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import SearchbarComponent from '../Components/SearchbarComponent';
 import Userbox from '../Components/Userbox';
 import navigationService from '../navigationService';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
 const Home = () => {
   const token = useSelector(state => state.authReducer.token);
@@ -218,9 +218,10 @@ const Home = () => {
       dispatch(setUserData(response?.data?.user_info));
       Platform.OS == 'android'
         ? ToastAndroid.show('services added  Successfully', ToastAndroid.SHORT)
-        : alert(' services added Successfully');
+        : Alert.alert(' services added Successfully');
     }
   };
+
   return (
     <SafeAreaView style={styles.safe_area}>
       <Header title={'Driver Online'} />
@@ -258,7 +259,7 @@ const Home = () => {
                   );
                 }}
                 style={{
-                  fontSize: moderateScale(12, 0.6),
+                  fontSize: moderateScale(14, 0.6),
                   color: Color.black,
                   paddingHorizontal: moderateScale(5, 0.6),
                 }}>
@@ -286,6 +287,8 @@ const Home = () => {
                 backgroundColor: Color.blue,
                 width: '100%',
                 alignItems: 'center',
+                marginTop: moderateScale(10, 0.6),
+                borderRadius: moderateScale(20, 0.6)
               }}>
               {isLoading ? (
                 <ActivityIndicator size={'small'} color={Color.black} />
@@ -429,25 +432,25 @@ const Home = () => {
               showsVerticalScrollIndicator={false}
               keyExtractor={item => item?.id}
               data={requestList}
-              contentContainerStyle={{marginBottom: moderateScale(100, 0.6)}}
-              style={{marginBottom: moderateScale(70, 0.6)}}
-              renderItem={({item}) => {
+              contentContainerStyle={{ marginBottom: moderateScale(100, 0.6) }}
+              style={{ marginBottom: moderateScale(70, 0.6) }}
+              renderItem={({ item }) => {
                 console.log("🚀 ~ Home ~ item:", item)
                 return (
                   <Userbox
                     data={item?.ride_info}
                     onPressDetails={() => {
                       item?.ride_info?.type == 'Parcel Delivery' ||
-                      item?.ride_info?.type == 'Pets Delivery'
+                        item?.ride_info?.type == 'Pets Delivery'
                         ? navigationService.navigate('PassengerDetails', {
-                            type: 'delivery',
-                            data: item?.ride_info,
-                            fromdelivery: true,
-                          })
+                          type: 'delivery',
+                          data: item?.ride_info,
+                          fromdelivery: true,
+                        })
                         : navigationService.navigate('RideRequest', {
-                            type: 'ride',
-                            data: item?.ride_info,
-                          });
+                          type: 'ride',
+                          data: item?.ride_info,
+                        });
                     }}
                   />
                 );
@@ -528,14 +531,16 @@ const styles = StyleSheet.create({
   },
   con: {
     backgroundColor: Color.white,
-    height: windowHeight * 0.08,
+    height: windowHeight * 0.12,
     borderWidth: 1,
-    borderColor: Color.lightGrey,
-    width: windowWidth * 0.28,
-    borderRadius: moderateScale(10, 0.6),
+    borderColor: Color.blue,
+    width: windowWidth * 0.4,
+    borderRadius: moderateScale(12, 0.6),
     zIndex: 1,
     position: 'absolute',
     right: 20,
     top: 115,
+    paddingHorizontal: moderateScale(10, 0.6),
+    paddingVertical: moderateScale(5, 0.6),
   },
 });

@@ -1,7 +1,7 @@
-import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {getDistance} from 'geolib';
-import {Icon} from 'native-base';
-import React, {useEffect, useRef, useState} from 'react';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { getDistance } from 'geolib';
+import { Icon } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Linking,
@@ -10,24 +10,28 @@ import {
   View,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import AdditionalTimeModal from '../Components/AdditionalTimeModal';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import navigationService from '../navigationService';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import { Pusher } from '@pusher/pusher-websocket-react-native';
+import { baseUrl } from '../Config';
+import { customMapStyle } from '../Utillity/mapstyle';
 
-const RideScreen = ({route}) => {
-  const {data, type, ride_status} = route?.params;
+const RideScreen = ({ route }) => {
+  const { data, type, ride_status } = route?.params;
+  console.log("🚀 ~ RideScreen ~ data:", data)
   const rideData = route?.params?.data;
   const rider_arrived_time = route?.params?.rider_arrived_time;
   const isFocused = useIsFocused();
@@ -36,10 +40,11 @@ const RideScreen = ({route}) => {
   const token = useSelector(state => state.authReducer.token);
   const [additionalTime, setAdditionalTime] = useState(false);
   const [additionalTimeModal, setAdditionalTimeModal] = useState(false);
-  const [isriderArrive, setIsRiderArrived] = useState(true);
+  const [isriderArrive, setIsRiderArrived] = useState(false);
+  console.log("🚀 ~ RideScreen ~ isriderArrive:", isriderArrive)
   const [addTime, setAddTime] = useState(0);
   const [time, setTime] = useState(0);
-  const {user_type} = useSelector(state => state.authReducer);
+  const { user_type } = useSelector(state => state.authReducer);
   const [start_waiting, setStartWaiting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [arrive, setArrive] = useState(false);
@@ -47,12 +52,16 @@ const RideScreen = ({route}) => {
   const [fare, setFare] = useState(0);
   const [distance, setDistance] = useState(0);
   const [Updatedride, setUpdatedRide] = useState({});
-  console.log('🚀 ~ Updatedride:', Updatedride);
+  console.log("🚀 ~ RideScreen ~ Updatedride:", Updatedride?.ride_info?.status)
+
+
+  const pusher = Pusher.getInstance();
+  const myChannel = useRef(null);
   const [currentPosition, setCurrentPosition] = useState({
-    // latitude: 0,
-    // longitude: 0,
-    latitude: 37.43312021,
-    longitude: -122.0876855,
+    latitude: 0,
+    longitude: 0,
+    // latitude: 37.43312021,
+    // longitude: -122.0876855,
   });
   const apikey = 'AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8';
   const origin = {
@@ -111,52 +120,98 @@ const RideScreen = ({route}) => {
     getCurrentLocation();
   }, [isFocused]);
 
+  const trackedLoaction = async (lat, lng) => {
+    const url = 'auth/ride_location'
+    const body = {
+      lat: lat,
+      lng: lng,
+      target_id: data?.user?.id
+    }
+    const response = await Post(url, body, apiHeader(token))
+    console.log("🚀 ~ trackedLoaction ~ response:", response?.data)
+  }
+
+
+  useEffect(() => {
+    console.log('==================== >>>>> from pusher tracking screen');
+    const connectPusher = async () => {
+      try {
+        console.log('Initializing Pusher...');
+        await pusher.init({
+          apiKey: '2cbabf5fca8e6316ecfe',
+          cluster: 'ap2',
+          encrypted: true,
+        });
+
+        await pusher.connect();
+        console.log('Pusher Connected!');
+        myChannel.current = await pusher.subscribe({
+          channelName: `my-ride-location-${data?.user?.id}`,
+          onSubscriptionSucceeded: channelName => {
+            console.log(`Subscribed to ${channelName}`);
+          },
+          onEvent: event => {
+            console.log('Received Event:', event);
+            try {
+              console.log(
+                'Pusher Connection State:',
+                pusher.connectionState.state,
+              );
+            } catch (error) {
+              console.error('Error parsing event data:', error);
+            }
+          },
+        });
+      } catch (error) {
+        console.error('Pusher Connection Error:', error);
+      }
+      getChatListingData();
+    };
+
+    connectPusher();
+
+    return () => {
+      if (myChannel.current) {
+        pusher.unsubscribe({ channelName: `my-ride-location-${data?.user?.id}` });
+      }
+    };
+  }, [isFocused]);
+
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
       position => {
-        const {latitude, longitude} = position.coords;
+        const { latitude, longitude } = position.coords;
+        console.log("🚀 ~ useEffect ~ latitude: latitude", latitude, longitude)
+        trackedLoaction(latitude, longitude);
         setCurrentPosition(prevLocation => ({
           ...prevLocation,
           latitude,
           longitude,
         }));
+
         const isLocationClose = (lat1, lon1, lat2, lon2, threshold = 0.0001) =>
           Math.abs(lat1 - lat2) < threshold &&
           Math.abs(lon1 - lon2) < threshold;
-        // if (
-        //   isLocationClose(
-        //     37.4219983,
-        //     -122.084,
-        //     37.43312021060092,
-        //     -122.08768555488422,
-        //   )
-        // ) {
-        if (
-          isLocationClose(
-            latitude,
-            !isriderArrive ? origin?.lat : destination?.lat,
-            longitude,
-            !isriderArrive ? origin?.lng : destination?.lng,
-          )
-        ) {
-          console.log(
-            'location same eeeaaaaaaaaaaaaaaaaassseeeeeeeeeeeeee111111111eeeeeeeee',
-            latitude,
-            origin.lat,
-            longitude,
-            origin.lng,
-          );
 
+        const targetLat = !isriderArrive ? origin?.lat : destination?.lat;
+        const targetLng = !isriderArrive ? origin?.lng : destination?.lng;
+
+        if (isLocationClose(latitude, targetLat, longitude, targetLng)) {
+          console.log('🚗 Rider arrived at the destination!');
           setIsRiderArrived(true);
         }
       },
-      error => console.log('Error getting location:', error),
+      error => console.log('❌ Error getting location:', error),
       {
         enableHighAccuracy: true,
         distanceFilter: 1,
-        interval: 1000,
+        interval: 3000,
+        fastestInterval: 2000,
+        forceRequestLocation: true,
+        showLocationDialog: true,
       },
     );
+
     return () => {
       Geolocation.clearWatch(watchId);
     };
@@ -240,7 +295,6 @@ const RideScreen = ({route}) => {
       longitude: parseFloat(data?.dropoff_location_lng),
     };
     if (data?.pickup === 'null') {
-      // console.log("inside fron fuction ===ddd===========")
       const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup?.latitude},${pickup?.longitude}&destination=${dropoff?.latitude},${dropoff?.longitude}&travelmode=driving`;
       Linking.openURL(url).catch(err =>
         console.error('An error occurred', err),
@@ -264,8 +318,8 @@ const RideScreen = ({route}) => {
           additionalTime
             ? 'Wait For Additional Time'
             : user_type === 'Rider'
-            ? 'Navigation to Pickup'
-            : 'Waiting Pickup'
+              ? 'Navigation to Pickup'
+              : 'Waiting Pickup'
         }
       />
       <View style={styles.main_view}>
@@ -278,15 +332,28 @@ const RideScreen = ({route}) => {
             longitudeDelta: 0.0521,
           }}
           ref={mapRef}
+          onReady={result => {
+            if (mapRef.current && !isRouteFitted) {
+              mapRef.current.fitToCoordinates(result.coordinates, {
+                edgePadding: {
+                  right: 50,
+                  left: 50,
+                  top: 300,
+                  bottom: 100,
+                },
+              });
+
+            }
+          }}
           // provider={PROVIDER_GOOGLE}
-          // customMapStyle={customMapStyle}
+          customMapStyle={customMapStyle}
         >
           <Marker
+            pinColor={Color.black}
             coordinate={{
               latitude: origin?.lat,
               longitude: origin?.lng,
             }}
-            pinColor={Color.black}
           />
           <MapViewDirections
             apikey={'AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8'}
@@ -332,12 +399,11 @@ const RideScreen = ({route}) => {
           <View style={styles.latest_ride_subView}>
             <View style={styles.latest_ride_image_view}>
               <CustomImage
-                // source={{uri :`${baseUrl}${rideData?.rideData?.user?.photo}`}}
-                source={require('../Assets/Images/user.png')}
+                source={{ uri: `${baseUrl}${rideData?.rideData?.user?.photo}` }}
+                // source={require('../Assets/Images/user.png')}
                 style={{
                   width: '100%',
                   height: '100%',
-                  backgroundColor: 'red',
                   borderRadius: windowWidth,
                 }}
               />
@@ -390,7 +456,6 @@ const RideScreen = ({route}) => {
             </View>
           </View>
         </View>
-
         <>
           <View
             style={{
@@ -400,7 +465,7 @@ const RideScreen = ({route}) => {
               position: 'absolute',
               bottom: 0,
             }}>
-            {Updatedride?.ride_info?.status == 'arrive' ? (
+            {Updatedride?.ride_info?.status == 'arrive' && (
               <CustomButton
                 text={
                   isLoading ? (
@@ -424,13 +489,16 @@ const RideScreen = ({route}) => {
                   onPressStartNavigation();
                 }}
               />
-            ) : Updatedride?.ride_info?.status == 'waiting' ? (
+            )
+            }
+
+            {Updatedride?.ride_info?.status == 'riderArrived' && (
               <CustomButton
                 text={
                   isLoading ? (
                     <ActivityIndicator size={'small'} color={Color.white} />
                   ) : (
-                    'arrive'
+                    'Start Waiting'
                   )
                 }
                 fontSize={moderateScale(14, 0.3)}
@@ -447,7 +515,9 @@ const RideScreen = ({route}) => {
                   rideUpdate('arrive');
                 }}
               />
-            ) : Updatedride?.ride_info?.status == 'ontheway' ? (
+            )
+            }
+            {Updatedride?.ride_info?.status == 'ontheway' && (
               <View
                 style={{
                   position: 'absolute',
@@ -479,7 +549,9 @@ const RideScreen = ({route}) => {
                   }}
                 />
               </View>
-            ) : (
+            )
+            }
+            {!isriderArrive && (
               <CustomButton
                 style={{
                   position: 'absolute',
@@ -489,7 +561,7 @@ const RideScreen = ({route}) => {
                   isLoading ? (
                     <ActivityIndicator size={'small'} color={Color.white} />
                   ) : (
-                    'start waiting'
+                    'Arrived'
                   )
                 }
                 fontSize={moderateScale(14, 0.3)}
@@ -502,10 +574,11 @@ const RideScreen = ({route}) => {
                 textTransform={'capitalize'}
                 isBold
                 onPress={() => {
-                  rideUpdate('waiting');
+                  rideUpdate('riderArrived');
                 }}
               />
-            )}
+            )
+            }
           </View>
         </>
       </View>

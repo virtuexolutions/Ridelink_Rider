@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {Icon} from 'native-base';
+import React, { useState } from 'react';
+import { Icon } from 'native-base';
 import {
   View,
   Platform,
@@ -8,21 +8,21 @@ import {
   ToastAndroid,
   Alert,
 } from 'react-native';
-import {DrawerActions, useNavigation} from '@react-navigation/native';
+import { DrawerActions, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import Color from '../Assets/Utilities/Color';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import CustomText from './CustomText';
 import CustomImage from './CustomImage';
-const {height, width} = Dimensions.get('window');
+const { height, width } = Dimensions.get('window');
 import Feather from 'react-native-vector-icons/Feather';
 
-import {useDispatch, useSelector} from 'react-redux';
-import {imageUrl} from '../Config';
-import {setUserLogout, setUserLogoutAuth} from '../Store/slices/auth-slice';
+import { useDispatch, useSelector } from 'react-redux';
+import { imageUrl } from '../Config';
+import { setUserLogout, setUserLogoutAuth } from '../Store/slices/auth-slice';
 import LinearGradient from 'react-native-linear-gradient';
-import {setUserLogOut} from '../Store/slices/common';
+import { setUserLogOut } from '../Store/slices/common';
 import navigationService from '../navigationService';
 
 const Header = props => {
@@ -54,10 +54,10 @@ const Header = props => {
   const userRole = useSelector(state => state.commonReducer.selectedRole);
   const token = useSelector(state => state.authReducer.token);
   const statusArray = [
-    {label: 'Change Password', value: 'ChangePassword'},
-    {label: 'Terms & Conditions', value: 'TermsAndConditions'},
-    {label: 'Financial Breakdown', value: 'FinancialBreakDown'},
-    {label: 'Logout', value: 'Logout'},
+    { label: 'Change Password', value: 'ChangePassword' },
+    { label: 'Terms & Conditions', value: 'TermsAndConditions' },
+    { label: 'Financial Breakdown', value: 'FinancialBreakDown' },
+    { label: 'Logout', value: 'Logout' },
   ];
 
   const Confirm = () => {
@@ -81,7 +81,7 @@ const Header = props => {
     <View
       style={[
         styles.header2,
-        {backgroundColor: headerColor ? headerColor : Color.white},
+        { backgroundColor: headerColor ? headerColor : Color.white },
       ]}>
       <View
         style={{
@@ -109,16 +109,16 @@ const Header = props => {
                   // style={styles.menu}
                   name={'menu'}
                   as={Feather
-                    
+
                   }
                   size={moderateScale(21, 0.3)}
                   color={Color.white}
-                  // onPress={() => {
-                  //   console.log('hello mg ');
-                  //   navigationN.toggleDrawer();
-                  //   // navigation.openDrawer()
-                  //   // navigationN.dispatch(DrawerActions.toggleDrawer());
-                  // }}
+                // onPress={() => {
+                //   console.log('hello mg ');
+                //   navigationN.toggleDrawer();
+                //   // navigation.openDrawer()
+                //   // navigationN.dispatch(DrawerActions.toggleDrawer());
+                // }}
                 />
               </TouchableOpacity>
             ) : (
@@ -131,7 +131,6 @@ const Header = props => {
                 onPress={() => {
                   console.log('hello mg ======================= ');
                   navigationN.toggleDrawer();
-
                   // dispatch(setUserLogOut())
                   // dispatch(SetUserRole(''));
 
@@ -140,7 +139,7 @@ const Header = props => {
                 }}
               />
             )}
-            
+
           </>
         )}
       </View>
@@ -154,7 +153,7 @@ const Header = props => {
             // backgroundColor : 'red' ,
             height: windowHeight * 0.05,
           }}
-          // source={require('../Assets/Images/customerservice.png')}
+        // source={require('../Assets/Images/customerservice.png')}
         />
       )}
 
@@ -223,7 +222,7 @@ const Header = props => {
               // dispatch(setUserLogoutAuth());
             }}
             source={require('../Assets/Images/user_Image.png')}
-            style={{width: windowHeight * 0.06, height: windowHeight * 0.06}}
+            style={{ width: windowHeight * 0.06, height: windowHeight * 0.06 }}
           />
           <View
             style={{
@@ -266,7 +265,7 @@ const styles = ScaledSheet.create({
     width: windowHeight * 0.05,
     borderRadius: (windowHeight * 0.05) / 2,
     textAlign: 'center',
-    backgroundColor: 'white',
+    backgroundColor: Color.white,
     paddingTop: moderateScale(7, 0.6),
   },
   shadowporp: {
