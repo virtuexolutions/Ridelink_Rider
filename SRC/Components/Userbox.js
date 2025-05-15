@@ -1,40 +1,50 @@
 import moment from 'moment';
-import {Icon} from 'native-base';
+import { Icon } from 'native-base';
 import React from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import {moderateScale} from 'react-native-size-matters';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { moderateScale } from 'react-native-size-matters';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {baseUrl} from '../Config';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { baseUrl } from '../Config';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import CustomButton from './CustomButton';
 import CustomImage from './CustomImage';
 import CustomText from './CustomText';
 
-const Userbox = ({data, onPress, onPressDetails}) => {
+const Userbox = ({ data, onPress, onPressDetails }) => {
   console.log('🚀 ~ Userbox ~ data:', data);
   const userData = useSelector(state => state.commonReducer.userData);
+  const timePart = data?.createdAt.split(" ")[1];
+  let [hour, minute] = timePart.split(":");
+  hour = parseInt(hour);
+  const ampm = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12;
+  hour = hour === 0 ? 12 : hour;
+  const formattedHour = hour.toString().padStart(2, "0");
+  console.log("🚀 ~ Userbox ~ formattedHour:", formattedHour)
+  const hourMinuteAmPm = `${formattedHour}:${minute} ${ampm}`;
 
   return (
     <TouchableOpacity onPress={onPress} style={styles.details_Style}>
       <View style={styles.text_Style}>
         <View style={styles.image_Style}>
           <CustomImage
-            style={{width: '100%', height: '100%'}}
+            style={{ width: '100%', height: '100%' }}
             source={
               userData?.photo
-                ? {uri: `${baseUrl}/${userData?.photo}`}
+                ? { uri: `${baseUrl}/${userData?.photo}` }
                 : require('../Assets/Images/user.png')
             }
           />
         </View>
         <View style={styles.container}>
-          <CustomText style={styles.h1}>{/* {userData?.name} */}</CustomText>
+          <CustomText style={styles.h1}>{userData?.name}</CustomText>
           <CustomText style={styles.status}>{data?.type}</CustomText>
         </View>
         <CustomText style={styles.time}>
-          {moment(data?.created_at).format('LT')}
+          {hourMinuteAmPm}
+          {/* {moment(data?.created_at).format('LT')} */}
         </CustomText>
       </View>
       {/* <View style={{flexDirection:'row'}}> */}
@@ -45,7 +55,7 @@ const Userbox = ({data, onPress, onPressDetails}) => {
             marginLeft: moderateScale(10, 0.6),
           },
         ]}>
-        <View style={{flexDirection: 'row', left: moderateScale(2, 0.6)}}>
+        <View style={{ flexDirection: 'row', left: moderateScale(2, 0.6) }}>
           <View style={styles.fromLocationStyle}>
             <View style={styles.toLocationStyle}></View>
           </View>
@@ -61,15 +71,15 @@ const Userbox = ({data, onPress, onPressDetails}) => {
         </View>
         <View
           style={{
-            transform: [{rotate: '90deg'}],
+            transform: [{ rotate: '90deg' }],
             position: 'absolute',
             width: windowWidth * 0.1,
             top: moderateScale(25, 0.6),
             left: moderateScale(-4, 0.6),
           }}>
-          <CustomText style={{color: Color.black}}>........</CustomText>
+          <CustomText style={{ color: Color.black }}>........</CustomText>
         </View>
-        <View style={{flexDirection: 'row', marginTop: moderateScale(20, 0.6)}}>
+        <View style={{ flexDirection: 'row', marginTop: moderateScale(20, 0.6) }}>
           <Icon
             name="location-outline"
             as={Ionicons}
@@ -193,7 +203,7 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.55,
     marginLeft: moderateScale(20, 0.6),
   },
-  h1: {fontSize: moderateScale(20, 0.6), color: Color.themeBlack},
+  h1: { fontSize: moderateScale(20, 0.6), color: Color.themeBlack },
   status: {
     fontSize: moderateScale(10, 0.6),
     color: Color.themeDarkGray,

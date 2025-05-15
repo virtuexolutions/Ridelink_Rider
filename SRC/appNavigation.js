@@ -238,7 +238,7 @@ export const MyDrawer = () => {
   return (
     <DrawerNavigation.Navigator
       drawerContent={props => <Drawer {...props} />}
-      initialRouteName={'Home'}
+      initialRouteName={'PlaceHolderScreen'}
       screenOptions={{
         headerShown: false,
         drawerStyle: {
@@ -248,6 +248,7 @@ export const MyDrawer = () => {
         },
       }}>
       <DrawerNavigation.Screen name="Home" component={Home} />
+      <DrawerNavigation.Screen name="PlaceHolderScreen" component={PlaceHolderScreen} />
       <DrawerNavigation.Screen name="Walletscreen" component={Walletscreen} />
       <DrawerNavigation.Screen
         name="Earningsscreen"

@@ -7,10 +7,12 @@ import axios from 'axios';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { Get } from '../Axios/AxiosInterceptorFunction';
 import { useSelector } from 'react-redux';
+import navigationService from '../navigationService';
 
 const PlaceHolderScreen = () => {
     const navigation = useNavigation();
     const [requestList, setRequestList] = useState([]);
+    console.log("🚀 ~ PlaceHolderScreen ~ requestList:", requestList)
     const [isLoading, setIsLoading] = useState(false);
     const token = useSelector(state => state.authReducer.token);
     const isFocused = useIsFocused();
@@ -20,20 +22,36 @@ const PlaceHolderScreen = () => {
     }, [])
 
     const rideRequestList = async () => {
-        const url = `auth/rider/ride-request-list?type[0]=${'ride'}?type[1]=${'Parcel Delivery'}?type[2]=${'Pets Delivery'}`;
+        const url = `auth/rider/ride-request-list?type[0]=ride`;
         setIsLoading(true);
-        console.log('🚀 ~ rideRequestList ~ url:  >>>>>', url);
+        console.log('🚀 ~ rideRequestList ~ url: >>>>>', url);
         try {
             const response = await Get(url, token);
-            console.log('🚀 ~ rideRequestList ~ response:', response?.data);
-            if (response != undefined) {
-                setRequestList(response?.data?.ride_info);
+            const rides = response?.data?.ride_info;
+            console.log('🚀 ~ rideRequestList ~ response:', JSON.stringify(rides, null, 2));
+            if (Array.isArray(rides) && rides.length > 0) {
+                const ride = rides[0];
+                const status = ride?.status?.toLowerCase();
+                const goHomeStatuses = ['pending', 'cancelled', 'completed', 'reviewed'];
+                if (goHomeStatuses.includes(status)) {
+                    navigationService.navigate('Home');
+                } else {
+                    navigationService.navigate('RideScreen', {
+                        data: ride?.ride_info,
+                        type: 'details',
+                    });
+                }
+
+                setRequestList(rides);
             } else {
                 setRequestList([]);
+                navigationService.navigate('Home');
             }
         } catch (error) {
-            console.error('Error festchaaing ride requests:', error);
+            console.error('Error fetching ride requests:', error);
+            navigationService.navigate('Home');
         }
+
         setIsLoading(false);
     };
 
@@ -64,7 +82,7 @@ const PlaceHolderScreen = () => {
 
     return (
         <View style={styles.container}>
-            <SkeletonPlaceholder borderRadius={8}>
+            <SkeletonPlaceholder borderRadius={8} >
                 <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
                     <SkeletonPlaceholder.Item width={60} height={60} borderRadius={30} />
                     <SkeletonPlaceholder.Item marginLeft={20}>

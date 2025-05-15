@@ -31,7 +31,7 @@ import { customMapStyle } from '../Utillity/mapstyle';
 
 const RideScreen = ({ route }) => {
   const { data, type, ride_status } = route?.params;
-  console.log("🚀 ~ RideScreen ~ data:", data)
+  console.log("🚀 ~ RideScreen ~ data:", data?.status)
   const rideData = route?.params?.data;
   const rider_arrived_time = route?.params?.rider_arrived_time;
   const isFocused = useIsFocused();
@@ -51,7 +51,7 @@ const RideScreen = ({ route }) => {
   const [passengerArrive, setPassengerArrive] = useState(false);
   const [fare, setFare] = useState(0);
   const [distance, setDistance] = useState(0);
-  const [Updatedride, setUpdatedRide] = useState({});
+  const [Updatedride, setUpdatedRide] = useState(data?.status);
   console.log("🚀 ~ RideScreen ~ Updatedride:", Updatedride?.ride_info?.status)
 
 
@@ -60,8 +60,6 @@ const RideScreen = ({ route }) => {
   const [currentPosition, setCurrentPosition] = useState({
     latitude: 0,
     longitude: 0,
-    // latitude: 37.43312021,
-    // longitude: -122.0876855,
   });
   const apikey = 'AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8';
   const origin = {
@@ -130,7 +128,6 @@ const RideScreen = ({ route }) => {
     const response = await Post(url, body, apiHeader(token))
     console.log("🚀 ~ trackedLoaction ~ response:", response?.data)
   }
-
 
   useEffect(() => {
     console.log('==================== >>>>> from pusher tracking screen');
@@ -465,6 +462,7 @@ const RideScreen = ({ route }) => {
               position: 'absolute',
               bottom: 0,
             }}>
+
             {Updatedride?.ride_info?.status == 'arrive' && (
               <CustomButton
                 text={
@@ -492,7 +490,7 @@ const RideScreen = ({ route }) => {
             )
             }
 
-            {Updatedride?.ride_info?.status == 'riderArrived' && (
+            {Updatedride?.ride_info?.status == 'riderArrived' || data?.status === 'riderArrived' ? (
               <CustomButton
                 text={
                   isLoading ? (
@@ -513,6 +511,30 @@ const RideScreen = ({ route }) => {
                 isBold
                 onPress={() => {
                   rideUpdate('arrive');
+                }}
+              />
+            ) : (
+              <CustomButton
+                text={
+                  isLoading ? (
+                    <ActivityIndicator size={'small'} color={Color.white} />
+                  ) : (
+                    'Start Ride'
+                  )
+                }
+                fontSize={moderateScale(14, 0.3)}
+                textColor={Color.white}
+                borderRadius={moderateScale(30, 0.3)}
+                width={windowWidth * 0.85}
+                marginTop={moderateScale(10, 0.3)}
+                height={windowHeight * 0.07}
+                bgColor={Color.darkBlue}
+                borderWidth={1.5}
+                borderColor={Color.darkBlue}
+                textTransform={'capitalize'}
+                isBold
+                onPress={() => {
+                  rideUpdate('OnTheWay');
                 }}
               />
             )
@@ -551,7 +573,7 @@ const RideScreen = ({ route }) => {
               </View>
             )
             }
-            {!isriderArrive && (
+            {isriderArrive && (
               <CustomButton
                 style={{
                   position: 'absolute',
