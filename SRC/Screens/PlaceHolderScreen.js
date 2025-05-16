@@ -30,14 +30,17 @@ const PlaceHolderScreen = () => {
             const rides = response?.data?.ride_info;
             console.log('🚀 ~ rideRequestList ~ response:', JSON.stringify(rides, null, 2));
             if (Array.isArray(rides) && rides.length > 0) {
-                const ride = rides[0];
+                const ride = rides[0]?.ride_info;
+                console.log("🚀 ~ rideRequestList ~ ride:", ride)
                 const status = ride?.status?.toLowerCase();
+                console.log("🚀 ~ rideRequestList ~ status:", status)
                 const goHomeStatuses = ['pending', 'cancelled', 'completed', 'reviewed'];
+                console.log("🚀 ~ rideRequestList ~ goHomeStatuses:", goHomeStatuses.includes(status))
                 if (goHomeStatuses.includes(status)) {
                     navigationService.navigate('Home');
                 } else {
                     navigationService.navigate('RideScreen', {
-                        data: ride?.ride_info,
+                        data: ride,
                         type: 'details',
                     });
                 }

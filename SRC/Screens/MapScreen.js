@@ -1,19 +1,20 @@
-import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {Icon} from 'native-base';
-import React, {useEffect, useRef, useState} from 'react';
-import {ActivityIndicator, SafeAreaView, StyleSheet, View} from 'react-native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { Icon } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, SafeAreaView, StyleSheet, View } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import Pulse from 'react-native-pulse';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Color from '../Assets/Utilities/Color';
 import CustomButton from '../Components/CustomButton';
 import DeclineModal from '../Components/DeclineModal';
 import RequestModal from '../Components/RequestModal';
 import navigationService from '../navigationService';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import CancelRide from '../Components/CancelRide';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 
 const MapScreen = props => {
   console.log('🚀 ~ props:', props);
@@ -130,6 +131,7 @@ const MapScreen = props => {
     }
   };
 
+
   return (
     <SafeAreaView style={[styles.safe_are, styles.background_view]}>
       <MapView
@@ -160,10 +162,10 @@ const MapScreen = props => {
           as={FontAwesome5}
           size={moderateScale(30, 0.6)}
           color={Color.white}
-          style={{left: 5}}
+          style={{ left: 5 }}
         />
       </View>
-      <View style={{position: 'absolute', bottom: 20}}>
+      <View style={{ position: 'absolute', bottom: 20 }}>
         <CustomButton
           width={windowWidth * 0.9}
           height={windowHeight * 0.07}
@@ -179,7 +181,9 @@ const MapScreen = props => {
             )
           }
           isBold
-          onPress={() => {}}
+          onPress={() => {
+
+          }}
         />
       </View>
       <RequestModal

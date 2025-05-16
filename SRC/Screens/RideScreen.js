@@ -1,5 +1,5 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { getDistance } from 'geolib';
+import { getDistance, isValidCoordinate } from 'geolib';
 import { Icon } from 'native-base';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -345,13 +345,15 @@ const RideScreen = ({ route }) => {
           // provider={PROVIDER_GOOGLE}
           customMapStyle={customMapStyle}
         >
-          <Marker
-            pinColor={Color.black}
-            coordinate={{
-              latitude: origin?.lat,
-              longitude: origin?.lng,
-            }}
-          />
+          {Object.keys(origin)?.length > 0 && isValidCoordinate(origin) && (
+            <Marker
+              pinColor={Color.black}
+              coordinate={{
+                latitude: origin?.lat,
+                longitude: origin?.lng,
+              }}
+            />
+          )}
           <MapViewDirections
             apikey={'AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8'}
             origin={{
@@ -378,13 +380,16 @@ const RideScreen = ({ route }) => {
               }
             }}
           />
-          <Marker
-            pinColor={Color.black}
-            coordinate={{
-              latitude: destination?.lat,
-              longitude: destination?.lng,
-            }}
-          />
+          {Object.keys(destination)?.length > 0 && isValidCoordinate(destination) && (
+            <Marker
+              pinColor={Color.black}
+              coordinate={{
+                latitude: destination?.lat,
+                longitude: destination?.lng,
+              }}
+            />
+          )}
+
         </MapView>
         <View
           style={[
@@ -490,7 +495,7 @@ const RideScreen = ({ route }) => {
             )
             }
 
-            {Updatedride?.ride_info?.status == 'riderArrived' || data?.status === 'riderArrived' ? (
+            {Updatedride?.ride_info?.status == 'riderArrived' || data?.status === 'riderArrived' && (
               <CustomButton
                 text={
                   isLoading ? (
@@ -511,30 +516,6 @@ const RideScreen = ({ route }) => {
                 isBold
                 onPress={() => {
                   rideUpdate('arrive');
-                }}
-              />
-            ) : (
-              <CustomButton
-                text={
-                  isLoading ? (
-                    <ActivityIndicator size={'small'} color={Color.white} />
-                  ) : (
-                    'Start Ride'
-                  )
-                }
-                fontSize={moderateScale(14, 0.3)}
-                textColor={Color.white}
-                borderRadius={moderateScale(30, 0.3)}
-                width={windowWidth * 0.85}
-                marginTop={moderateScale(10, 0.3)}
-                height={windowHeight * 0.07}
-                bgColor={Color.darkBlue}
-                borderWidth={1.5}
-                borderColor={Color.darkBlue}
-                textTransform={'capitalize'}
-                isBold
-                onPress={() => {
-                  rideUpdate('OnTheWay');
                 }}
               />
             )
