@@ -13,7 +13,6 @@ import CustomImage from './CustomImage';
 import CustomText from './CustomText';
 
 const Userbox = ({ data, onPress, onPressDetails }) => {
-  console.log('🚀 ~ Userbox ~ data:', data);
   const userData = useSelector(state => state.commonReducer.userData);
   const timePart = data?.createdAt.split(" ")[1];
   let [hour, minute] = timePart.split(":");

@@ -1,19 +1,18 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import {moderateScale} from 'react-native-size-matters';
-import {useDispatch, useSelector} from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { Icon } from 'native-base';
+import React, { useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { moderateScale } from 'react-native-size-matters';
+import Entypo from 'react-native-vector-icons/Entypo';
+import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import {setUserToken} from '../Store/slices/auth';
-import {SetUserRole} from '../Store/slices/auth-slice';
-import {setUserLogOut} from '../Store/slices/common';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import {baseUrl} from '../Config';
-import Entypo from 'react-native-vector-icons/Entypo';
-import {Icon} from 'native-base';
+import { baseUrl } from '../Config';
+import { setUserLogoutAuth, setUserToken } from '../Store/slices/auth';
+import { setUserLogOut } from '../Store/slices/common';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 
 const Drawer = React.memo(() => {
   const dispatch = useDispatch();
@@ -52,7 +51,7 @@ const Drawer = React.memo(() => {
       id: 4,
       name: 'Earnings',
       onPress: () => {
-        navigation.navigate('Earningsscreen');
+        navigation.navigate('Walletscreen');
       },
     },
     {
@@ -99,23 +98,23 @@ const Drawer = React.memo(() => {
       },
     },
   ];
-  const profileUpdate = async () => {
-    const body = {
-      work_category: selectedService,
-    };
+  // const profileUpdate = async () => {
+  //   const body = {
+  //     work_category: selectedService,
+  //   };
 
-    const url = 'auth/profile';
-    setIsLoading(true);
-    const response = await Post(url, body, apiHeader(token));
-    setIsLoading(false);
-    if (response != undefined) {
-      setModalVisible(false);
-      dispatch(setUserData(response?.data?.user_info));
-      Platform.OS == 'android'
-        ? ToastAndroid.show('services added  Successfully', ToastAndroid.SHORT)
-        : alert(' services added Successfully');
-    }
-  };
+  //   const url = 'auth/profile';
+  //   setIsLoading(true);
+  //   const response = await Post(url, body, apiHeader(token));
+  //   setIsLoading(false);
+  //   if (response != undefined) {
+  //     setModalVisible(false);
+  //     dispatch(setUserData(response?.data?.user_info));
+  //     Platform.OS == 'android'
+  //       ? ToastAndroid.show('services added  Successfully', ToastAndroid.SHORT)
+  //       : alert(' services added Successfully');
+  //   }
+  // };
 
   return (
     <ScreenBoiler
@@ -143,12 +142,7 @@ const Drawer = React.memo(() => {
           onPress={() => {
             setIsActive(!isActive);
           }}
-          style={{
-            flexDirection: 'row',
-            width: '88%',
-            marginTop: moderateScale(10, 0.6),
-            justifyContent: 'space-between',
-          }}>
+          style={styles.row}>
           <CustomText
             style={[
               styles.text,
@@ -162,13 +156,7 @@ const Drawer = React.memo(() => {
             onPress={() => {
               setIsActive(!isActive);
             }}
-            style={{
-              borderWidth: 1,
-              borderColor: Color.black,
-              borderRadius: moderateScale(4, 0.6),
-              height: windowHeight * 0.022,
-              width: windowWidth * 0.05,
-            }}>
+            style={styles.btn}>
             {isActive && (
               <Icon
                 onPress={() => {
@@ -191,14 +179,7 @@ const Drawer = React.memo(() => {
               <TouchableOpacity
                 key={item.id}
                 onPress={item.onPress}
-                style={{
-                  width: windowWidth * 0.7,
-                  borderColor: Color.black,
-                  margin: moderateScale(10, 0.3),
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
+                style={styles.arraybtn}>
                 <CustomText
                   style={{
                     fontSize: moderateScale(14, 0.6),
@@ -215,34 +196,14 @@ const Drawer = React.memo(() => {
             onPress={() => {
               navigation.navigate('HelpAndSupport');
             }}
-            style={{
-              width: windowWidth * 0.7,
-              borderColor: Color.black,
-              margin: moderateScale(5, 0.3),
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <CustomText
-              style={{
-                fontSize: moderateScale(14, 0.6),
-                color: Color.black,
-              }}>
-              Help
-            </CustomText>
+            style={styles.end_btn}>
+            <CustomText style={styles.txt}>Help</CustomText>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate('LearningCenter');
             }}
-            style={{
-              width: windowWidth * 0.7,
-              borderColor: Color.black,
-              margin: moderateScale(5, 0.3),
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
+            style={styles.le_btn}>
             <CustomText
               style={{
                 fontSize: moderateScale(14, 0.6),
@@ -254,24 +215,11 @@ const Drawer = React.memo(() => {
           <TouchableOpacity
             onPress={() => {
               dispatch(setUserToken(''));
-              dispatch(SetUserRole(''));
               dispatch(setUserLogOut());
+              dispatch(setUserLogoutAuth());
             }}
-            style={{
-              width: windowWidth * 0.7,
-              borderColor: Color.black,
-              margin: moderateScale(5, 0.3),
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <CustomText
-              style={{
-                fontSize: moderateScale(14, 0.6),
-                color: Color.veryLightGray,
-              }}>
-              Logout
-            </CustomText>
+            style={styles.logout_btn}>
+            <CustomText style={styles.btn_txt}>Logout</CustomText>
           </TouchableOpacity>
         </View>
       </View>
@@ -282,17 +230,6 @@ const Drawer = React.memo(() => {
 export default Drawer;
 
 const styles = StyleSheet.create({
-  Profile: {
-    width: windowWidth * 0.15,
-    height: windowWidth * 0.15,
-    borderRadius: (windowWidth * 0.2) / 1,
-    borderWidth: 1,
-    borderColor: Color.white,
-    overflow: 'hidden',
-  },
-  menu_text: {
-    color: Color.darkGray,
-  },
   profile_view: {
     paddingHorizontal: moderateScale(20, 0.6),
     height: '20%',
@@ -338,5 +275,58 @@ const styles = StyleSheet.create({
     paddingVertical: moderateScale(60, 0.6),
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  row: {
+    flexDirection: 'row',
+    width: '88%',
+    marginTop: moderateScale(10, 0.6),
+    justifyContent: 'space-between',
+  },
+  btn: {
+    borderWidth: 1,
+    borderColor: Color.black,
+    borderRadius: moderateScale(4, 0.6),
+    height: windowHeight * 0.022,
+    width: windowWidth * 0.05,
+  },
+  arraybtn: {
+    width: windowWidth * 0.7,
+    borderColor: Color.black,
+    margin: moderateScale(10, 0.3),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  end_btn: {
+    width: windowWidth * 0.7,
+    borderColor: Color.black,
+    margin: moderateScale(5, 0.3),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  txt: {
+    fontSize: moderateScale(14, 0.6),
+    color: Color.black,
+  },
+  le_btn: {
+    width: windowWidth * 0.7,
+    borderColor: Color.black,
+    margin: moderateScale(5, 0.3),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  logout_btn: {
+    width: windowWidth * 0.7,
+    borderColor: Color.black,
+    margin: moderateScale(5, 0.3),
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  btn_txt: {
+    fontSize: moderateScale(14, 0.6),
+    color: Color.veryLightGray,
   },
 });

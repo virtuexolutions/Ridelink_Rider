@@ -1,62 +1,61 @@
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { getDistance, isValidCoordinate } from 'geolib';
-import { Icon } from 'native-base';
-import React, { useEffect, useRef, useState } from 'react';
+import {Pusher} from '@pusher/pusher-websocket-react-native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {getDistance, isValidCoordinate} from 'geolib';
+import {Icon} from 'native-base';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Linking,
   SafeAreaView,
   StyleSheet,
   View,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, {Marker} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Post } from '../Axios/AxiosInterceptorFunction';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 import AdditionalTimeModal from '../Components/AdditionalTimeModal';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import navigationService from '../navigationService';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-import { Pusher } from '@pusher/pusher-websocket-react-native';
-import { baseUrl } from '../Config';
-import { customMapStyle } from '../Utillity/mapstyle';
+import {customMapStyle} from '../Utillity/mapstyle';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
-const RideScreen = ({ route }) => {
-  const { data, type, ride_status } = route?.params;
-  console.log("🚀 ~ RideScreen ~ data:", data?.status)
+const RideScreen = ({route}) => {
+  const {data, type, ride_status} = route?.params;
+  console.log('🚀 ~ RideScreen ~ data:', data?.user?.phone);
   const rideData = route?.params?.data;
   const rider_arrived_time = route?.params?.rider_arrived_time;
+
+  const token = useSelector(state => state.authReducer.token);
+
+  const timeoutRef = useRef(null);
+  console.log('🚀 ~ RideScreen ~ timeoutRef:aaaaaaaa', timeoutRef?.current);
   const isFocused = useIsFocused();
   const mapRef = useRef(null);
-  const navigation = useNavigation();
-  const token = useSelector(state => state.authReducer.token);
+  const pusher = Pusher.getInstance();
+  const myChannel = useRef(null);
+
+  const [canCancel, setCanCancel] = useState(true);
+  console.log('🚀 ~ RideScreen ~ canCancel:', canCancel);
   const [additionalTime, setAdditionalTime] = useState(false);
   const [additionalTimeModal, setAdditionalTimeModal] = useState(false);
   const [isriderArrive, setIsRiderArrived] = useState(false);
-  console.log("🚀 ~ RideScreen ~ isriderArrive:", isriderArrive)
   const [addTime, setAddTime] = useState(0);
   const [time, setTime] = useState(0);
-  const { user_type } = useSelector(state => state.authReducer);
-  const [start_waiting, setStartWaiting] = useState(false);
+  const {user_type} = useSelector(state => state.authReducer);
   const [isLoading, setIsLoading] = useState(false);
-  const [arrive, setArrive] = useState(false);
-  const [passengerArrive, setPassengerArrive] = useState(false);
-  const [fare, setFare] = useState(0);
-  const [distance, setDistance] = useState(0);
+
   const [Updatedride, setUpdatedRide] = useState(data?.status);
-  console.log("🚀 ~ RideScreen ~ Updatedride:", Updatedride?.ride_info?.status)
 
-
-  const pusher = Pusher.getInstance();
-  const myChannel = useRef(null);
   const [currentPosition, setCurrentPosition] = useState({
     latitude: 0,
     longitude: 0,
@@ -74,11 +73,13 @@ const RideScreen = ({ route }) => {
   };
   const destination = {
     lat:
-      type === 'details' ? parseFloat(data?.pickup_location_lat) : 37.43312021,
-    // : parseFloat(data?.ride_info?.rider?.lat),
+      type === 'details'
+        ? parseFloat(data?.pickup_location_lat)
+        : parseFloat(data?.ride_info?.rider?.lat),
     lng:
-      type === 'details' ? parseFloat(data?.pickup_location_lng) : -122.0876855,
-    // : parseFloat(data?.ride_info?.rider?.lng),
+      type === 'details'
+        ? parseFloat(data?.pickup_location_lng)
+        : parseFloat(data?.ride_info?.rider?.lng),
   };
 
   useEffect(() => {
@@ -119,15 +120,14 @@ const RideScreen = ({ route }) => {
   }, [isFocused]);
 
   const trackedLoaction = async (lat, lng) => {
-    const url = 'auth/ride_location'
+    const url = 'auth/ride_location';
     const body = {
       lat: lat,
       lng: lng,
-      target_id: data?.user?.id
-    }
-    const response = await Post(url, body, apiHeader(token))
-    console.log("🚀 ~ trackedLoaction ~ response:", response?.data)
-  }
+      target_id: data?.user?.id,
+    };
+    const response = await Post(url, body, apiHeader(token));
+  };
 
   useEffect(() => {
     console.log('==================== >>>>> from pusher tracking screen');
@@ -169,7 +169,7 @@ const RideScreen = ({ route }) => {
 
     return () => {
       if (myChannel.current) {
-        pusher.unsubscribe({ channelName: `my-ride-location-${data?.user?.id}` });
+        pusher.unsubscribe({channelName: `my-ride-location-${data?.user?.id}`});
       }
     };
   }, [isFocused]);
@@ -177,8 +177,7 @@ const RideScreen = ({ route }) => {
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
       position => {
-        const { latitude, longitude } = position.coords;
-        console.log("🚀 ~ useEffect ~ latitude: latitude", latitude, longitude)
+        const {latitude, longitude} = position.coords;
         trackedLoaction(latitude, longitude);
         setCurrentPosition(prevLocation => ({
           ...prevLocation,
@@ -275,6 +274,8 @@ const RideScreen = ({ route }) => {
         navigationService.navigate('RateScreen', {
           data: Updatedride?.ride_info,
         });
+      } else if (response?.data?.ride_info?.status === 'cancel') {
+        navigationService.navigate('Home');
       }
       setUpdatedRide(response?.data);
     }
@@ -315,8 +316,8 @@ const RideScreen = ({ route }) => {
           additionalTime
             ? 'Wait For Additional Time'
             : user_type === 'Rider'
-              ? 'Navigation to Pickup'
-              : 'Waiting Pickup'
+            ? 'Navigation to Pickup'
+            : 'Waiting Pickup'
         }
       />
       <View style={styles.main_view}>
@@ -339,12 +340,10 @@ const RideScreen = ({ route }) => {
                   bottom: 100,
                 },
               });
-
             }
           }}
           // provider={PROVIDER_GOOGLE}
-          customMapStyle={customMapStyle}
-        >
+          customMapStyle={customMapStyle}>
           {Object.keys(origin)?.length > 0 && isValidCoordinate(origin) && (
             <Marker
               pinColor={Color.black}
@@ -380,16 +379,16 @@ const RideScreen = ({ route }) => {
               }
             }}
           />
-          {Object.keys(destination)?.length > 0 && isValidCoordinate(destination) && (
-            <Marker
-              pinColor={Color.black}
-              coordinate={{
-                latitude: destination?.lat,
-                longitude: destination?.lng,
-              }}
-            />
-          )}
-
+          {Object.keys(destination)?.length > 0 &&
+            isValidCoordinate(destination) && (
+              <Marker
+                pinColor={Color.black}
+                coordinate={{
+                  latitude: destination?.lat,
+                  longitude: destination?.lng,
+                }}
+              />
+            )}
         </MapView>
         <View
           style={[
@@ -398,11 +397,17 @@ const RideScreen = ({ route }) => {
               top: 20,
             },
           ]}>
+          {/* <View
+          style={[
+            styles.latest_ride_view,
+            {
+              top: 20,
+            },
+          ]}> */}
           <View style={styles.latest_ride_subView}>
             <View style={styles.latest_ride_image_view}>
               <CustomImage
-                source={{ uri: `${baseUrl}${rideData?.rideData?.user?.photo}` }}
-                // source={require('../Assets/Images/user.png')}
+                source={require('../Assets/Images/user.png')}
                 style={{
                   width: '100%',
                   height: '100%',
@@ -413,7 +418,7 @@ const RideScreen = ({ route }) => {
             <View
               style={{
                 marginLeft: moderateScale(10, 0.6),
-                width: windowWidth * 0.5,
+                width: windowWidth * 0.45,
               }}>
               <CustomText
                 isBold
@@ -421,11 +426,26 @@ const RideScreen = ({ route }) => {
                   fontSize: moderateScale(13, 0.6),
                   color: Color.black,
                 }}>
-                {/* name sssssssssssssss */}
                 {rideData?.user?.name}
               </CustomText>
-              {/* <Vie
-              ew> */}
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <CustomText
+                  isBold
+                  style={{
+                    fontSize: moderateScale(11, 0.6),
+                    color: Color.black,
+                  }}>
+                  status :
+                </CustomText>
+                <CustomText
+                  style={{
+                    fontSize: moderateScale(11, 0.6),
+                    color: Color.veryLightGray,
+                    marginLeft: moderateScale(8, 0.6),
+                  }}>
+                  {data?.status}
+                </CustomText>
+              </View>
             </View>
             <View
               style={{
@@ -434,13 +454,17 @@ const RideScreen = ({ route }) => {
                 height: '100%',
                 paddingHorizontal: moderateScale(10, 0.6),
                 justifyContent: 'space-between',
-                // marginHorizontal :moderateScale(5,.6)
+                paddingTop: moderateScale(5, 0.6),
               }}>
               <Icon
+              onPress={() =>{
+                Linking.openURL(`tel:${data?.user?.phone}`);
+                //  ridedata?.ride_info?.rider?.phone
+              }}
                 style={styles.icons}
                 name={'call'}
                 as={Ionicons}
-                size={moderateScale(17, 0.6)}
+                size={moderateScale(21, 0.6)}
                 color={'white'}
               />
               <Icon
@@ -452,7 +476,7 @@ const RideScreen = ({ route }) => {
                 style={styles.icons}
                 name={'message1'}
                 as={AntDesign}
-                size={moderateScale(17, 0.6)}
+                size={moderateScale(21, 0.6)}
                 color={'white'}
               />
             </View>
@@ -466,8 +490,8 @@ const RideScreen = ({ route }) => {
               height: windowHeight * 0.2,
               position: 'absolute',
               bottom: 0,
+              // backgroundColor :'red'
             }}>
-
             {Updatedride?.ride_info?.status == 'arrive' && (
               <CustomButton
                 text={
@@ -492,8 +516,7 @@ const RideScreen = ({ route }) => {
                   onPressStartNavigation();
                 }}
               />
-            )
-            }
+            )}
 
             {Updatedride?.ride_info?.status == 'riderArrived' || data?.status === 'riderArrived' && (
               <CustomButton
@@ -552,8 +575,7 @@ const RideScreen = ({ route }) => {
                   }}
                 />
               </View>
-            )
-            }
+            )}
             {isriderArrive && (
               <CustomButton
                 style={{
@@ -585,12 +607,12 @@ const RideScreen = ({ route }) => {
           </View>
         </>
       </View>
-      <AdditionalTimeModal
+      {/* <AdditionalTimeModal
         setAdditionalTime={setAdditionalTime}
         modalvisibe={additionalTimeModal}
         setTime={setAddTime}
         setModalVisible={setAdditionalTimeModal}
-      />
+      /> */}
     </SafeAreaView>
   );
 };
@@ -607,76 +629,17 @@ const styles = StyleSheet.create({
     width: windowWidth,
     height: windowHeight,
     backgroundColor: Color.white,
-    // backgroundColor :'red'
   },
-  map_view: {
-    height: windowHeight * 0.7,
-    width: windowWidth,
-    borderRadius: moderateScale(40, 0.6),
-  },
+
   map: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: Color.grey,
   },
-  image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  waiting_card: {
-    width: windowWidth * 0.9,
-    height: windowHeight * 0.25,
-    backgroundColor: Color.white,
-    alignSelf: 'center',
-    borderRadius: moderateScale(20, 0.6),
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 12,
-    },
-    shadowOpacity: 0.58,
-    shadowRadius: 16.0,
-    elevation: 24,
-    paddingHorizontal: moderateScale(15, 0.6),
-    paddingVertical: moderateScale(15, 0.6),
-    bottom: 70,
-  },
-  text_view: {
-    fontSize: moderateScale(15, 0.6),
-    textAlign: 'center',
-  },
-  row_view: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  location_text_view: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    height: moderateScale(40, 0.6),
-    borderWidth: 0.6,
-    borderColor: Color.lightGrey,
-    borderRadius: moderateScale(10, 0.6),
-    marginTop: moderateScale(20, 0.6),
-  },
-  text: {
-    fontSize: moderateScale(12, 0.6),
-    color: Color.veryLightGray,
-    marginLeft: moderateScale(10, 0.6),
-  },
-  text2: {
-    fontSize: moderateScale(12, 0.6),
-    color: Color.black,
-    marginLeft: moderateScale(5, 0.6),
-    fontWeight: '600',
-  },
+
   latest_ride_view: {
     position: 'absolute',
-    // bottom: 0,
     left: 0,
     right: 0,
-    // backgroundColor :'red' ,
     backgroundColor: Color.white,
     alignItems: 'center',
     width: windowWidth * 0.95,
@@ -706,25 +669,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'green ',
   },
-  text_view2: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: windowWidth * 0.8,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: moderateScale(10, 0.6),
-  },
-  text1: {
-    fontSize: moderateScale(9, 0.6),
-  },
+
   icons: {
     backgroundColor: Color.darkBlue,
-    height: windowHeight * 0.034,
-    width: windowHeight * 0.034,
+    height: windowHeight * 0.04,
+    width: windowHeight * 0.04,
     textAlign: 'center',
-    borderRadius: (windowHeight * 0.034) / 2,
+    borderRadius: (windowHeight * 0.04) / 2,
     paddingTop: moderateScale(7, 0.6),
     marginHorizontal: moderateScale(2.6),
-    // borderWidth: 0.3,
   },
 });

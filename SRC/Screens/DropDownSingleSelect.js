@@ -38,6 +38,9 @@ const DropDownSingleSelect = ({
   // const themeColor = useSelector(state => state.authReducer.ThemeColor);
 
   useEffect(() => {
+    // if (Array.isArray(array)) {
+    //   setData(array);
+    // }
     setData([]);
     array?.map((x, index) => {
       // return console.log( "DDSINGLE SELECT ==>",typeof(array[0]) == 'object')

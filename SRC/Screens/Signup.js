@@ -1,5 +1,7 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {Formik} from 'formik';
+import {Icon} from 'native-base';
+import React, {useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -9,40 +11,31 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { moderateScale, ScaledSheet } from 'react-native-size-matters';
-import { Formik } from 'formik';
-import { Icon } from 'native-base';
+import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Post } from '../Axios/AxiosInterceptorFunction';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import { SignupSchema } from '../Constant/schema';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-import { setUserData } from '../Store/slices/common';
+import {SignupSchema} from '../Constant/schema';
+import {setUserToken} from '../Store/slices/auth';
+import {setUserData} from '../Store/slices/common';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
 const Signup = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const [username, setUserName] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState(null);
   const [imagePicker, setImagePicker] = useState(false);
   const [image, setImage] = useState({});
-  const [term, setTerm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  console.log('🚀 ~ Signup ~ isLoading:', isLoading);
-  const { user_type } = useSelector(state => state.authReducer);
-  console.log(user_type, 'userrtypeeeeee');
+  const {user_type} = useSelector(state => state.authReducer);
 
   const onPressregister = async values => {
-    console.log(values, 'valuyessssssssss');
     const body = {
       name: values.name,
       email: values.email,
@@ -52,11 +45,9 @@ const Signup = () => {
       confirm_password: values.confirmPassword,
       role: 'Rider',
     };
-    console.log('🚀 ~ Signup ~ body:', body);
     const url = 'register';
     setIsLoading(true);
     const response = await Post(url, body, apiHeader());
-    console.log('🚀 ~ Signup ~ response:', response?.data);
     setIsLoading(false);
     if (response != undefined) {
       navigation.navigate('AddYourCar');
@@ -64,6 +55,7 @@ const Signup = () => {
         ? ToastAndroid.show('Sign up successfully', ToastAndroid.SHORT)
         : Alert.alert('Sign up successfully');
       dispatch(setUserData(response?.data?.user_info));
+      dispatch(setUserToken({token: response?.data?.token}));
     }
   };
 
@@ -109,7 +101,6 @@ const Signup = () => {
             termsAccepted: false,
           }}
           validationSchema={SignupSchema}
-          // onSubmit={console.log('//////////////////////////')}>
           onSubmit={onPressregister}>
           {({
             values,
@@ -119,12 +110,8 @@ const Signup = () => {
             touched,
             setFieldValue,
           }) => {
-            // console.log('Errors:', errors);
             return (
-              <View
-                style={[
-                  styles.fields_box
-                ]}>
+              <View style={[styles.fields_box]}>
                 <TextInputWithTitle
                   title={'name *'}
                   placeholder={'James W. Brown'}
@@ -139,7 +126,7 @@ const Signup = () => {
                   borderColor={Color.lightGrey}
                   marginTop={moderateScale(8, 0.3)}
                   placeholderColor={Color.mediumGray}
-                  titleStlye={{ right: 10 }}
+                  titleStlye={{right: 10}}
                 />
                 {touched.name && errors.name && (
                   <CustomText style={styles.schemaText}>
@@ -161,7 +148,7 @@ const Signup = () => {
                   borderColor={Color.lightGrey}
                   marginTop={moderateScale(8, 0.3)}
                   placeholderColor={Color.mediumGray}
-                  titleStlye={{ right: 10 }}
+                  titleStlye={{right: 10}}
                 />
                 {touched.email && errors.email && (
                   <CustomText
@@ -174,11 +161,7 @@ const Signup = () => {
                     {errors.email}
                   </CustomText>
                 )}
-                {/* {touched.email && errors.email && (
-                <CustomText style={styles.schemaText}>
-                  {errors.email}
-                </CustomText>
-              )} */}
+
                 <TextInputWithTitle
                   title={'contact * '}
                   titleText={'Username'}
@@ -194,7 +177,7 @@ const Signup = () => {
                   borderColor={Color.lightGrey}
                   marginTop={moderateScale(8, 0.3)}
                   placeholderColor={Color.mediumGray}
-                  titleStlye={{ right: 10 }}
+                  titleStlye={{right: 10}}
                 />
                 {touched.contact && errors.contact && (
                   <CustomText style={styles.schemaText}>
@@ -216,9 +199,8 @@ const Signup = () => {
                   backgroundColor={'transparent'}
                   borderColor={Color.lightGrey}
                   marginTop={moderateScale(8, 0.3)}
-                  // color={Color.white}
                   placeholderColor={Color.mediumGray}
-                  titleStlye={{ right: 10 }}
+                  titleStlye={{right: 10}}
                 />
                 {touched.password && errors.password && (
                   <CustomText style={styles.schemaText}>
@@ -240,9 +222,8 @@ const Signup = () => {
                   backgroundColor={'transparent'}
                   borderColor={Color.lightGrey}
                   marginTop={moderateScale(8, 0.3)}
-                  // color={Color.white}
                   placeholderColor={Color.mediumGray}
-                  titleStlye={{ right: 10 }}
+                  titleStlye={{right: 10}}
                 />
                 {touched.password && errors.password && (
                   <CustomText style={styles.schemaText}>
@@ -267,12 +248,12 @@ const Signup = () => {
                   <CustomText style={styles.term_text}>
                     By Click You Agree To Our
                     <CustomText
-                      style={{ fontSize: moderateScale(11, 0.6), color: 'red' }}>
+                      style={{fontSize: moderateScale(11, 0.6), color: 'red'}}>
                       terms & conditions
                     </CustomText>
                     As Well As Our
                     <CustomText
-                      style={{ fontSize: moderateScale(11, 0.6), color: 'red' }}>
+                      style={{fontSize: moderateScale(11, 0.6), color: 'red'}}>
                       Privacy Policy.
                     </CustomText>
                   </CustomText>
@@ -294,18 +275,14 @@ const Signup = () => {
                   fontSize={moderateScale(14, 0.3)}
                   textColor={Color.white}
                   borderWidth={1.5}
-                  borderColor={
-                    Color.darkBlue
-                  }
+                  borderColor={Color.darkBlue}
                   borderRadius={moderateScale(30, 0.3)}
                   width={windowWidth * 0.8}
                   marginTop={moderateScale(10, 0.3)}
                   height={windowHeight * 0.075}
-                  bgColor={
-                    Color.darkBlue
-                  }
+                  bgColor={Color.darkBlue}
                   textTransform={'capitalize'}
-                  elevation
+                  // elevation
                 />
               </View>
             );
@@ -323,21 +300,17 @@ const Signup = () => {
           </CustomText>
         </CustomText>
 
-        <ImagePickerModal
+        {/* <ImagePickerModal
           show={imagePicker}
           setShow={setImagePicker}
           setFileObject={setImage}
-        />
+        /> */}
       </ScrollView>
     </ScreenBoiler>
   );
 };
 
 const styles = ScaledSheet.create({
-  container: {
-    backgroundColor: 'white',
-    alignItems: 'center',
-  },
   text: {
     fontSize: moderateScale(22, 0.6),
     color: Color.themeBlack,
@@ -347,7 +320,6 @@ const styles = ScaledSheet.create({
     borderWidth: 0.3,
     borderColor: '#28272369',
     borderRadius: 20,
-    // height: windowHeight * 0.65,
     paddingVertical: moderateScale(10, 0.6),
     width: windowWidth * 0.9,
     alignItems: 'center',
@@ -361,19 +333,9 @@ const styles = ScaledSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4.65,
     paddingHorizontal: moderateScale(20, 0.6),
-    elevation: 8,
+    elevation: 200,
   },
-  input_container: {
-    borderWidth: 1,
-    borderColor: Color.mediumGray,
-    borderRadius: 20,
-    paddingVertical: moderateScale(10, 0.6),
-    // height: windowHeight * 0.65,
-    width: windowWidth * 0.9,
-    alignItems: 'center',
-    paddingTop: moderateScale(15, 0.6),
-    paddingHorizontal: moderateScale(20, 0.6),
-  },
+
   row: {
     flexDirection: 'row',
     paddingVertical: moderateScale(15, 0.6),
@@ -404,7 +366,6 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(10, 0.6),
     color: 'red',
     alignSelf: 'flex-start',
-    // backgroundColor: 'red',
   },
 });
 

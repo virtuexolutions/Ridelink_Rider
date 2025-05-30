@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, {useEffect, useState} from 'react';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import navigationService from './navigationService';
-import { useSelector } from 'react-redux';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import {useSelector} from 'react-redux';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import Drawer from './Drawer/Drawer';
 import LoginScreen from './Screens/LoginScreen';
 import Signup from './Screens/Signup';
@@ -24,12 +24,12 @@ import RideRequest from './Screens/RideRequest';
 import PassengerDetails from './Screens/PassengerDetails';
 import GoOnlineScreen from './Screens/GoOnlineScreen';
 import SendTripRecieptScreen from './Screens/SendTripRecieptScreen';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import Walletscreen from './Screens/Walletscreen';
 import Earningsscreen from './Screens/Earningsscreen';
 import ChooseDeclineReasonScreen from './Screens/ChooseDeclineReasonScreen';
 import Profile from './Screens/Profile';
-import { enableScreens } from 'react-native-screens';
+import {enableScreens} from 'react-native-screens';
 import MyWallet from './Screens/MyWallet';
 import AddYourCar from './Screens/AddYourCar';
 import History from './Screens/History';
@@ -37,37 +37,37 @@ import ReferFriendScreen from './Screens/ReferFriendScreen';
 import MessagesScreen from './Screens/MessagesScreen';
 import DeliveryScreen from './Screens/DeliveryScreen';
 import PlaceHolderScreen from './Screens/PlaceHolderScreen';
+import AccountVerificationScreen from './Screens/AccountVerificationScreen';
 // import ReferFriendScreen from './Screens/ReferFriendScreen';
 // import LearningCenter from './Screens/LearningCenter';
 // import PrivacyPolicy from './Screens/PrivacyPolicy';
 
 enableScreens();
 const AppNavigator = () => {
-  const isGoalCreated = useSelector(state => state.authReducer.isGoalCreated);
   const walkThrough = useSelector(state => state.authReducer.userWalkThrough);
-  const role = useSelector(state => state.authReducer.role);
-  const isVerified = useSelector(state => state.authReducer.isVerified);
   const token = useSelector(state => state.authReducer.token);
+  const userData = useSelector(state => state.commonReducer.userData);
 
   const RootNav = createNativeStackNavigator();
-  const RootNavLogged = createNativeStackNavigator();
 
   const AppNavigatorContainer = () => {
     const firstScreen =
       walkThrough == false
         ? 'WalkThroughScreen'
         : token == null
-          ? 'LoginScreen'
-          : 'MyDrawer';
+        ? 'LoginScreen'
+        : userData?.car_info == null
+        ? 'AddYourCar'
+        : userData?.acc_active == 'pending'
+        ? 'AccountVerificationScreen'
+        : 'MyDrawer';
 
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
         <RootNav.Navigator
-          // initialRouteName={'PlaceHolderScreen'}
+          // initialRouteName={'AccountVerificationScreen'}
           initialRouteName={firstScreen}
-          // initialRouteName={'Walletscreen'}
-          // initialRouteName={'RateScreen'}
-          screenOptions={{ headerShown: false }}>
+          screenOptions={{headerShown: false}}>
           <RootNav.Screen name="MyDrawer" component={MyDrawer} />
           <RootNav.Screen
             name="WalkThroughScreen"
@@ -87,11 +87,21 @@ const AppNavigator = () => {
           <RootNav.Screen name="VerifyNumber" component={VerifyNumber} />
           <RootNav.Screen name="Profile" component={Profile} />
           <RootNav.Screen name="RateScreen" component={RateScreen} />
-          <RootNav.Screen name="AddYourCar" component={AddYourCar} />
           <RootNav.Screen name="MessagesScreen" component={MessagesScreen} />
-          <RootNav.Screen name="PlaceHolderScreen" component={PlaceHolderScreen} />
+          <RootNav.Screen
+            name="PlaceHolderScreen"
+            component={PlaceHolderScreen}
+          />
           <RootNav.Screen name="Home" component={Home} />
-
+          <RootNav.Screen
+            name="AccountVerificationScreen"
+            component={AccountVerificationScreen}
+          />
+          <RootNav.Screen name="AddYourCar" component={AddYourCar} />
+          <RootNav.Screen
+            name="Walletscreen"
+            component={Walletscreen}
+          />
 
           {/* <RootNav.Screen name="History" component={History} /> */}
           {/* <RootNav.Screen name="PrivacyPolicy" component={PrivacyPolicy} /> */}
@@ -248,7 +258,10 @@ export const MyDrawer = () => {
         },
       }}>
       <DrawerNavigation.Screen name="Home" component={Home} />
-      <DrawerNavigation.Screen name="PlaceHolderScreen" component={PlaceHolderScreen} />
+      <DrawerNavigation.Screen
+        name="PlaceHolderScreen"
+        component={PlaceHolderScreen}
+      />
       <DrawerNavigation.Screen name="Walletscreen" component={Walletscreen} />
       <DrawerNavigation.Screen
         name="Earningsscreen"

@@ -1,491 +1,6 @@
-// import { useNavigation } from '@react-navigation/native';
-// import { Formik } from 'formik';
-// import { Icon, Toast } from 'native-base';
-// import React, { useState } from 'react';
-// import {
-//   ActivityIndicator,
-//   Alert,
-//   Platform,
-//   ScrollView,
-//   StyleSheet,
-//   ToastAndroid,
-//   TouchableOpacity,
-//   View,
-// } from 'react-native';
-// import { SafeAreaView } from 'react-native-safe-area-context';
-// import { moderateScale } from 'react-native-size-matters';
-// import FontAwesome from 'react-native-vector-icons/FontAwesome';
-// import { useDispatch, useSelector } from 'react-redux';
-// import Color from '../Assets/Utilities/Color';
-// import CustomButton from '../Components/CustomButton';
-// import CustomImage from '../Components/CustomImage';
-// import CustomStatusBar from '../Components/CustomStatusBar';
-// import CustomText from '../Components/CustomText';
-// import ImagePickerModal from '../Components/ImagePickerModal';
-// import TextInputWithTitle from '../Components/TextInputWithTitle';
-// import { addYourCarSchema, loginSchema } from '../Constant/schema';
-// import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-// import DropDownSingleSelect from './DropDownSingleSelect';
-// import { Post } from '../Axios/AxiosInterceptorFunction';
-// import Header from '../Components/Header';
-// import { setUserData } from '../Store/slices/common';
-// import { setUserToken } from '../Store/slices/auth';
-// import navigationService from '../navigationService';
-
-// const AddYourCar = props => {
-//   const dispatch = useDispatch();
-//   const token = useSelector(state => state.authReducer.token);
-//   const [username, setUserName] = useState('');
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [imagePicker, setImagePicker] = useState(false);
-//   const [cartype, setCarType] = useState('');
-//   const [image, setImage] = useState({});
-//   const navigation = useNavigation();
-//   const [loginMethod, setLoginMethod] = useState('');
-//   const carType = ['Mini', 'Standered Ac', 'Luxury Ac'];
-
-//   const onSubmit = async values => {
-//     const formData = new FormData();
-
-//     const body = {
-//       name: values.carName,
-//       number: values.carNumber,
-//       seats: values.carSeats,
-//       category: cartype,
-//       model: values.carModel,
-//       status: 'active',
-//       type: 'hjhjhjk',
-//     };
-//     for (let key in body) {
-//       if (key == '') {
-//         Platform.OS == 'android'
-//           ? ToastAndroid.show(`${key} is required`, ToastAndroid.SHORT)
-//           : alert(`${key} is required`);
-//       }
-//       formData.append(key, body[key]);
-//     }
-//     formData.append('image', image);
-//     const url = 'auth/rider/car_update';
-//     setIsLoading(true);
-//     const response = await Post(url, body, apiHeader(token));
-//     setIsLoading(false);
-//     if (response != undefined) {
-//       Platform.OS == 'android'
-//         ? ToastAndroid.show('Your car is Updated', ToastAndroid.SHORT)
-//         : Alert.alert('Your car is Updated');
-//       dispatch(setUserData(response?.data?.user_info));
-//       dispatch(setUserToken({ token: response?.data?.token }));
-//       navigationService.navigate('Home');
-//     }
-//   };
-
-//   return (
-//     <SafeAreaView style={{ flex: 1 }}>
-//       <CustomStatusBar
-//         backgroundColor={Color.white}
-//         barStyle={'dark-content'}
-//       />
-//       <ScrollView
-//         style={{
-//           height: windowHeight,
-//           width: windowWidth,
-//           backgroundColor: Color.white,
-//         }}
-//         contentContainerStyle={{
-//           alignItems: 'center',
-//         }}
-//         showsVerticalScrollIndicator={false}>
-//         {token && <Header title={'Add Your vehicle'} showBack hideUser />}
-//         {token ? (
-//           <></>
-//         ) : (
-//           <CustomText isBold style={styles.text}>
-//             Update Your Vehicle
-//           </CustomText>
-//         )}
-//         <View style={token ? styles.container_field : styles.feild_container}>
-//           <Formik
-//             initialValues={{
-//               carModel: '',
-//               carNumber: '',
-//               carSeats: '',
-//               category: '',
-//             }}
-//             onSubmit={onSubmit}
-//             validationSchema={addYourCarSchema}>
-//             {({ handleChange, handleSubmit, values, errors, touched }) => {
-//               return (
-//                 <>
-//                   <TextInputWithTitle
-//                     title={'Car Year'}
-//                     placeholder={'enter your car year here'}
-//                     setText={handleChange('year')}
-//                     value={values.year}
-//                     viewHeight={0.055}
-//                     viewWidth={0.82}
-//                     inputWidth={0.8}
-//                     border={1}
-//                     fontSize={moderateScale(10, 0.6)}
-//                     borderRadius={30}
-//                     backgroundColor={'transparent'}
-//                     borderColor={Color.lightGrey}
-//                     marginTop={moderateScale(10, 0.3)}
-//                     placeholderColor={Color.darkGray}
-//                     titleStlye={{ right: 10 }}
-//                   />
-//                   {touched.year && errors.year && (
-//                     <CustomText
-//                       textAlign={'left'}
-//                       style={{
-//                         fontSize: moderateScale(10, 0.6),
-//                         color: Color.red,
-//                         alignSelf: 'flex-start',
-//                       }}>
-//                       {errors.year}
-//                     </CustomText>
-//                   )}
-//                   <TextInputWithTitle
-//                     title={'Car Making Comapny Name'}
-//                     placeholder={'enter your making comapny name'}
-//                     setText={handleChange('make')}
-//                     value={values.make}
-//                     viewHeight={0.055}
-//                     viewWidth={0.82}
-//                     inputWidth={0.8}
-//                     border={1}
-//                     fontSize={moderateScale(10, 0.6)}
-//                     borderRadius={30}
-//                     backgroundColor={'transparent'}
-//                     borderColor={Color.lightGrey}
-//                     marginTop={moderateScale(10, 0.3)}
-//                     placeholderColor={Color.darkGray}
-//                     titleStlye={{ right: 10 }}
-//                   />
-//                   {touched.make && errors.make && (
-//                     <CustomText
-//                       textAlign={'left'}
-//                       style={{
-//                         fontSize: moderateScale(10, 0.6),
-//                         color: Color.red,
-//                         alignSelf: 'flex-start',
-//                       }}>
-//                       {errors.make}
-//                     </CustomText>
-//                   )}
-//                   <TextInputWithTitle
-//                     title={'car Modal'}
-//                     placeholder={'enter your car modal'}
-//                     setText={handleChange('model')}
-//                     value={values.model}
-//                     viewHeight={0.055}
-//                     viewWidth={0.82}
-//                     inputWidth={0.8}
-//                     border={1}
-//                     fontSize={moderateScale(10, 0.6)}
-//                     borderRadius={30}
-//                     backgroundColor={'transparent'}
-//                     borderColor={Color.lightGrey}
-//                     marginTop={moderateScale(10, 0.3)}
-//                     placeholderColor={Color.darkGray}
-//                     titleStlye={{ right: 10 }}
-//                   />
-//                   {touched.model && errors.model && (
-//                     <CustomText
-//                       textAlign={'left'}
-//                       style={{
-//                         fontSize: moderateScale(10, 0.6),
-//                         color: Color.red,
-//                         alignSelf: 'flex-start',
-//                       }}>
-//                       {errors.model}
-//                     </CustomText>
-//                   )}
-//                   <TextInputWithTitle
-//                     title={'Car capacity'}
-//                     placeholder={'enter your car capacity here'}
-//                     setText={handleChange('capacity')}
-//                     value={values.capacity}
-//                     viewHeight={0.055}
-//                     viewWidth={0.82}
-//                     inputWidth={0.8}
-//                     border={1}
-//                     fontSize={moderateScale(9, 0.6)}
-//                     borderRadius={30}
-//                     backgroundColor={'transparent'}
-//                     borderColor={Color.lightGrey}
-//                     marginTop={moderateScale(10, 0.3)}
-//                     placeholderColor={Color.veryLightGray}
-//                     titleStlye={{ right: 10 }}
-//                   />
-//                   {touched.capacity && errors.capacity && (
-//                     <CustomText
-//                       textAlign={'left'}
-//                       style={{
-//                         fontSize: moderateScale(10, 0.6),
-//                         color: Color.red,
-//                         alignSelf: 'flex-start',
-//                       }}>
-//                       {errors.capacity}
-//                     </CustomText>
-//                   )}
-//                   <View style={{ marginTop: moderateScale(10, 0.6) }} />
-//                   <CustomText
-//                     style={{
-//                       color: Color.black,
-//                       fontSize: moderateScale(12, 0.3),
-//                       textAlign: 'left',
-//                       width: windowWidth * 0.75,
-//                     }}>
-//                     Select car Category
-//                   </CustomText>
-//                   <DropDownSingleSelect
-//                     array={carType}
-//                     item={cartype}
-//                     setItem={setCarType}
-//                     width={windowWidth * 0.8}
-//                     placeholder={'Select Car Category'}
-//                     dropdownStyle={{
-//                       borderWidth: 0.5,
-//                       borderColor: Color.lightGrey,
-//                       width: windowWidth * 0.85,
-//                       borderRadius: 25,
-//                       marginBottom: moderateScale(20, 0.6),
-//                       height: windowHeight * 0.06,
-//                       // backgroundColor: 'red'
-//                     }}
-//                     btnStyle={{
-//                       height: windowHeight * 0.06,
-//                       borderWidth: 0.1,
-//                       alignSelf: 'center',
-//                     }}
-//                   />
-//                   <CustomText
-//                     style={{
-//                       color: Color.black,
-//                       fontSize: moderateScale(12, 0.3),
-//                       textAlign: 'left',
-//                       width: windowWidth * 0.75,
-//                     }}>
-//                     Add Car Image
-//                   </CustomText>
-//                   <TouchableOpacity
-//                     activeOpacity={0.6}
-//                     onPress={() => {
-//                       setImagePicker(true);
-//                     }}
-//                     style={styles.image}>
-//                     {Object.keys(image).length > 0 ? (
-//                       <CustomImage
-//                         source={{ uri: image?.uri }}
-//                         resizeMode="cover"
-//                         style={{
-//                           height: windowHeight * 0.14,
-//                           width: windowHeight * 0.12,
-//                           borderRadius: moderateScale(15, 0.6),
-//                         }}
-//                       />
-//                     ) : (
-//                       <Icon
-//                         name="plus"
-//                         as={FontAwesome}
-//                         style={styles.icon2}
-//                         color={Color.darkGray}
-//                         size={moderateScale(20, 0.3)}
-//                         onPress={() => {
-//                           setImagePicker(true);
-//                         }}
-//                       />
-//                     )}
-//                   </TouchableOpacity>
-//                   <View
-//                     style={{
-//                       marginVertical: moderateScale(10, 0.6),
-//                     }}>
-//                     <CustomText
-//                       style={{
-//                         fontSize: moderateScale(12, 0.6),
-//                         color: Color.red,
-//                         fontWeight: '500',
-//                       }}>
-//                       Instructions :
-//                     </CustomText>
-//                     <CustomText
-//                       style={{
-//                         fontSize: moderateScale(11, 0.6),
-//                         color: Color.grey,
-//                       }}>
-//                       Please add valid Imformation about your Car add front and
-//                       clear image.
-//                     </CustomText>
-//                   </View>
-//                   <CustomButton
-//                     text={
-//                       isLoading ? (
-//                         <ActivityIndicator size={'small'} color={Color.white} />
-//                       ) : (
-//                         'Submit'
-//                       )
-//                     }
-//                     fontSize={moderateScale(15, 0.3)}
-//                     textColor={Color.white}
-//                     borderWidth={0}
-//                     borderColor={Color.white}
-//                     borderRadius={moderateScale(30, 0.3)}
-//                     width={windowWidth * 0.8}
-//                     height={windowHeight * 0.075}
-//                     bgColor={Color.darkBlue}
-//                     textTransform={'capitalize'}
-//                     elevation={true}
-//                     onPress={handleSubmit}
-//                   />
-//                 </>
-//               );
-//             }}
-//           </Formik>
-//         </View>
-//         <ImagePickerModal
-//           show={imagePicker}
-//           setShow={setImagePicker}
-//           setFileObject={setImage}
-//         />
-//       </ScrollView>
-//     </SafeAreaView>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: {
-//     backgroundColor: 'white',
-//     alignItems: 'center',
-//   },
-//   text: {
-//     fontSize: moderateScale(24, 0.6),
-//     color: Color.themeBlack,
-//     paddingVertical: moderateScale(10, 0.6),
-//     paddingTop: windowHeight * 0.02,
-//     marginTop: moderateScale(20, 0.6),
-//   },
-//   input_container: {
-//     borderWidth: 1,
-//     borderColor: Color.mediumGray,
-//     borderRadius: 20,
-//     height: windowHeight * 0.4,
-//     width: windowWidth * 0.9,
-//     alignItems: 'center',
-//     paddingTop: moderateScale(15, 0.6),
-//     paddingHorizontal: moderateScale(10, 0.6),
-//   },
-//   container_field: {
-//     width: windowWidth,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     backgroundColor: Color.white,
-//     paddingHorizontal: moderateScale(20, 0.6),
-//     paddingVertical: moderateScale(10, 0.6),
-//     marginBottom: moderateScale(10, 0.6),
-//   },
-//   feild_container: {
-//     borderWidth: 0.5,
-//     borderColor: '#28272369',
-//     borderRadius: 20,
-//     width: windowWidth * 0.9,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     backgroundColor: Color.white,
-//     shadowColor: '#000',
-//     shadowOffset: {
-//       width: 0,
-//       height: 4,
-//     },
-//     shadowOpacity: 0.3,
-//     shadowRadius: 4.65,
-//     elevation: 22,
-//     paddingHorizontal: moderateScale(20, 0.6),
-//     paddingVertical: moderateScale(10, 0.6),
-//     marginBottom: moderateScale(10, 0.6),
-//   },
-//   forgotpassword: {
-//     fontSize: moderateScale(10, 0.6),
-//     color: Color.black,
-//     textAlign: 'right',
-//     width: '95%',
-//     paddingVertical: moderateScale(4, 0.6),
-//     fontWeight: '700',
-//   },
-//   button_container: {
-//     paddingTop: windowHeight * 0.08,
-//   },
-//   soc_text: {
-//     fontSize: moderateScale(8, 6),
-//     paddingVertical: moderateScale(8, 0.6),
-//     textAlign: 'center',
-//     letterSpacing: 0.7,
-//     fontWeight: '700',
-//   },
-//   do_text: {
-//     paddingVertical: moderateScale(35, 0.6),
-//     textTransform: 'none',
-//     letterSpacing: 0.5,
-//     fontSize: moderateScale(12, 0.6),
-//   },
-//   Sign_text: {
-//     color: Color.themeBlack,
-//     paddingRight: moderateScale(5, 0.6),
-//     fontSize: moderateScale(12, 0.6),
-//   },
-//   fields_box: {
-//     borderWidth: 0.3,
-//     borderColor: '#28272369',
-//     borderRadius: 20,
-//     height: windowHeight * 0.5,
-//     width: windowWidth * 0.9,
-//     alignItems: 'center',
-//     paddingTop: moderateScale(15, 0.6),
-//     backgroundColor: Color.white,
-//     shadowColor: '#000',
-//     shadowOffset: {
-//       width: 0,
-//       height: 4,
-//     },
-//     shadowOpacity: 0.3,
-//     shadowRadius: 4.65,
-//     elevation: 8,
-//   },
-//   image: {
-//     marginTop: moderateScale(10, 0.3),
-//     height: windowHeight * 0.14,
-//     width: windowHeight * 0.12,
-//     alignSelf: 'flex-start',
-//     borderRadius: moderateScale(15, 0.6),
-//     backgroundColor: Color.lightGrey,
-//     marginBottom: moderateScale(10, 0.6),
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   edit: {
-//     backgroundColor: Color.white,
-//     width: moderateScale(20, 0.3),
-//     height: moderateScale(20, 0.3),
-//     position: 'absolute',
-//     bottom: -2,
-//     right: 5,
-//     borderRadius: moderateScale(10, 0.3),
-//     elevation: 8,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     zIndex: 1,
-//   },
-// });
-
-// export default AddYourCar;
-
-
-import { useNavigation } from '@react-navigation/native';
-import { Formik } from 'formik';
-import { Icon, Toast } from 'native-base';
-import React, { useState } from 'react';
+import {Formik} from 'formik';
+import {FlatList, Icon} from 'native-base';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -496,77 +11,229 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { moderateScale } from 'react-native-size-matters';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {moderateScale} from 'react-native-size-matters';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomStatusBar from '../Components/CustomStatusBar';
 import CustomText from '../Components/CustomText';
+import DropDown from '../Components/DropDown';
+import Header from '../Components/Header';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import { addYourCarSchema, loginSchema } from '../Constant/schema';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-import DropDownSingleSelect from './DropDownSingleSelect';
-import { Post } from '../Axios/AxiosInterceptorFunction';
-import Header from '../Components/Header';
-import { setUserData } from '../Store/slices/common';
-import { setUserToken } from '../Store/slices/auth';
+import {addYourCarSchema} from '../Constant/schema';
+import {setUserData} from '../Store/slices/common';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import navigationService from '../navigationService';
+import {color} from 'native-base/lib/typescript/theme/styled-system';
 
 const AddYourCar = props => {
   const dispatch = useDispatch();
+  const ref = useRef();
   const token = useSelector(state => state.authReducer.token);
-  const [username, setUserName] = useState('');
+  const userData = useSelector(state => state.commonReducer.userData);
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [imagePicker, setImagePicker] = useState(false);
-  const [cartype, setCarType] = useState('');
-  const [image, setImage] = useState({});
-  const navigation = useNavigation();
-  const [loginMethod, setLoginMethod] = useState('');
-  const carType = ['Mini', 'Standered Ac', 'Luxury Ac'];
+  const [selectedCabCategory, setSelectedCabCategory] = useState('');
+  const [carImages, setCarImages] = useState([]);
+  const [registrationImage, setRegistrationImage] = useState([]);
+  const [insuranceImage, setInsuranceImage] = useState([]);
+  const [ssnImages, setSsnImages] = useState([]);
+  const [licenceImages, setLicenceImages] = useState([]);
+  const [registrationPicker, setRegistrationPicker] = useState(false);
+  const [insurancePicker, setInsurancePicker] = useState(false);
+  const [ssnPicker, setSsnPicker] = useState(false);
+  const [licencePicker, setLicencePicker] = useState(false);
+  const [cabSubCategory, setCabSubCategory] = useState({});
+  const [toolTip, setToolTip] = useState(false);
+  const [imageLoading, setImageLoading] = useState({
+    license: false,
+    ssn: false,
+    insurance: false,
+    registration: false,
+    car: false,
+  });
+  const carType = ['Lynk Standard ', 'Lynk Economy', 'Lynk Premium'];
+  const standardCabs = [
+    {
+      id: 1,
+      cabName: 'Lynk X',
+      feature: 'Budget-friendly everyday rides.',
+    },
+    {
+      id: 2,
+      cabName: 'Lynk Plus',
+      feature: 'Spacious, newer vehicles with extra comfort.',
+      capacity: 4,
+    },
+    {
+      id: 3,
+      cabName: 'Lynk XL',
+      feature: 'Budget-friendly larger vehicles for up to 6 passengers.',
+    },
+  ];
 
-  const onSubmit = async values => {
+  const economyCabs = [
+    {
+      id: 1,
+      cabName: 'LynkEase',
+      feature: 'Smooth, quiet rides with additional comfort.',
+    },
+    {
+      id: 2,
+      cabName: 'Lynk Eco',
+      feature: 'Eco-friendly rides in hybrid or electric vehicles',
+    },
+    {
+      id: 3,
+      cabName: 'Lynk Pet',
+      feature: 'Pet-friendly rides for passengers traveling with pets.',
+    },
+  ];
+
+  const premiumCabs = [
+    {
+      id: 1,
+      cabName: 'Lynk SUV',
+      feature: 'High-end luxury rides with professional drivers.',
+    },
+    {
+      id: 2,
+      cabName: 'Lynk Max',
+      feature: 'Vans or large vehicles for events and group travel.',
+    },
+    {
+      id: 3,
+      cabName: 'Taxi',
+      feature: 'Traditional friendly Local Taxi.',
+    },
+    {
+      id: 4,
+      cabName: 'LynkAccess',
+      feature:
+        'Wheelchair-accessible vehicles for passengers with disabilities.',
+    },
+  ];
+
+  const updateVehicle = async values => {
     const formData = new FormData();
-    console.log('oressed')
+    console.log('oressed');
     const body = {
       name: values.carName,
       number: values.carNumber,
-      seats: values.carSeats,
-      category: cartype,
-      model: values.carModel,
+      capacity: values.capacity,
+      cab_category: selectedCabCategory,
+      cab_model: values.carModel,
       status: 'active',
-      type: 'hjhjhjk',
+      // cab_type: selected,
+      makingyear: values.year,
+      cab_subcategory: cabSubCategory?.cabName,
     };
     for (let key in body) {
-      if (key == '') {
+      if (
+        body[key] === '' ||
+        body[key] === null ||
+        body[key] === undefined ||
+        // object.key(body[key]) == 0 ||
+        (Array.isArray(body[key]) && body[key].length === 0)
+      ) {
         Platform.OS == 'android'
           ? ToastAndroid.show(`${key} is required`, ToastAndroid.SHORT)
-          : alert(`${key} is required`);
+          : Alert.alert(`${key} is required`);
       }
+
       formData.append(key, body[key]);
     }
-    formData.append('image', image);
+    if (
+      Object.keys(carImages).length > 0 &&
+      Object.keys(registrationImage).length > 0
+    ) {
+      carImages?.map((item, index) => {
+        formData.append(`image[${index}]`, item);
+      });
+      registrationImage?.map((item, index) => {
+        formData.append(`registration_certificate[${index}]`, item);
+      });
+      insuranceImage?.map((item, index) => {
+        formData.append(`insurance_paper[${index}]`, item);
+      });
+      licenceImages?.map((item, index) => {
+        formData.append(`licence[${index}]`, item);
+      });
+      ssnImages?.map((item, index) => {
+        formData.append(`ssn[${index}]`, item);
+      });
+    } else {
+      return Platform.OS == 'android'
+        ? ToastAndroid.show(` image is required`, ToastAndroid.SHORT)
+        : Alert.alert(` image is required`);
+    }
+
     const url = 'auth/rider/car_update';
     setIsLoading(true);
-    const response = await Post(url, body, apiHeader(token));
+    const response = await Post(url, formData, apiHeader(token, true));
+   
     setIsLoading(false);
     if (response != undefined) {
       Platform.OS == 'android'
         ? ToastAndroid.show('Your car is Updated', ToastAndroid.SHORT)
         : Alert.alert('Your car is Updated');
       dispatch(setUserData(response?.data?.user_info));
-      dispatch(setUserToken({ token: response?.data?.token }));
       navigationService.navigate('Home');
     }
   };
 
+  const prevImagesRef = useRef({
+    license: null,
+    ssn: null,
+    insurance: null,
+    registration: null,
+    car: null,
+  });
+
+  useEffect(() => {
+    const imageMap = {
+      license: licenceImages,
+      ssn: ssnImages,
+      insurance: insuranceImage,
+      registration: registrationImage,
+      car: carImages,
+    };
+
+    Object.entries(imageMap).forEach(([key, currentValue]) => {
+      const previousValue = prevImagesRef.current[key];
+
+      const isArray = Array.isArray(currentValue);
+      const hasNewValue = isArray
+        ? currentValue.length > 0 && currentValue !== previousValue
+        : currentValue && currentValue !== previousValue;
+
+      if (hasNewValue) {
+        setImageLoading(prev => ({...prev, [key]: true}));
+
+        setTimeout(() => {
+          setImageLoading(prev => ({...prev, [key]: false}));
+        }, 3000);
+      }
+
+      prevImagesRef.current[key] = currentValue;
+    });
+  }, [licenceImages, ssnImages, insuranceImage, registrationImage, carImages]);
+
+
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView
+      style={{
+        height: windowHeight,
+        width: windowWidth,
+        backgroundColor: Color.lightGrey,
+      }}>
       <CustomStatusBar
         backgroundColor={Color.white}
         barStyle={'dark-content'}
@@ -575,49 +242,55 @@ const AddYourCar = props => {
         style={{
           height: windowHeight,
           width: windowWidth,
-          backgroundColor: Color.white,
+          backgroundColor: Color.lightGrey,
         }}
         contentContainerStyle={{
           alignItems: 'center',
         }}
         showsVerticalScrollIndicator={false}>
-        {token && <Header title={'Add Your vehicle'} showBack hideUser />}
-        {token ? (
-          <></>
+        {userData?.car_info ? (
+          <Header title={'Update Your Vehicle'} showBack hideUser />
         ) : (
           <CustomText isBold style={styles.text}>
-            Update Your Vehicle
+            Add Your vehicle
           </CustomText>
         )}
-        <View style={token ? styles.container_field : styles.feild_container}>
+        <View style={styles.container_field}>
           <Formik
             initialValues={{
               carModel: '',
+              carName: '',
               carNumber: '',
-              carSeats: '',
+              image: {},
+              year: 0,
+              capacity: 0,
+              registration: {},
               category: '',
+              cabsubcategory: '',
+              cabcategory: '',
+              cabtype: '',
             }}
-            onSubmit={onSubmit}
-            validationSchema={addYourCarSchema}>
-            {({ handleChange, handleSubmit, values, errors, touched }) => {
+            validationSchema={addYourCarSchema}
+            onSubmit={updateVehicle}>
+            {({handleChange, handleSubmit, values, errors, touched}) => {
               return (
                 <>
                   <TextInputWithTitle
-                    title={'Car Name'}
+                    title={'company Name'}
                     placeholder={'enter your car name here'}
                     setText={handleChange('carName')}
                     value={values.carName}
                     viewHeight={0.055}
-                    viewWidth={0.82}
-                    inputWidth={0.8}
+                    viewWidth={0.88}
+                    inputWidth={0.85}
                     border={1}
                     fontSize={moderateScale(10, 0.6)}
                     borderRadius={30}
                     backgroundColor={'transparent'}
-                    borderColor={Color.lightGrey}
+                    borderColor={Color.darkGray}
                     marginTop={moderateScale(10, 0.3)}
-                    placeholderColor={Color.darkGray}
-                    titleStlye={{ right: 10 }}
+                    placeholderColor={Color.veryLightGray}
+                    titleStlye={{right: 10}}
                   />
                   {touched.carName && errors.carName && (
                     <CustomText
@@ -626,6 +299,7 @@ const AddYourCar = props => {
                         fontSize: moderateScale(10, 0.6),
                         color: Color.red,
                         alignSelf: 'flex-start',
+                        paddingHorizontal: moderateScale(10, 0.6),
                       }}>
                       {errors.carName}
                     </CustomText>
@@ -636,16 +310,16 @@ const AddYourCar = props => {
                     setText={handleChange('carModel')}
                     value={values.carModel}
                     viewHeight={0.055}
-                    viewWidth={0.82}
-                    inputWidth={0.8}
+                    viewWidth={0.88}
+                    inputWidth={0.85}
                     border={1}
                     fontSize={moderateScale(10, 0.6)}
                     borderRadius={30}
                     backgroundColor={'transparent'}
-                    borderColor={Color.lightGrey}
+                    borderColor={Color.darkGray}
                     marginTop={moderateScale(10, 0.3)}
-                    placeholderColor={Color.darkGray}
-                    titleStlye={{ right: 10 }}
+                    placeholderColor={Color.veryLightGray}
+                    titleStlye={{right: 10}}
                   />
                   {touched.carModel && errors.carModel && (
                     <CustomText
@@ -664,16 +338,16 @@ const AddYourCar = props => {
                     setText={handleChange('carNumber')}
                     value={values.carNumber}
                     viewHeight={0.055}
-                    viewWidth={0.82}
-                    inputWidth={0.8}
+                    viewWidth={0.88}
+                    inputWidth={0.85}
                     border={1}
                     fontSize={moderateScale(10, 0.6)}
                     borderRadius={30}
                     backgroundColor={'transparent'}
-                    borderColor={Color.lightGrey}
+                    borderColor={Color.darkGray}
                     marginTop={moderateScale(10, 0.3)}
-                    placeholderColor={Color.darkGray}
-                    titleStlye={{ right: 10 }}
+                    placeholderColor={Color.veryLightGray}
+                    titleStlye={{right: 10}}
                   />
                   {touched.carNumber && errors.carNumber && (
                     <CustomText
@@ -687,23 +361,23 @@ const AddYourCar = props => {
                     </CustomText>
                   )}
                   <TextInputWithTitle
-                    title={'Car Seats'}
-                    placeholder={'enter your car seats here'}
-                    setText={handleChange('carSeats')}
-                    value={values.carSeats}
+                    title={'capacity'}
+                    placeholder={'enter capcity here'}
+                    setText={handleChange('capacity')}
+                    value={values.capacity}
                     viewHeight={0.055}
-                    viewWidth={0.82}
-                    inputWidth={0.8}
+                    viewWidth={0.88}
+                    inputWidth={0.85}
                     border={1}
                     fontSize={moderateScale(9, 0.6)}
                     borderRadius={30}
                     backgroundColor={'transparent'}
-                    borderColor={Color.lightGrey}
+                    borderColor={Color.darkGray}
                     marginTop={moderateScale(10, 0.3)}
                     placeholderColor={Color.veryLightGray}
-                    titleStlye={{ right: 10 }}
+                    titleStlye={{right: 10}}
                   />
-                  {touched.carSeats && errors.carSeats && (
+                  {touched.capacity && errors.capacity && (
                     <CustomText
                       textAlign={'left'}
                       style={{
@@ -711,11 +385,39 @@ const AddYourCar = props => {
                         color: Color.red,
                         alignSelf: 'flex-start',
                       }}>
-                      {errors.carSeats}
+                      {errors.capacity}
                     </CustomText>
                   )}
-                  <View style={{ marginTop: moderateScale(10, 0.6) }} />
-                  <CustomText
+                  <TextInputWithTitle
+                    title={' making year'}
+                    placeholder={'enter making year'}
+                    setText={handleChange('year')}
+                    value={values.year}
+                    viewHeight={0.055}
+                    viewWidth={0.88}
+                    inputWidth={0.85}
+                    border={1}
+                    fontSize={moderateScale(9, 0.6)}
+                    borderRadius={30}
+                    backgroundColor={'transparent'}
+                    borderColor={Color.darkGray}
+                    marginTop={moderateScale(10, 0.3)}
+                    placeholderColor={Color.veryLightGray}
+                    titleStlye={{right: 10}}
+                  />
+                  {touched.year && errors.year && (
+                    <CustomText
+                      textAlign={'left'}
+                      style={{
+                        fontSize: moderateScale(10, 0.6),
+                        color: Color.red,
+                        alignSelf: 'flex-start',
+                      }}>
+                      {errors.year}
+                    </CustomText>
+                  )}
+                  <View style={{marginTop: moderateScale(10, 0.6)}} />
+                  {/* <CustomText
                     style={{
                       color: Color.black,
                       fontSize: moderateScale(12, 0.3),
@@ -724,68 +426,520 @@ const AddYourCar = props => {
                     }}>
                     Select car Category
                   </CustomText>
-                  <DropDownSingleSelect
+                  <DropDown
+                    array={carcategory}
+                    data={selected}
+                    setData={setSelected}
+                    placeHolder={'select car category'}
+                  /> */}
+                  <DropDown
+                    // style={styles.drop}
                     array={carType}
-                    item={cartype}
-                    setItem={setCarType}
-                    width={windowWidth * 0.8}
-                    placeholder={'Select Car Category'}
-                    dropdownStyle={{
-                      // backgroundColor: 'red',
-                      borderWidth: 0.5,
-                      borderColor: Color.lightGrey,
-                      width: windowWidth * 0.85,
-                      // marginRight: moderateScale(3, 0.2),
-                      // marginTop: 10,
-                      borderRadius: 25,
-                      // alignSelf: 'center',
-                      marginBottom: moderateScale(20, 0.6),
-                      height: windowHeight * 0.06,
-                    }}
-                    btnStyle={{
-                      height: windowHeight * 0.06,
-                      borderWidth: 0.1,
-                      alignSelf: 'center',
-                    }}
+                    data={selectedCabCategory}
+                    setData={setSelectedCabCategory}
+                    placeHolder={'select car standard'}
                   />
-                  <CustomText
-                    style={{
-                      color: Color.black,
-                      fontSize: moderateScale(12, 0.3),
-                      textAlign: 'left',
-                      width: windowWidth * 0.75,
-                    }}>
-                    Add Car Image
-                  </CustomText>
-                  <TouchableOpacity
-                    activeOpacity={0.6}
-                    onPress={() => {
-                      setImagePicker(true);
-                    }}
-                    style={styles.image}>
-                    {Object.keys(image).length > 0 ? (
-                      <CustomImage
-                        source={{ uri: image?.uri }}
-                        resizeMode="cover"
+                  <View>
+                    {selectedCabCategory !== '' && (
+                      <View
                         style={{
-                          height: windowHeight * 0.14,
-                          width: windowHeight * 0.12,
-                          borderRadius: moderateScale(15, 0.6),
-                        }}
-                      />
-                    ) : (
-                      <Icon
-                        name="plus"
-                        as={FontAwesome}
-                        style={styles.icon2}
-                        color={Color.darkGray}
-                        size={moderateScale(20, 0.3)}
-                        onPress={() => {
-                          setImagePicker(true);
-                        }}
-                      />
+                          flexDirection: 'row',
+                          width: '100%',
+                          backgroundColor: 'white',
+                        }}>
+                        <DropDown
+                          array={
+                            selectedCabCategory === 'Lynk Standard '
+                              ? standardCabs
+                              : selectedCabCategory === 'Lynk Economy'
+                              ? economyCabs
+                              : premiumCabs
+                          }
+                          style={styles.drop}
+                          data={cabSubCategory}
+                          setData={setCabSubCategory}
+                          placeHolder={'Select car sub category'}
+                          labelKey="name"
+                          fromobject={true}
+                        />
+
+                        <TouchableOpacity
+                          onPress={() => {
+                            if (
+                              cabSubCategory &&
+                              typeof cabSubCategory?.cabName === 'string' &&
+                              cabSubCategory?.cabName.trim() !== ''
+                            ) {
+                              setToolTip(!toolTip);
+                            }
+                          }}
+                          style={{
+                            marginTop: moderateScale(30, 0.6),
+                            width: '10%',
+                            alignItems: 'center',
+                          }}>
+                          <Icon
+                            size={moderateScale(20, 0.6)}
+                            color={Color.black}
+                            as={AntDesign}
+                            name="questioncircle"
+                          />
+                        </TouchableOpacity>
+                      </View>
                     )}
-                  </TouchableOpacity>
+                    {toolTip && (
+                      <View style={styles.tooltip}>
+                        <CustomText
+                          numberOfLines={2}
+                          style={{
+                            fontSize: moderateScale(11, 0.6),
+                            color: Color.white,
+                          }}>
+                          {cabSubCategory?.feature}
+                        </CustomText>
+                      </View>
+                    )}
+                  </View>
+
+                  {touched.category && errors.category && (
+                    <CustomText
+                      textAlign={'left'}
+                      style={{
+                        fontSize: moderateScale(10, 0.6),
+                        color: Color.red,
+                        alignSelf: 'flex-start',
+                      }}>
+                      {errors.category}
+                    </CustomText>
+                  )}
+                  <CustomText style={styles.image_headindg}>
+                    Add Car Image
+                    <CustomText style={styles.sub_heading}>
+                      (Front, Back, and Driver Side of the Vehicle) :
+                    </CustomText>
+                  </CustomText>
+
+                  <View style={styles.imagesContainer}>
+                    <FlatList
+                      scrollEnabled={false}
+                      horizontal
+                      data={carImages}
+                      showsHorizontalScrollIndicator={false}
+                      style={{
+                        flexGrow: 0,
+                      }}
+                      renderItem={({item, index}) => {
+                        return (
+                          <View
+                            style={[
+                              styles.addImageContainer,
+                              {
+                                borderWidth: 0,
+                                borderRadius: moderateScale(10, 0.3),
+                              },
+                            ]}>
+                            <Icon
+                              name={'close'}
+                              as={FontAwesome}
+                              color={Color.black}
+                              size={moderateScale(12, 0.3)}
+                              style={{
+                                position: 'absolute',
+                                right: 2,
+                                top: 2,
+                                zIndex: 1,
+                              }}
+                              onPress={() => {
+                                let newArray = [...carImages];
+                                newArray.splice(index, 1);
+                                setCarImages(newArray);
+                              }}
+                            />
+                            {imageLoading?.car && (
+                              <ActivityIndicator
+                                style={styles.activty}
+                                size={'small'}
+                                color={Color.black}
+                              />
+                            )}
+                            <CustomImage
+                              source={{
+                                uri: item?.uri,
+                              }}
+                              resizeMode={'stretch'}
+                              style={{
+                                height: '100%',
+                                width: '100%',
+                              }}
+                            />
+                          </View>
+                        );
+                      }}
+                    />
+                    {carImages?.length < 3 && (
+                      <View
+                        style={[
+                          styles.addImageContainer,
+                          {
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          },
+                        ]}>
+                        <Icon
+                          name={'plus'}
+                          as={AntDesign}
+                          color={Color.black}
+                          size={moderateScale(30, 0.3)}
+                          onPress={() => {
+                            setImagePicker(true);
+                          }}
+                        />
+                      </View>
+                    )}
+                  </View>
+
+                  <CustomText style={styles.image_headindg}>
+                    Upload Registration Document
+                    <CustomText style={styles.sub_heading}>
+                      (Front & Back)
+                    </CustomText>
+                  </CustomText>
+
+                  <View style={styles.imagesContainer}>
+                    <FlatList
+                      scrollEnabled={false}
+                      horizontal
+                      data={registrationImage}
+                      showsHorizontalScrollIndicator={false}
+                      style={{
+                        flexGrow: 0,
+                      }}
+                      renderItem={({item, index}) => {
+                        return (
+                          <View
+                            style={[
+                              styles.addImageContainer,
+                              {
+                                borderWidth: 0,
+                                borderRadius: moderateScale(10, 0.3),
+                              },
+                            ]}>
+                            <Icon
+                              name={'close'}
+                              as={FontAwesome}
+                              color={Color.black}
+                              size={moderateScale(12, 0.3)}
+                              style={{
+                                position: 'absolute',
+                                right: 2,
+                                top: 2,
+                                zIndex: 1,
+                              }}
+                              onPress={() => {
+                                let newArray = [...registrationImage];
+                                newArray.splice(index, 1);
+                                setRegistrationImage(newArray);
+                              }}
+                            />
+                            {imageLoading?.registration && (
+                              <ActivityIndicator
+                                style={styles.activty}
+                                size={'small'}
+                                color={Color.black}
+                              />
+                            )}
+                            <CustomImage
+                              source={{
+                                uri: item?.uri,
+                              }}
+                              resizeMode={'stretch'}
+                              style={{
+                                height: '100%',
+                                width: '100%',
+                              }}
+                            />
+                          </View>
+                        );
+                      }}
+                    />
+                    {registrationImage?.length < 2 && (
+                      <View
+                        style={[
+                          styles.addImageContainer,
+                          {
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          },
+                        ]}>
+                        <Icon
+                          name={'plus'}
+                          as={AntDesign}
+                          color={Color.black}
+                          size={moderateScale(30, 0.3)}
+                          onPress={() => {
+                            setRegistrationPicker(true);
+                          }}
+                        />
+                      </View>
+                    )}
+                  </View>
+                  <CustomText style={styles.image_headindg}>
+                    Upload insurance Document
+                    <CustomText style={styles.sub_heading}>
+                      (Front & Back)
+                    </CustomText>
+                  </CustomText>
+
+                  <View style={styles.imagesContainer}>
+                    <FlatList
+                      scrollEnabled={false}
+                      horizontal
+                      data={insuranceImage}
+                      showsHorizontalScrollIndicator={false}
+                      style={{
+                        flexGrow: 0,
+                      }}
+                      renderItem={({item, index}) => {
+                        return (
+                          <View
+                            style={[
+                              styles.addImageContainer,
+                              {
+                                borderWidth: 0,
+                                borderRadius: moderateScale(10, 0.3),
+                              },
+                            ]}>
+                            <Icon
+                              name={'close'}
+                              as={FontAwesome}
+                              color={Color.black}
+                              size={moderateScale(12, 0.3)}
+                              style={{
+                                position: 'absolute',
+                                right: 2,
+                                top: 2,
+                                zIndex: 1,
+                              }}
+                              onPress={() => {
+                                let newArray = [...insuranceImage];
+                                newArray.splice(index, 1);
+                                setInsuranceImage(newArray);
+                              }}
+                            />
+                            {imageLoading?.insurance && (
+                              <ActivityIndicator
+                                style={styles.activty}
+                                size={'small'}
+                                color={Color.black}
+                              />
+                            )}
+                            <CustomImage
+                              source={{
+                                uri: item?.uri,
+                              }}
+                              resizeMode={'stretch'}
+                              style={{
+                                height: '100%',
+                                width: '100%',
+                              }}
+                            />
+                          </View>
+                        );
+                      }}
+                    />
+                    {insuranceImage?.length < 2 && (
+                      <View
+                        style={[
+                          styles.addImageContainer,
+                          {
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          },
+                        ]}>
+                        <Icon
+                          name={'plus'}
+                          as={AntDesign}
+                          color={Color.black}
+                          size={moderateScale(30, 0.3)}
+                          onPress={() => {
+                            setInsurancePicker(true);
+                          }}
+                        />
+                      </View>
+                    )}
+                  </View>
+                  <CustomText style={styles.image_headindg}>
+                    Upload licence Document
+                    <CustomText style={styles.sub_heading}>
+                      (Front & Back)
+                    </CustomText>
+                  </CustomText>
+
+                  <View style={styles.imagesContainer}>
+                    <FlatList
+                      scrollEnabled={false}
+                      horizontal
+                      data={licenceImages}
+                      showsHorizontalScrollIndicator={false}
+                      style={{
+                        flexGrow: 0,
+                      }}
+                      renderItem={({item, index}) => {
+                        return (
+                          <View
+                            style={[
+                              styles.addImageContainer,
+                              {
+                                borderWidth: 0,
+                                borderRadius: moderateScale(10, 0.3),
+                              },
+                            ]}>
+                            <Icon
+                              name={'close'}
+                              as={FontAwesome}
+                              color={Color.black}
+                              size={moderateScale(12, 0.3)}
+                              style={{
+                                position: 'absolute',
+                                right: 2,
+                                top: 2,
+                                zIndex: 1,
+                              }}
+                              onPress={() => {
+                                let newArray = [...licenceImages];
+                                newArray.splice(index, 1);
+                                setLicenceImages(newArray);
+                              }}
+                            />
+                            {imageLoading?.licenceImages && (
+                              <ActivityIndicator
+                                style={styles.activty}
+                                size={'small'}
+                                color={Color.black}
+                              />
+                            )}
+                            <CustomImage
+                              source={{
+                                uri: item?.uri,
+                              }}
+                              resizeMode={'stretch'}
+                              style={{
+                                height: '100%',
+                                width: '100%',
+                              }}
+                            />
+                          </View>
+                        );
+                      }}
+                    />
+                    {licenceImages?.length < 2 && (
+                      <View
+                        style={[
+                          styles.addImageContainer,
+                          {
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          },
+                        ]}>
+                        <Icon
+                          name={'plus'}
+                          as={AntDesign}
+                          color={Color.black}
+                          size={moderateScale(30, 0.3)}
+                          onPress={() => {
+                            setLicencePicker(true);
+                          }}
+                        />
+                      </View>
+                    )}
+                  </View>
+
+                  <CustomText style={styles.image_headindg}>
+                    Upload Ssn image
+                    <CustomText style={styles.sub_heading}>
+                      (Front & Back)
+                    </CustomText>
+                  </CustomText>
+
+                  <View style={styles.imagesContainer}>
+                    <FlatList
+                      scrollEnabled={false}
+                      horizontal
+                      data={ssnImages}
+                      showsHorizontalScrollIndicator={false}
+                      style={{
+                        flexGrow: 0,
+                      }}
+                      renderItem={({item, index}) => {
+                        return (
+                          <View
+                            style={[
+                              styles.addImageContainer,
+                              {
+                                borderWidth: 0,
+                                borderRadius: moderateScale(10, 0.3),
+                              },
+                            ]}>
+                            <Icon
+                              name={'close'}
+                              as={FontAwesome}
+                              color={Color.black}
+                              size={moderateScale(12, 0.3)}
+                              style={{
+                                position: 'absolute',
+                                right: 2,
+                                top: 2,
+                                zIndex: 1,
+                              }}
+                              onPress={() => {
+                                let newArray = [...ssnImages];
+                                newArray.splice(index, 1);
+                                setSsnImages(newArray);
+                              }}
+                            />
+                            {imageLoading?.ssnImages && (
+                              <ActivityIndicator
+                                style={styles.activty}
+                                size={'small'}
+                                color={Color.black}
+                              />
+                            )}
+                            <CustomImage
+                              source={{
+                                uri: item?.uri,
+                              }}
+                              resizeMode={'stretch'}
+                              style={{
+                                height: '100%',
+                                width: '100%',
+                              }}
+                            />
+                          </View>
+                        );
+                      }}
+                    />
+                    {ssnImages?.length < 2 && (
+                      <View
+                        style={[
+                          styles.addImageContainer,
+                          {
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          },
+                        ]}>
+                        <Icon
+                          name={'plus'}
+                          as={AntDesign}
+                          color={Color.black}
+                          size={moderateScale(30, 0.3)}
+                          onPress={() => {
+                            setSsnPicker(true);
+                          }}
+                        />
+                      </View>
+                    )}
+                  </View>
+
                   <View
                     style={{
                       marginVertical: moderateScale(10, 0.6),
@@ -824,7 +978,6 @@ const AddYourCar = props => {
                     height={windowHeight * 0.075}
                     bgColor={Color.darkBlue}
                     textTransform={'capitalize'}
-                    elevation={true}
                     onPress={handleSubmit}
                   />
                 </>
@@ -835,7 +988,27 @@ const AddYourCar = props => {
         <ImagePickerModal
           show={imagePicker}
           setShow={setImagePicker}
-          setFileObject={setImage}
+          setMultiImages={setCarImages}
+        />
+        <ImagePickerModal
+          show={registrationPicker}
+          setShow={setRegistrationPicker}
+          setMultiImages={setRegistrationImage}
+        />
+        <ImagePickerModal
+          show={insurancePicker}
+          setShow={setInsurancePicker}
+          setMultiImages={setInsuranceImage}
+        />
+        <ImagePickerModal
+          show={ssnPicker}
+          setShow={setSsnPicker}
+          setMultiImages={setSsnImages}
+        />
+        <ImagePickerModal
+          show={licencePicker}
+          setShow={setLicencePicker}
+          setMultiImages={setLicenceImages}
         />
       </ScrollView>
     </SafeAreaView>
@@ -843,26 +1016,12 @@ const AddYourCar = props => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-    alignItems: 'center',
-  },
   text: {
     fontSize: moderateScale(24, 0.6),
     color: Color.themeBlack,
     paddingVertical: moderateScale(10, 0.6),
     paddingTop: windowHeight * 0.02,
     marginTop: moderateScale(20, 0.6),
-  },
-  input_container: {
-    borderWidth: 1,
-    borderColor: Color.mediumGray,
-    borderRadius: 20,
-    height: windowHeight * 0.4,
-    width: windowWidth * 0.9,
-    alignItems: 'center',
-    paddingTop: moderateScale(15, 0.6),
-    paddingHorizontal: moderateScale(10, 0.6),
   },
   container_field: {
     width: windowWidth,
@@ -877,7 +1036,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#28272369',
     borderRadius: 20,
-    width: windowWidth * 0.9,
+    width: windowWidth,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Color.white,
@@ -887,41 +1046,11 @@ const styles = StyleSheet.create({
       height: 4,
     },
     shadowOpacity: 0.3,
-    shadowRadius: 4.65,
-    elevation: 22,
     paddingHorizontal: moderateScale(20, 0.6),
     paddingVertical: moderateScale(10, 0.6),
     marginBottom: moderateScale(10, 0.6),
   },
-  forgotpassword: {
-    fontSize: moderateScale(10, 0.6),
-    color: Color.black,
-    textAlign: 'right',
-    width: '95%',
-    paddingVertical: moderateScale(4, 0.6),
-    fontWeight: '700',
-  },
-  button_container: {
-    paddingTop: windowHeight * 0.08,
-  },
-  soc_text: {
-    fontSize: moderateScale(8, 6),
-    paddingVertical: moderateScale(8, 0.6),
-    textAlign: 'center',
-    letterSpacing: 0.7,
-    fontWeight: '700',
-  },
-  do_text: {
-    paddingVertical: moderateScale(35, 0.6),
-    textTransform: 'none',
-    letterSpacing: 0.5,
-    fontSize: moderateScale(12, 0.6),
-  },
-  Sign_text: {
-    color: Color.themeBlack,
-    paddingRight: moderateScale(5, 0.6),
-    fontSize: moderateScale(12, 0.6),
-  },
+
   fields_box: {
     borderWidth: 0.3,
     borderColor: '#28272369',
@@ -940,29 +1069,74 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
     elevation: 8,
   },
-  image: {
-    marginTop: moderateScale(10, 0.3),
-    height: windowHeight * 0.14,
-    width: windowHeight * 0.12,
+
+  addImageContainer: {
+    height: windowHeight * 0.12,
+    width: windowHeight * 0.1,
     alignSelf: 'flex-start',
     borderRadius: moderateScale(15, 0.6),
     backgroundColor: Color.lightGrey,
     marginBottom: moderateScale(10, 0.6),
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginHorizontal: moderateScale(5, 0.6),
+    shadowColor: Color.lightGrey,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+    elevation: 9,
+    overflow: 'hidden',
   },
-  edit: {
-    backgroundColor: Color.white,
-    width: moderateScale(20, 0.3),
-    height: moderateScale(20, 0.3),
+  imagesContainer: {
+    marginTop: moderateScale(10, 0.3),
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
+  },
+  image_headindg: {
+    color: Color.black,
+    fontSize: moderateScale(12, 0.3),
+    textAlign: 'left',
+    width: '90%',
+  },
+  sub_heading: {
+    color: Color.black,
+    fontSize: moderateScale(10, 0.3),
+  },
+  activty: {
     position: 'absolute',
-    bottom: -2,
-    right: 5,
-    borderRadius: moderateScale(10, 0.3),
-    elevation: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    right: 30,
+    top: 50,
     zIndex: 1,
+  },
+  drop: {
+    height: windowHeight * 0.06,
+    width: windowWidth * 0.8,
+    backgroundColor: Color.white,
+    borderRadius: 30,
+    borderWidth: 0.3,
+    borderColor: Color.darkGray,
+    paddingHorizontal: moderateScale(15, 0.6),
+    paddingTop: moderateScale(15, 0.6),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: moderateScale(10, 0.3),
+  },
+  tooltip: {
+    position: 'absolute',
+    right: 15,
+    top: -10,
+    marginBottom: moderateScale(10, 0.6),
+    backgroundColor: Color.blue,
+    padding: moderateScale(5, 0.6),
+    width: windowWidth * 0.5,
+    zIndex: 1,
+    borderBottomLeftRadius: 15,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    alignItems: 'flex-start',
+    paddingHorizontal: moderateScale(5, 0.6),
   },
 });
 

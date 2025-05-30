@@ -31,6 +31,13 @@ const ChooseDeclineReasonScreen = prop => {
     {id: 7, reason: 'Preference for Ride-Hailing Apps', checked: true},
     {id: 8, reason: 'Unfamiliarity with the Service', checked: true},
     {id: 9, reason: 'Route Concerns', checked: true},
+    {id: 10, reason: 'Rider no-show', checked: true},
+    {id: 11, reason: 'Wrong address', checked: true},
+    {id: 12, reason: 'Emergency', checked: true},
+    {id: 13, reason: 'Unsafe behavior', checked: true},
+    {id: 14, reason: 'App issue / bug', checked: true},
+
+
   ];
   const [isLoading, setIsLoading] = useState(false);
   const [reason, setReason] = useState({});
@@ -60,6 +67,7 @@ const ChooseDeclineReasonScreen = prop => {
       />
       <View style={styles.mainView}>
         {array?.map((item, index) => {
+          console.log("🚀 ~ {array?.map ~ item:", item)
           return (
             <TouchableOpacity
               onPress={() => {

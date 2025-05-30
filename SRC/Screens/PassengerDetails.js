@@ -1,5 +1,5 @@
-import { Icon } from 'native-base';
-import React, { useState } from 'react';
+import {Icon} from 'native-base';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -21,20 +21,18 @@ import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import PaymentMethodCard from '../Components/PaymentMethodCard';
-import { baseUrl } from '../Config';
+import {baseUrl} from '../Config';
 import navigationService from '../navigationService';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-import { Post } from '../Axios/AxiosInterceptorFunction';
-import { useSelector } from 'react-redux';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {useSelector} from 'react-redux';
+import {useIsFocused} from '@react-navigation/native';
 
-const PassengerDetails = ({ route }) => {
-  const { type, data, ride_status, fromdelivery } = route.params;
-  console.log(
-    '🚀 ~ PassengerDetails ~ data==============:',
-    ` ${baseUrl}${data?.photo}`,
-  );
+const PassengerDetails = ({route}) => {
+  const {type, data, ride_status, fromdelivery, currentPosition} = route.params;
   const token = useSelector(state => state.authReducer.token);
   const rider_arrived_time = route?.params?.rider_arrived_time;
+  const isFocused = useIsFocused();
   // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   // const isFocused = useIsFocused();
   // const [paymentMethod, setPaymentMethod] = useState('Card');
@@ -46,20 +44,61 @@ const PassengerDetails = ({ route }) => {
   const [selectedData, setSelectedData] = useState('pickup');
   const [isLoading, setIsLoading] = useState(false);
 
+  //  useEffect(() => {
+  //     getCurrentLocation();
+  //   }, [isFocused]);
+
+  //   const getCurrentLocation = async () => {
+  //     try {
+  //       const position = await new Promise((resolve, reject) => {
+  //         Geolocation.getCurrentPosition(
+  //           position => {
+  //             const coords = {
+  //               latitude: position.coords.latitude,
+  //               longitude: position.coords.longitude,
+  //             };
+  //             resolve(coords);
+  //             getAddressFromCoordinates(
+  //               position.coords.latitude,
+  //               position.coords.longitude,
+  //             );
+  //           },
+  //           error => {
+  //             reject(new Error(error.message));
+  //           },
+  //           {
+  //             enableHighAccuracy: true,
+  //             timeout: 15000,
+  //             maximumAge: 10000,
+  //           },
+  //         );
+  //       });
+  //       setCurrentPosition(position);
+  //     } catch (error) {
+  //       console.error('Error getting location:', error);
+  //       throw error;
+  //     }
+  //   };
+
   const rideUpdate = async status => {
     const url = `auth/rider/ride_update/${data?.ride_id}`;
     const body = {
       status: status,
+      lat: currentPosition?.latitude,
+      lng: currentPosition?.longitude,
+      rider_arrived_time: rider_arrived_time,
     };
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
     setIsLoading(false);
     if (response != undefined) {
-      if (response?.data?.ride_info?.status === 'complete') {
-        navigationService.navigate('RateScreen', {
-          data: Updatedride?.ride_info,
-        });
-      }
+      navigationService.navigate('RideScreen', {
+        data: data,
+        type: 'details',
+        rider_arrived_time: rider_arrived_time,
+        ride_status: ride_status,
+      });
+
       // setUpdatedRide(response?.data);
     }
   };
@@ -265,7 +304,7 @@ const PassengerDetails = ({ route }) => {
                           height: windowHeight * 0.1,
                           width: windowWidth * 0.33,
                           borderRadius: 10,
-                          overflow: 'hidden'
+                          overflow: 'hidden',
                         }}>
                         <CustomImage
                           style={{
@@ -275,7 +314,7 @@ const PassengerDetails = ({ route }) => {
                           }}
                           source={
                             data?.photo
-                              ? { uri: `${baseUrl}${data?.photo}` }
+                              ? {uri: `${baseUrl}${data?.photo}`}
                               : require('../Assets/Images/parcelimage.png')
                           }
                         />
@@ -322,13 +361,13 @@ const PassengerDetails = ({ route }) => {
                   isBold
                   style={[
                     styles.heading,
-                    { marginLeft: moderateScale(10, 0.6) },
+                    {marginLeft: moderateScale(10, 0.6)},
                   ]}>
                   Booking Time
                 </CustomText>
               </View>
               <CustomText
-                style={[styles.heading, { color: Color.veryLightGray }]}>
+                style={[styles.heading, {color: Color.veryLightGray}]}>
                 03 : 00 pm
               </CustomText>
             </View>
@@ -354,13 +393,13 @@ const PassengerDetails = ({ route }) => {
                   isBold
                   style={[
                     styles.heading,
-                    { marginLeft: moderateScale(10, 0.6) },
+                    {marginLeft: moderateScale(10, 0.6)},
                   ]}>
                   Passenger
                 </CustomText>
               </View>
               <CustomText
-                style={[styles.heading, { color: Color.veryLightGray }]}>
+                style={[styles.heading, {color: Color.veryLightGray}]}>
                 3 Passengers
               </CustomText>
             </View>
@@ -386,13 +425,13 @@ const PassengerDetails = ({ route }) => {
                   isBold
                   style={[
                     styles.heading,
-                    { marginLeft: moderateScale(10, 0.6) },
+                    {marginLeft: moderateScale(10, 0.6)},
                   ]}>
                   payment Method
                 </CustomText>
               </View>
               <CustomText
-                style={[styles.heading, { color: Color.veryLightGray }]}>
+                style={[styles.heading, {color: Color.veryLightGray}]}>
                 Online
               </CustomText>
             </View>
@@ -441,23 +480,23 @@ const PassengerDetails = ({ route }) => {
                 Payment Method
               </CustomText>
               <CustomText
-                style={[styles.heading, { color: Color.veryLightGray }]}>
+                style={[styles.heading, {color: Color.veryLightGray}]}>
                 **** *** **** 2482
               </CustomText>
               <View style={styles.text_view}>
-                <View style={[styles.text_view, { width: '35%' }]}>
+                <View style={[styles.text_view, {width: '35%'}]}>
                   <CustomText isBold style={styles.heading}>
                     Expires On :
                   </CustomText>
                   <CustomText
-                    style={[styles.heading, { color: Color.veryLightGray }]}>
+                    style={[styles.heading, {color: Color.veryLightGray}]}>
                     12 / 12{' '}
                   </CustomText>
                 </View>
-                <View style={[styles.text_view, { width: '30%' }]}>
+                <View style={[styles.text_view, {width: '30%'}]}>
                   <CustomText
                     isBold
-                    style={[styles.heading, { color: Color.red }]}>
+                    style={[styles.heading, {color: Color.red}]}>
                     $ 50.25
                   </CustomText>
                   {data?.payment_method === 'visa' ? (
@@ -480,7 +519,7 @@ const PassengerDetails = ({ route }) => {
             </View>
 
             <View
-              style={[styles.search_conatiner, { height: windowHeight * 0.09 }]}>
+              style={[styles.search_conatiner, {height: windowHeight * 0.09}]}>
               <CustomText isBold style={styles.heading}>
                 Promo Code
               </CustomText>
@@ -488,7 +527,7 @@ const PassengerDetails = ({ route }) => {
                 editable={false}
                 placeholder="013244879498"
                 placeholderTextColor={Color.veryLightGray}
-                style={{ borderBottomWidth: 0.5 }}
+                style={{borderBottomWidth: 0.5}}
               />
             </View>
             <View style={styles.expensesContainer}>
@@ -514,10 +553,10 @@ const PassengerDetails = ({ route }) => {
                     marginTop: 15,
                   },
                 ]}>
-                <CustomText isBold style={{ fontSize: moderateScale(24, 0.4) }}>
+                <CustomText isBold style={{fontSize: moderateScale(24, 0.4)}}>
                   Total
                 </CustomText>
-                <CustomText isBold style={{ fontSize: moderateScale(24, 0.4) }}>
+                <CustomText isBold style={{fontSize: moderateScale(24, 0.4)}}>
                   {'$ ' + data?.amount}
                 </CustomText>
                 {/* Resolved Design's calculations issues */}
@@ -541,12 +580,13 @@ const PassengerDetails = ({ route }) => {
                     data: data,
                   });
                 } else {
-                  navigationService.navigate('RideScreen', {
-                    data: data,
-                    type: 'details',
-                    rider_arrived_time: rider_arrived_time,
-                    ride_status: ride_status,
-                  });
+                  rideUpdate('riderOntheWay');
+                  // navigationService.navigate('RideScreen', {
+                  //   data: data,
+                  //   type: 'details',
+                  //   rider_arrived_time: rider_arrived_time,
+                  //   ride_status: ride_status,
+                  // });
                 }
               }}
             />

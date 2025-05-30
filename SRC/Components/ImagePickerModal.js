@@ -62,7 +62,7 @@ const ImagePickerModal = props => {
       if (response.didCancel) {
       } else if (response.error) {
       } else if (response.customButton) {
-        alert(response.customButton);
+        Alert.alert(response.customButton);
       } else {
         setFileObject &&
           setFileObject({
