@@ -33,6 +33,7 @@ import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
 const Home = () => {
   const token = useSelector(state => state.authReducer.token);
+  console.log("🚀 ~ Home ~ token:", token)
   const data = useSelector(state => state.commonReducer.userData)
   const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(false);

@@ -31,6 +31,7 @@ const PlaceHolderScreen = () => {
         const ride = rides[0]?.ride_info;
         console.log('🚀 ~ rideRequestList ~ ride:', ride);
         const status = ride?.status?.toLowerCase();
+        console.log("🚀 ~ rideRequestList ~ status:", status)
         console.log('🚀 ~ rideRequestList ~ status:', status);
         const goHomeStatuses = [
           'pending',

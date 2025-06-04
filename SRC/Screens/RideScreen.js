@@ -28,11 +28,13 @@ import Header from '../Components/Header';
 import navigationService from '../navigationService';
 import {customMapStyle} from '../Utillity/mapstyle';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import database from '@react-native-firebase/database';
 
 const RideScreen = ({route}) => {
   const {data, type, ride_status} = route?.params;
-  console.log('🚀 ~ RideScreen ~ data:', data?.user?.phone);
+  console.log('🚀 ~ RideScreen ~ data:', data?.status);
   const rideData = route?.params?.data;
+  console.log('🚀 ~ RideScreen ~ rideData:', rideData);
   const rider_arrived_time = route?.params?.rider_arrived_time;
 
   const token = useSelector(state => state.authReducer.token);
@@ -49,12 +51,17 @@ const RideScreen = ({route}) => {
   const [additionalTime, setAdditionalTime] = useState(false);
   const [additionalTimeModal, setAdditionalTimeModal] = useState(false);
   const [isriderArrive, setIsRiderArrived] = useState(false);
+  console.log('🚀 ~ RideScreen ~ isriderArrive:', isriderArrive);
   const [addTime, setAddTime] = useState(0);
   const [time, setTime] = useState(0);
   const {user_type} = useSelector(state => state.authReducer);
   const [isLoading, setIsLoading] = useState(false);
+  // const [updatedStatus, setUpdatedStatus] = useState('');
+  // console.log("🚀 ~ RideScreen ~ updatedStatus:", updatedStatus)
 
-  const [Updatedride, setUpdatedRide] = useState(data?.status);
+  // const [Updatedride, setUpdatedRide] = useState([]);
+  const Updatedride = 'riderArrived';
+  console.log('🚀 ~ RideScreen ~ Updatedride: ====>', Updatedride);
 
   const [currentPosition, setCurrentPosition] = useState({
     latitude: 0,
@@ -268,6 +275,7 @@ const RideScreen = ({route}) => {
     };
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
+    console.log('🚀 ~ RideScreen ~ response:', response?.data);
     setIsLoading(false);
     if (response != undefined) {
       if (response?.data?.ride_info?.status === 'complete') {
@@ -308,6 +316,21 @@ const RideScreen = ({route}) => {
     }
   };
 
+  // useEffect(() => {
+  //   const reference = database().ref(
+  //     `/requests/${data?.ride_info?.ride_id}`,
+  //   );
+  //   const listener = reference.on('value', snapshot => {
+  //     if (snapshot.exists()) {
+  //       const data = snapshot.val();
+  //       if (data?.ride_info) {
+  //         setUpdatedStatus(data?.ride_info?.status);
+  //       }
+  //     }
+  //   });
+
+  //   return () => reference.off('value', listener);
+  // }, [data?.ride_info?.ride_id]);
   return (
     <SafeAreaView style={styles.safe_are}>
       <Header
@@ -443,7 +466,7 @@ const RideScreen = ({route}) => {
                     color: Color.veryLightGray,
                     marginLeft: moderateScale(8, 0.6),
                   }}>
-                  {data?.status}
+                  {Updatedride}
                 </CustomText>
               </View>
             </View>
@@ -457,10 +480,10 @@ const RideScreen = ({route}) => {
                 paddingTop: moderateScale(5, 0.6),
               }}>
               <Icon
-              onPress={() =>{
-                Linking.openURL(`tel:${data?.user?.phone}`);
-                //  ridedata?.ride_info?.rider?.phone
-              }}
+                onPress={() => {
+                  Linking.openURL(`tel:${data?.user?.phone}`);
+                  //  ridedata?.ride_info?.rider?.phone
+                }}
                 style={styles.icons}
                 name={'call'}
                 as={Ionicons}
@@ -489,10 +512,10 @@ const RideScreen = ({route}) => {
               width: windowWidth,
               height: windowHeight * 0.2,
               position: 'absolute',
-              bottom: 0,
-              // backgroundColor :'red'
+              bottom: 20,
+              backgroundColor: 'red',
             }}>
-            {Updatedride?.ride_info?.status == 'arrive' && (
+            {Updatedride == 'arrive' && (
               <CustomButton
                 text={
                   isLoading ? (
@@ -518,32 +541,32 @@ const RideScreen = ({route}) => {
               />
             )}
 
-            {Updatedride?.ride_info?.status == 'riderArrived' || data?.status === 'riderArrived' && (
-              <CustomButton
-                text={
-                  isLoading ? (
-                    <ActivityIndicator size={'small'} color={Color.white} />
-                  ) : (
-                    'Start Waiting'
-                  )
-                }
-                fontSize={moderateScale(14, 0.3)}
-                textColor={Color.white}
-                borderRadius={moderateScale(30, 0.3)}
-                width={windowWidth * 0.85}
-                height={windowHeight * 0.07}
-                bgColor={Color.darkBlue}
-                borderWidth={1}
-                borderColor={Color.blue}
-                textTransform={'capitalize'}
-                isBold
-                onPress={() => {
-                  rideUpdate('arrive');
-                }}
-              />
-            )
-            }
-            {Updatedride?.ride_info?.status == 'ontheway' && (
+            {Updatedride === 'riderArrived' ||
+              (data?.status === 'riderArrived' && (
+                <CustomButton
+                  text={
+                    isLoading ? (
+                      <ActivityIndicator size={'small'} color={Color.white} />
+                    ) : (
+                      'Start Waiting'
+                    )
+                  }
+                  fontSize={moderateScale(14, 0.3)}
+                  textColor={Color.white}
+                  borderRadius={moderateScale(30, 0.3)}
+                  width={windowWidth * 0.85}
+                  height={windowHeight * 0.07}
+                  bgColor={Color.darkBlue}
+                  borderWidth={1}
+                  borderColor={Color.blue}
+                  textTransform={'capitalize'}
+                  isBold
+                  onPress={() => {
+                    rideUpdate('arrive');
+                  }}
+                />
+              ))}
+            {Updatedride == 'ontheway' && (
               <View
                 style={{
                   position: 'absolute',
@@ -563,7 +586,7 @@ const RideScreen = ({route}) => {
                   textColor={Color.white}
                   borderRadius={moderateScale(30, 0.3)}
                   width={windowWidth * 0.85}
-                  marginTop={moderateScale(10, 0.3)}
+                  // marginTop={moderateScale(10, 0.3)}
                   height={windowHeight * 0.07}
                   bgColor={Color.darkBlue}
                   borderWidth={1.5}
@@ -602,8 +625,7 @@ const RideScreen = ({route}) => {
                   rideUpdate('riderArrived');
                 }}
               />
-            )
-            }
+            )}
           </View>
         </>
       </View>

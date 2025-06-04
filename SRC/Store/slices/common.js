@@ -17,15 +17,14 @@ const initialState = {
   location: '',
   pickupLocatin: {},
   dropoffLocation: {},
+  cashout : false ,
 };
-
 const CommonSlice = createSlice({
   name: 'commonReducer',
   initialState: initialState,
   reducers: {
     setCategoryProperties(state, action) {
       state.categoryProperties = action?.payload;
-      // console.log("reduxxxx", state.categoryProperties);
     },
     setPickupLocation(state, action) {
       state.pickupLocatin = action.payload;
@@ -35,11 +34,9 @@ const CommonSlice = createSlice({
     },
     setUserData(state, action) {
       state.userData = action?.payload;
-      // state.userData = action?.payload?.userData;
     },
     setUserLogOut(state, action) {
       state.userData = {};
-      console.log('🚀 ~ setUserLogOut ~ userData:', state.userData);
     },
     setServiceCategories(state, action) {
       state.categories = action?.payload;
@@ -56,7 +53,6 @@ const CommonSlice = createSlice({
 
     AddToCart(state, action) {
       const itemId = action.payload.id;
-      console.log('🚀 ~ AddToCart ~ action.payload:', action.payload);
 
       state.cart.push({date: moment(), ...action.payload});
     },
@@ -127,18 +123,11 @@ const CommonSlice = createSlice({
       }
     },
     setServiceBooking(state, action) {
-      console.log(
-        '🚀 ~ file: common.js:116 ~ setServiceBooking ~ action:',
-        action.payload,
-      );
+
       state.bookings.push(action.payload);
     },
 
     setAddProducts(state, action) {
-      console.log('Data===============>>=====', state.sellerProducts);
-      console.log('Data===============>>', action.payload);
-
-      // console.log('Dat==================>>>>>>>', {sellerId:action.payload.userId,id:state.sellerProducts.length+1, ...action.payload.item, })
       const item = state.sellerProducts.find(
         item => item?.id == action.payload.item.id,
       );
@@ -162,32 +151,15 @@ const CommonSlice = createSlice({
     },
 
     deleteProducts(state, action) {
-      console.log(
-        '🚀 ~ file: common.js:147 ~ deleteProducts ~ action:',
-        action.payload,
-      );
-
-      console.log('Data===============>>=====', state.sellerProducts);
       state.sellerProducts = state.sellerProducts.filter(
         item => item.id != action.payload.id,
       );
     },
 
     setServices(state, action) {
-      console.log(
-        '🚀 ~ file: common.js:133 ~ setServices ~ state:',
-        state.sellerService,
-      );
-      console.log(
-        '🚀 ~ file: common.js:116 ~ setServiceBooking ~ action:',
-        action.payload,
-      );
-
       const item = state.sellerService.find(item => {
-        // console.log(item?.serviceOwner.id, action.payload.id)
         return item.serviceOwner.id == action.payload.serviceOwner.id;
       });
-      console.log('🚀 ~ file: common.js:137 ~ setServices ~ item:', item);
       if (item) {
         item.Title = action.payload.Title;
         item.category = action.payload.category;
@@ -214,8 +186,12 @@ const CommonSlice = createSlice({
     },
     setLoaction(state, action) {
       state.location = action.payload;
-      console.log('🚀 ~ setLoaction ~ ==============location:', action.payload);
     },
+    setCashOut(state,action){
+      state.cashout =action?.payload
+
+      console.log("🚀 ~ setCashOut ~ state.cashout:", state.cashout)
+    }
   },
 });
 
@@ -245,6 +221,7 @@ export const {
   setLoaction,
   setPickupLocation,
   setDropoffLocation,
+  setCashOut
 } = CommonSlice.actions;
 
 export default CommonSlice.reducer;

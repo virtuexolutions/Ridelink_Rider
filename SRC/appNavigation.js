@@ -38,6 +38,8 @@ import MessagesScreen from './Screens/MessagesScreen';
 import DeliveryScreen from './Screens/DeliveryScreen';
 import PlaceHolderScreen from './Screens/PlaceHolderScreen';
 import AccountVerificationScreen from './Screens/AccountVerificationScreen';
+import CashoutScreen from './Screens/CashoutScreen';
+import ConfirmationScreen from './Screens/ConfirmationScreen';
 // import ReferFriendScreen from './Screens/ReferFriendScreen';
 // import LearningCenter from './Screens/LearningCenter';
 // import PrivacyPolicy from './Screens/PrivacyPolicy';
@@ -98,10 +100,7 @@ const AppNavigator = () => {
             component={AccountVerificationScreen}
           />
           <RootNav.Screen name="AddYourCar" component={AddYourCar} />
-          <RootNav.Screen
-            name="Walletscreen"
-            component={Walletscreen}
-          />
+          <RootNav.Screen name="Walletscreen" component={Walletscreen} />
 
           {/* <RootNav.Screen name="History" component={History} /> */}
           {/* <RootNav.Screen name="PrivacyPolicy" component={PrivacyPolicy} /> */}
@@ -131,6 +130,11 @@ const AppNavigator = () => {
             component={ChooseDeclineReasonScreen}
           />
           <RootNav.Screen name="DeliveryScreen" component={DeliveryScreen} />
+          <RootNav.Screen name="CashoutScreen" component={CashoutScreen} />
+          <RootNav.Screen
+            name="ConfirmationScreen"
+            component={ConfirmationScreen}
+          />
         </RootNav.Navigator>
       </NavigationContainer>
     );

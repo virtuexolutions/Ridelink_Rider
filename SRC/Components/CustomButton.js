@@ -72,7 +72,7 @@ const CustomButton = props => {
             height: 4,
           },
           shadowOpacity: 0.32,
-          shadowRadius: 5.46,
+          shadowRadius:5.46,
 
           elevation: 9,
         },

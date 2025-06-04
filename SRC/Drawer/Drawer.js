@@ -51,7 +51,11 @@ const Drawer = React.memo(() => {
       id: 4,
       name: 'Earnings',
       onPress: () => {
-        // navigation.navigate('Walletscreen');
+        navigation.navigate('Walletscreen');
+        // navigation.navigate('MyWallet');
+        // navigation.navigate('Earningsscreen');
+
+
       },
     },
     {
