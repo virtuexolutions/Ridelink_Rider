@@ -17,6 +17,7 @@ const DropDown = ({
   placeHolder,
   style,
 }) => {
+  console.log("🚀 ~ data:",typeof  data)
   console.log('🚀 ~ placeHolder:', placeHolder);
   const [isOpened, setIsOpened] = useState(false);
   const isFocused = useIsFocused();
@@ -27,7 +28,13 @@ const DropDown = ({
         onPress={() => setIsOpened(!isOpened)}
         style={style ? style : styles.mainContainer}>
         <CustomText style={styles.text}>
-          {data ? (labelKey ? data?.cabName : data) : placeHolder}
+         {(() => {
+    if (!data) return placeHolder || 'select type';
+    if (typeof data === 'object') {
+      return data?.cabName || data?.name || placeHolder || 'select type';
+    }
+    return data;
+  })()}
         </CustomText>
         <Icon
           style={{paddingTop: moderateScale(3, 0.6)}}

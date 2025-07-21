@@ -1,25 +1,22 @@
+import { Icon } from 'native-base';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
-  Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
-import React, {useState} from 'react';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import Color from '../Assets/Utilities/Color';
-import {moderateScale} from 'react-native-size-matters';
-import CustomText from '../Components/CustomText';
-import SearchbarComponent from '../Components/SearchbarComponent';
+import { moderateScale } from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
-import CustomButton from '../Components/CustomButton';
+import Color from '../Assets/Utilities/Color';
 import AskLocation from '../Components/AskLocation';
-import {Icon} from 'native-base';
-import navigationService from '../navigationService';
-import PaymentMethodCard from '../Components/PaymentMethodCard';
+import CustomButton from '../Components/CustomButton';
+import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
-import {Post} from '../Axios/AxiosInterceptorFunction';
-import {useSelector} from 'react-redux';
+import PaymentMethodCard from '../Components/PaymentMethodCard';
+import SearchbarComponent from '../Components/SearchbarComponent';
+import navigationService from '../navigationService';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 
 const FareScreen = props => {
   const ridedata = props?.route?.params?.rideData;

@@ -1,22 +1,15 @@
-import {
-  ActivityIndicator,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import React, {useState} from 'react';
-import Header from '../Components/Header';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import Color from '../Assets/Utilities/Color';
-import {moderateScale} from 'react-native-size-matters';
-import PaymentMethodCard from '../Components/PaymentMethodCard';
-import CreditCardComponent from '../Components/CreditCardComponent';
-import CustomText from '../Components/CustomText';
-import CustomButton from '../Components/CustomButton';
-import navigationService from '../navigationService';
 import {CardField, createToken} from '@stripe/stripe-react-native';
+import React, {useState} from 'react';
+import {ActivityIndicator, SafeAreaView, StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import {moderateScale} from 'react-native-size-matters';
+import Color from '../Assets/Utilities/Color';
+import CustomButton from '../Components/CustomButton';
+import CustomText from '../Components/CustomText';
+import Header from '../Components/Header';
+import PaymentMethodCard from '../Components/PaymentMethodCard';
+import navigationService from '../navigationService';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 
 const PaymentScreen = props => {
   const data = props?.route?.params?.data;
@@ -43,15 +36,15 @@ const PaymentScreen = props => {
           paymentMethod={data?.ride_info?.payment_method}
           isEnabled={data?.ride_info?.nearest_cab}
         />
-        {/* <CreditCardComponent /> */}
+ 
         <LinearGradient
-          colors={['#1f1f1f', '#cfcfcf']} // Adjust these colors for a closer match
+          colors={['#1f1f1f', '#cfcfcf']} 
           start={{x: 0, y: 0}}
           end={{x: 1, y: 1}}
           style={styles.addcard}
-          // style={styles.modal}
+     
         >
-          {/* <View style={styles.modal}> */}
+          
           <View style={styles.header}>
             <CustomText
               style={{
@@ -68,13 +61,11 @@ const PaymentScreen = props => {
             placeholders={{
               number: '4242 4242 4242 4242',
             }}
-            // placeholdersColor={'black'}
             cardStyle={{
               backgroundColor: Color.white,
               borderRadius: moderateScale(15, 0.6),
               width: windowWidth * 0.5,
               borderRadius: moderateScale(35, 0.6),
-              // placeholderColor:'red',
               textColor: 'black',
               placeholderColor: Color.darkGray,
             }}
@@ -104,11 +95,9 @@ const PaymentScreen = props => {
             fontSize={moderateScale(14, 0.3)}
             textTransform={'uppercase'}
             bgColor={'white'}
-            // isGradient={true}
             isBold
             disabled={loading}
           />
-          {/* </View> */}
         </LinearGradient>
 
         <CustomText isBold style={styles.heading}>
@@ -210,12 +199,9 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(14, 0.4),
     width: windowWidth * 0.9,
     height: windowHeight * 0.2,
-    // justifyContent: 'flex-start',
     alignItems: 'center',
     marginTop: moderateScale(20, 0.6),
     overflow: 'hidden',
-    // paddingHorizontal: moderateScale(15, 0.6),
-    // paddingVertical: moderateScale(20, 0.6),
   },
   header: {
     width: '100%',
@@ -223,25 +209,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.7)',
     justifyContent: 'center',
     alignItems: 'center',
-    // marginBottom: moderateScale(10, 0.6),
   },
-  modal: {
-    // backgroundColor: Color.black,
-    // backgroundColor: 'rgba(109, 106, 108, 0.72)',
-    // // backgroundColor: 'rgba(76, 73, 75, 0.79)',
-    // // backgroundColor: 'rgba(36, 35, 36, 0.53)',
-    backgroundColor: 'red',
 
-    borderRadius: moderateScale(14, 0.4),
-    borderWidth: 2,
-    borderColor: Color.themeBlack,
-    width: windowWidth * 0.9,
-    // height: windowHeight * 0.3,
-    paddingBottom: moderateScale(20, 0.6),
-    flexDirection: 'column',
-    // alignItems: 'center',
-    // paddingTop: windowHeight * 0.03,
-    // gap: 12,
-    overflow: 'hidden',
-  },
 });

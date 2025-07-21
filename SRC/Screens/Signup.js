@@ -1,7 +1,7 @@
-import {useNavigation} from '@react-navigation/native';
-import {Formik} from 'formik';
-import {Icon} from 'native-base';
-import React, {use, useEffect, useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { Formik } from 'formik';
+import { Icon } from 'native-base';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -11,27 +11,29 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
-import {useDispatch, useSelector} from 'react-redux';
-import Color from '../Assets/Utilities/Color';
-import {Post} from '../Axios/AxiosInterceptorFunction';
-import CustomButton from '../Components/CustomButton';
-import CustomImage from '../Components/CustomImage';
-import CustomText from '../Components/CustomText';
-import ImagePickerModal from '../Components/ImagePickerModal';
-import ScreenBoiler from '../Components/ScreenBoiler';
-import TextInputWithTitle from '../Components/TextInputWithTitle';
-import {SignupSchema} from '../Constant/schema';
-import {setUserToken} from '../Store/slices/auth';
-import {setUserData} from '../Store/slices/common';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
 import {
   CodeField,
   Cursor,
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
+import CountryPicker from 'react-native-country-picker-modal';
+import { useDispatch, useSelector } from 'react-redux';
+import Color from '../Assets/Utilities/Color';
+import { Post } from '../Axios/AxiosInterceptorFunction';
+import CustomButton from '../Components/CustomButton';
+import CustomText from '../Components/CustomText';
+import ScreenBoiler from '../Components/ScreenBoiler';
+import SearchLocationModal from '../Components/SearchLocationModal';
+import TextInputWithTitle from '../Components/TextInputWithTitle';
+import { SignupSchema } from '../Constant/schema';
+import { setUserToken } from '../Store/slices/auth';
+import { setUserData } from '../Store/slices/common';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -42,21 +44,32 @@ const Signup = () => {
   const [image, setImage] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setloading] = useState(false);
-  console.log('🚀 ~ Signup ~ loading:', loading);
-
   const {user_type} = useSelector(state => state.authReducer);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  console.log('🚀 ~ Signup ~ isEmailVerified:', isEmailVerified);
   const [isContactVerified, setIsContactVerified] = useState(false);
-
+  const [showNumberModal, setShowNumberModal] = useState(false);
+  const [countryCode, setCountryCode] = useState('US');
+  const [country, setCountry] = useState({
+    callingCode: ['1'],
+    cca2: 'US',
+    currency: ['USD'],
+    flag: 'flag-us',
+    name: 'United States',
+    region: 'Americas',
+    subregion: 'North America',
+  });
   const [timerLabel, settimerLabel] = useState('Resend In');
   const CELL_COUNT = 6;
   const [code, setCode] = useState('');
   const [contact_code, setContact_Code] = useState('');
+  const [state, setState] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  const [city, setCity] = useState('');
+  const [number, setNumber] = useState('');
   const [ismail, setIsmail] = useState(false);
-  console.log("🚀 ~ Signup ~ ismail:", ismail)
   const [isnumber, setIsNumber] = useState(false);
-
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [address, setAddress] = useState({});
   const [abcd, getCellOnLayoutHandler] = useClearByFocusCell({
     code,
     setCode,
@@ -64,9 +77,9 @@ const Signup = () => {
   const [time, settime] = useState(120);
   if (time > 0) {
     ismail &&
-        setTimeout(function () {
-          settime(time - 1);
-        }, 1000);
+      setTimeout(function () {
+        settime(time - 1);
+      }, 1000);
   }
 
   const label = () => {
@@ -82,15 +95,38 @@ const Signup = () => {
       name: values.name,
       email: values.email,
       password: values.password,
-      phone: values.contact,
+      phone: number,
       agree_terms_condition: values.termsAccepted,
       confirm_password: values.confirmPassword,
-      role: 'Rider',
+      role: 'rider',
+      title: 'Driver',
+      city: city,
+      country: country?.name,
+      state: state,
+      zip_code: zipCode,
+      address: address?.name,
     };
+    for (let key in body) {
+      if (body[key] == '') {
+        return Platform.OS == 'android'
+          ? ToastAndroid.show(` ${key} field is empty`, ToastAndroid.SHORT)
+          : Alert.alert( 'error',`${key} field is empty`);
+      }
+    }
+    if (!usPhoneRegex.test(`+1 ${number}`)) {
+      Platform.OS === 'android'
+        ? ToastAndroid.show(
+            'Please enter a valid US phone number',
+            ToastAndroid.SHORT,
+          )
+        : Alert.alert( 'error','Please enter a valid US phone number');
+      // return null
+    }
     const url = 'register';
-    setIsLoading(true);
+    // setIsLoading(true);
     const response = await Post(url, body, apiHeader());
-    setIsLoading(false);
+    console.log("🚀 ~ Signup ~ response:", response?.data)
+    // setIsLoading(false);
     if (response != undefined) {
       navigation.navigate('AddYourCar');
       Platform.OS == 'android'
@@ -108,7 +144,7 @@ const Signup = () => {
     const url = 'email/verify/send';
     setloading(true);
     const response = await Post(url, body, apiHeader());
-    console.log('🚀 ~ Signup ~ response:', response?.data);
+    console.log("🚀 ~ Signup ~ response:", response?.data)
     setloading(false);
     if (response != undefined) {
       setIsmail(true);
@@ -120,48 +156,79 @@ const Signup = () => {
       code: code,
     };
     const url = 'email/verify/check';
-    setloading(true)
+    setloading(true);
     const response = await Post(url, body, apiHeader());
-    console.log('🚀 ~ Signup ~ response:', response?.data);
-
-    setloading(false)
+    setloading(false);
     if (response != undefined) {
       setCode('');
       setIsEmailVerified(true);
       setIsmail(false);
     }
   };
-  // const contactVerify = async values => {
-  //   const body = {
-  //     phone: values.contact,
-  //   };
-  //   console.log('🚀 ~ Signup ~ body:', body);
-  //   const url = 'phone/verify/send';
-  //   // setIsLoading(true)
-  //   const response = await Post(url, body, apiHeader(true));
-  //   console.log('🚀 ~ Signup ~ response:', response?.data);
-  //   // setIsLoading(false)
-  //   if (response != undefined) {
-  //     setIsNumber(true);
-  //   }
-  // };
-  // const contactOtpVerify = async values => {
-  //   const body = {
-  //     phone: values.contact,
-  //     code: contact_code,
-  //   };
-  //   const url = 'phone/verify/check';
-  //   // setloading(true)
-  //   const response = await Post(url, body, apiHeader());
-  //   console.log('🚀 ~ Signup ~ response:', response?.data);
 
-  //   // setloading(false)
-  //   if (response != undefined) {
-  //     setContact_Code('');
-  //     setIsContactVerified(true);
-  //     setIsNumber(false);
-  //   }
-  // };
+  const onSelect = country => {
+    setCountryCode(country.cca2);
+    setCountry(country);
+  };
+
+  const contactVerify = async values => {
+    const body = {
+      phone: `+1${number}`,
+    };
+
+    const url = 'phone/verify/send';
+    // setIsLoading(true)
+    const response = await Post(url, body, apiHeader());
+    console.log("🚀 ~ Signup ~ response:", response?.data)
+    // setIsLoading(false)
+    if (response != undefined) {
+      setIsNumber(true);
+    }
+  };
+
+  const contactOtpVerify = async values => {
+    const body = {
+      phone: `+1${number}`,
+      code: contact_code,
+    };
+    const url = 'phone/verify/check';
+    // setloading(true)
+    const response = await Post(url, body, apiHeader());
+    console.log("🚀 ~ Signup ~ response:", response?.data)
+    // setloading(false)
+    if (response != undefined) {
+      setContact_Code('');
+      setIsContactVerified(true);
+      setIsNumber(false);
+    }
+  };
+
+  const usPhoneRegex = /^(\+1\s?)?(\(?\d{3}\)?[\s.-]?)\d{3}[\s.-]?\d{4}$/;
+
+  const validateAndFormatUSPhone = phoneNumber => {
+    // if (!usPhoneRegex.test(phoneNumber)) {
+    //   const errorMessage = 'Please enter a valid US phone number'
+    //   // Platform.OS === 'android'
+    //   //   ? ToastAndroid.show(errorMessage, ToastAndroid.SHORT)
+    //   //   : Alert.alert(errorMessage);
+    //   // return null; // ❌ Don't update field
+    // }
+
+    const phoneNumberRegex = /^(\d{3})[-]?(\d{3})[-]?(\d{4})$/;
+    const cleaned = phoneNumber.replace(/\D/g, '');
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+      return `${match[1]} ${match[2]} ${match[3]}`; // e.g., "571 561 8937"
+    }
+
+    return phoneNumber;
+  };
+  useEffect(() => {
+    if (number && number.length < 12) {
+      const formattedNumber = validateAndFormatUSPhone(number);
+      setNumber(formattedNumber);
+    }
+  }, [number]);
   return (
     <ScreenBoiler
       statusBarBackgroundColor={'white'}
@@ -178,21 +245,6 @@ const Signup = () => {
           justifyContent: 'center',
         }}
         showsVerticalScrollIndicator={false}>
-        {/* <View
-          style={{
-            height: windowHeight * 0.15,
-            width: windowHeight * 0.25,
-            marginBottom: windowHeight * 0.01,
-          }}>
-          <CustomImage
-            resizeMode="contain"
-            // source={require('../Assets/Images/logo.png')}
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
-          />
-        </View> */}
         <CustomText isBold style={styles.text}>
           Sign up
         </CustomText>
@@ -203,6 +255,9 @@ const Signup = () => {
             contact: 0,
             password: '',
             termsAccepted: false,
+            state: '',
+            city: '',
+            zipCode: '',
           }}
           validationSchema={SignupSchema}
           onSubmit={onPressregister}>
@@ -253,6 +308,7 @@ const Signup = () => {
                   marginTop={moderateScale(8, 0.3)}
                   placeholderColor={Color.mediumGray}
                   titleStlye={{right: 10}}
+                  disable={ismail || isEmailVerified}
                 />
                 {touched.email && errors.email && (
                   <CustomText
@@ -268,42 +324,24 @@ const Signup = () => {
 
                 {values.email != '' && !isEmailVerified ? (
                   <CustomText
+                  disabled={ismail}
                     onPress={() => {
                       emailVerify(values);
-                      // console.log('================= >>>>>>>>>>>>>' )
                     }}
-                    style={{
-                      fontSize: moderateScale(11, 0.6),
-                      alignSelf: 'flex-end',
-                      paddingTop: moderateScale(5, 0.6),
-                      color: Color.darkBlue,
-                    }}>
+                    style={[styles.verify_email ,{
+                         color: ismail ? Color.darkGray:Color.darkBlue,
+                    }]}>
                     verify now
                   </CustomText>
                 ) : (
                   isEmailVerified && (
-                    <CustomText
-                      style={{
-                        fontSize: moderateScale(11, 0.6),
-                        alignSelf: 'flex-end',
-                        paddingTop: moderateScale(5, 0.6),
-                        color: Color.darkBlue,
-                      }}>
+                    <CustomText style={styles.email_txt}>
                       email verified successfully
                     </CustomText>
                   )
                 )}
                 {ismail && (
-                  <View
-                    style={{
-                      width: windowWidth * 0.8,
-                      backgroundColor: Color.white,
-                      borderRadius: 10,
-                      padding: moderateScale(10, 0.6),
-                      marginVertical: moderateScale(5, 0.6),
-                      borderWidth: 1,
-                      borderColor: Color.darkBlue,
-                    }}>
+                  <View style={styles.email_con}>
                     <CodeField
                       placeholder={'0'}
                       ref={ref}
@@ -377,13 +415,94 @@ const Signup = () => {
                     />
                   </View>
                 )}
+                <CustomText
+                  style={[
+                    {
+                      color: Color.themeBlack,
+                      fontSize: moderateScale(12, 0.6),
+                      marginBottom: moderateScale(5, 0.3),
+                      marginTop: moderateScale(10, 0.3),
+                      textAlign: 'left',
+                      width: windowWidth * 0.75,
+                    },
+                  ]}>
+                  Country *
+                </CustomText>
+                <TouchableOpacity
+                  disabled={true}
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    setShowNumberModal(true);
+                  }}
+                  style={[styles.birthday, {justifyContent: 'flex-start'}]}>
+                  <CountryPicker
+                    {...{
+                      countryCode,
+                      // withCallingCode,
+                      onSelect,
+                      // withFilter,
+                    }}
+                    visible={showNumberModal}
+                    onClose={() => {
+                      setShowNumberModal(false);
+                    }}
+                  />
 
+                  {country && (
+                    <CustomText
+                      style={{
+                        fontSize: moderateScale(15, 0.6),
+                        color: '#5E5E5E',
+                      }}>
+                      {countryCode}
+                    </CustomText>
+                  )}
+
+                  <Icon
+                    name={'angle-down'}
+                    as={FontAwesome}
+                    size={moderateScale(20, 0.6)}
+                    color={Color.themeColor}
+                    // onPress={() => {
+                    //   setShowNumberModal(true);
+                    // }}
+                    style={{
+                      position: 'absolute',
+                      right: moderateScale(5, 0.3),
+                    }}
+                  />
+                </TouchableOpacity>
+                <CustomText
+                  style={{
+                    fontSize: moderateScale(12, 0.6),
+                    color: Color.black,
+                    alignSelf: 'flex-start',
+                    paddingHorizontal: moderateScale(3, 0.6),
+                    paddingTop: moderateScale(10, 0.6),
+                  }}>
+                  address *
+                </CustomText>
+                <TouchableOpacity
+                  onPress={() => {
+                    setIsModalVisible(true);
+                  }}
+                  style={styles.address_btn}>
+                  <CustomText
+                    numberOfLines={1}
+                    style={{
+                      fontSize: moderateScale(13, 0.6),
+                      color: Color.mediumGray,
+                    }}>
+                    {address?.name ? address?.name : 'Address'}
+                  </CustomText>
+                </TouchableOpacity>
                 <TextInputWithTitle
-                  title={'contact * '}
-                  titleText={'Username'}
-                  placeholder={'phone number'}
-                  setText={handleChange('contact')}
-                  value={values.contact}
+                  disable={true}
+                  title={'State * '}
+                  titleText={'State'}
+                  placeholder={'State'}
+                  // setText={handleChange('state')}
+                  value={state}
                   viewHeight={0.055}
                   viewWidth={0.82}
                   inputWidth={0.8}
@@ -395,13 +514,74 @@ const Signup = () => {
                   placeholderColor={Color.mediumGray}
                   titleStlye={{right: 10}}
                 />
-                {touched.contact && errors.contact && (
+                <TextInputWithTitle
+                  disable={true}
+                  title={'city * '}
+                  titleText={'city'}
+                  placeholder={'City'}
+                  // setText={handleChange('city')}
+                  value={city}
+                  viewHeight={0.055}
+                  viewWidth={0.82}
+                  inputWidth={0.8}
+                  border={1}
+                  borderRadius={30}
+                  backgroundColor={'transparent'}
+                  borderColor={Color.lightGrey}
+                  marginTop={moderateScale(8, 0.3)}
+                  placeholderColor={Color.mediumGray}
+                  titleStlye={{right: 10}}
+                />
+                <TextInputWithTitle
+                  disable={true}
+                  title={'Zip Code * '}
+                  titleText={'Zip Code'}
+                  placeholder={'Zip Code'}
+                  // setText={handleChange('zipCode')}
+                  value={zipCode}
+                  viewHeight={0.055}
+                  viewWidth={0.82}
+                  inputWidth={0.8}
+                  border={1}
+                  borderRadius={30}
+                  backgroundColor={'transparent'}
+                  borderColor={Color.lightGrey}
+                  marginTop={moderateScale(8, 0.3)}
+                  placeholderColor={Color.mediumGray}
+                  titleStlye={{right: 10}}
+                />
+
+                <TextInputWithTitle
+                  disable={isnumber || isContactVerified}
+                  title={'contact * '}
+                  titleText={'Username'}
+                  placeholder={'contact'}
+                  setText={setNumber}
+                  value={number}
+                  // setText={handleChange('contact')}
+                  // value={values.contact}
+                  viewHeight={0.055}
+                  viewWidth={0.82}
+                  inputWidth={0.8}
+                  border={1}
+                  borderRadius={30}
+                  backgroundColor={'transparent'}
+                  borderColor={Color.lightGrey}
+                  marginTop={moderateScale(8, 0.3)}
+                  placeholderColor={Color.mediumGray}
+                  titleStlye={{right: 10}}
+                  keyboardType={'numeric'}
+                  maxLength={12}
+                  // disable={isnumber}
+                />
+                {/* {touched.contact && errors.contact && (
                   <CustomText style={styles.schemaText}>
                     {errors.contact}
                   </CustomText>
-                )}
-                {/* {values.contact != '' && !isContactVerified ? (
+                )} */}
+                {number != '' && !isContactVerified ? (
                   <CustomText
+                  disable={isnumber}
                     onPress={() => {
                       contactVerify(values);
                     }}
@@ -409,7 +589,7 @@ const Signup = () => {
                       fontSize: moderateScale(11, 0.6),
                       alignSelf: 'flex-end',
                       paddingTop: moderateScale(5, 0.6),
-                      color: Color.darkBlue,
+                      color:isnumber ? Color.darkGray : Color.darkBlue,
                     }}>
                     verify now
                   </CustomText>
@@ -509,7 +689,7 @@ const Signup = () => {
                       elevation
                     />
                   </View>
-                )} */}
+                )}
                 <TextInputWithTitle
                   showPassword
                   title={'password *'}
@@ -590,13 +770,14 @@ const Signup = () => {
                   </CustomText>
                 )}
                 <CustomButton
+                  // disabled={!isEmailVerified}
                   disabled={!isEmailVerified && !isContactVerified}
                   onPress={handleSubmit}
                   text={
                     isLoading ? (
                       <ActivityIndicator color={Color.white} size={'small'} />
                     ) : (
-                      'sign  up'
+                      'sign up'
                     )
                   }
                   fontSize={moderateScale(14, 0.3)}
@@ -609,12 +790,12 @@ const Signup = () => {
                   height={windowHeight * 0.075}
                   bgColor={Color.darkBlue}
                   textTransform={'capitalize'}
-                  // elevation
                 />
               </View>
             );
           }}
         </Formik>
+
         <CustomText style={styles.do_text}>
           Already have an account?
           <CustomText
@@ -626,13 +807,17 @@ const Signup = () => {
             Sign in
           </CustomText>
         </CustomText>
-
-        {/* <ImagePickerModal
-          show={imagePicker}
-          setShow={setImagePicker}
-          setFileObject={setImage}
-        /> */}
       </ScrollView>
+      <SearchLocationModal
+        locationType={'address'}
+        isModalVisible={isModalVisible}
+        setIsModalVisible={setIsModalVisible}
+        setUserAddress={setAddress}
+        userAddress={address}
+        setCity={setCity}
+        setState={setState}
+        setZipCode={setZipCode}
+      />
     </ScreenBoiler>
   );
 };
@@ -642,7 +827,6 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(22, 0.6),
     color: Color.themeBlack,
     paddingVertical: moderateScale(10, 0.6),
-    // marginBottom : moderateScale(10,.6) ,
     marginTop: windowHeight * 0.1,
     paddingBottom: moderateScale(10, 0.6),
   },
@@ -681,8 +865,6 @@ const styles = ScaledSheet.create({
   },
   do_text: {
     paddingVertical: moderateScale(35, 0.6),
-    // position: 'absolute',
-    // bottom: 10,
     textTransform: 'none',
     letterSpacing: 1,
   },
@@ -735,16 +917,52 @@ const styles = ScaledSheet.create({
   txt4: {
     color: Color.darkGray,
     fontSize: moderateScale(12, 0.6),
-    // borderBottomWidth: 1,
     borderColor: Color.white,
     fontWeight: '600',
     paddingHorizontal: moderateScale(15, 0.6),
   },
-  // row_con: {
-  //   flexDirection: 'row',
-  //   backgroundColor :'red' ,
-  //   width : '100%'
-  // },
+  email_con: {
+    width: windowWidth * 0.8,
+    backgroundColor: Color.white,
+    borderRadius: 10,
+    padding: moderateScale(10, 0.6),
+    marginVertical: moderateScale(5, 0.6),
+    borderWidth: 1,
+    borderColor: Color.darkBlue,
+  },
+  email_txt: {
+    fontSize: moderateScale(11, 0.6),
+    alignSelf: 'flex-end',
+    paddingTop: moderateScale(5, 0.6),
+    color: Color.darkBlue,
+  },
+  verify_email: {
+    fontSize: moderateScale(11, 0.6),
+    alignSelf: 'flex-end',
+    paddingTop: moderateScale(5, 0.6),
+ 
+  },
+  birthday: {
+    width: windowWidth * 0.8,
+    height: windowHeight * 0.06,
+    borderRadius: moderateScale(30, 0.6),
+    borderWidth: 0.2,
+    borderColor: Color.mediumGray,
+    flexDirection: 'row',
+    paddingHorizontal: moderateScale(10, 0.6),
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  address_btn: {
+    width: windowWidth * 0.8,
+    borderWidth: 0.3,
+    height: windowHeight * 0.055,
+    borderColor: Color.mediumGray,
+    marginTop: moderateScale(10, 0.6),
+    borderRadius: moderateScale(30, 0.6),
+    justifyContent: 'center',
+    paddingHorizontal: moderateScale(15, 0.6),
+  },
 });
 
 export default Signup;

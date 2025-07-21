@@ -1,30 +1,39 @@
-import { Icon } from 'native-base';
-import React, { useRef } from 'react';
-import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { Rating } from 'react-native-ratings';
-import { moderateScale } from 'react-native-size-matters';
+import {Icon} from 'native-base';
+import React, {useRef} from 'react';
+import {SafeAreaView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Rating} from 'react-native-ratings';
+import {moderateScale} from 'react-native-size-matters';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import navigationService from '../navigationService';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import {windowHeight, windowWidth} from '../Utillity/utils';
+import ReviewModal from '../Components/ReviewModal';
 
 const RateScreen = props => {
   const data = props?.route?.params?.data;
+  console.log('🚀 ~ data:', data);
   const rbRef = useRef();
+
   return (
-    <SafeAreaView>
+    <SafeAreaView
+      style={{
+        paddingVertical: moderateScale(30, 0.6),
+        height : windowHeight ,
+        width :windowWidth,
+      }}>
       <View style={styles.mainContainer}>
         <Header
           showBack={true}
-          textstyle={{ fontWeight: 'regular' }}
-          title={'Rate Passenger'}
+          textstyle={{fontWeight: 'regular'}}
+          title={'rate Rider'}
         />
         <View style={styles.box}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={styles.image_Style}>
               <CustomImage
                 style={{
@@ -34,16 +43,16 @@ const RateScreen = props => {
                 source={require('../Assets/Images/riderphoto.png')}
               />
             </View>
-            <CustomText style={styles.name}>{data?.user?.name}</CustomText>
+            <CustomText style={styles.name}>{data?.rider?.name}</CustomText>
             <TouchableOpacity style={styles.button}>
               <CustomText style={styles.ride_status}>COMPLETE</CustomText>
             </TouchableOpacity>
           </View>
-          <View style={{ marginTop: moderateScale(20, 0.6) }}>
-            <View style={{ flexDirection: 'row' }}>
+          <View style={{marginTop: moderateScale(20, 0.6)}}>
+            <View style={{flexDirection: 'row'}}>
               <View style={styles.Circle}>
                 <Icon
-                  style={{ color: Color.white }}
+                  style={{color: Color.white}}
                   as={FontAwesome5}
                   name="car"
                   size={moderateScale(12, 0.6)}
@@ -57,13 +66,13 @@ const RateScreen = props => {
               </View>
             </View>
             <View style={styles.rotate_View}>
-              <CustomText style={{ color: Color.black }}>.........</CustomText>
+              <CustomText style={{color: Color.black}}>.........</CustomText>
             </View>
             <View
-              style={{ flexDirection: 'row', marginTop: moderateScale(20, 0.6) }}>
+              style={{flexDirection: 'row', marginTop: moderateScale(20, 0.6)}}>
               <View style={styles.Circle}>
                 <Icon
-                  style={{ color: Color.white }}
+                  style={{color: Color.white}}
                   as={FontAwesome5}
                   name="car"
                   size={moderateScale(12, 0.6)}
@@ -72,22 +81,17 @@ const RateScreen = props => {
               <View style={styles.loca_con}>
                 <CustomText style={styles.text}>Drop Off</CustomText>
                 <CustomText numberOfLines={2} style={styles.value2}>
-                  {data?.type == 'Pets Delivery' || 'Parcel Delivery'
-                    ? data?.location_to
-                    : data?.ride_info?.location_to}
+                  {data?.location_to}
                 </CustomText>
               </View>
             </View>
           </View>
         </View>
         <View style={styles.amountBox}>
-          <View style={{ gap: moderateScale(10, 0.6) }}>
+          <View style={{gap: moderateScale(10, 0.6)}}>
             <View style={styles.row}>
               <CustomText style={styles.trip_t}>Trip Fare Breakdown</CustomText>
-              <CustomText style={styles.h1}>{`$${data?.type == 'Pets Delivery' || 'Parcel Delivery'
-                ? data?.amount
-                : data?.ride_info?.amount
-                }`}</CustomText>
+              <CustomText style={styles.h1}>${data?.amount}</CustomText>
             </View>
             <View style={styles.row}>
               <CustomText
@@ -99,10 +103,7 @@ const RateScreen = props => {
                 ]}>
                 Subtotal
               </CustomText>
-              <CustomText style={styles.h1}>{`$${data?.type == 'Pets Delivery' || 'Parcel Delivery'
-                ? data?.amount
-                : data?.ride_info?.amount
-                }`}</CustomText>
+              <CustomText style={styles.h1}>${data?.amount}</CustomText>
             </View>
             <View style={styles.row}>
               <CustomText
@@ -114,10 +115,7 @@ const RateScreen = props => {
                 ]}>
                 Promo Code
               </CustomText>
-              <CustomText style={styles.h1}>{`$${data?.type == 'Pets Delivery' || 'Parcel Delivery'
-                ? data?.amount
-                : data?.ride_info?.amount
-                }`}</CustomText>
+              <CustomText style={styles.h1}>$ {data?.amount}</CustomText>
             </View>
           </View>
           <View style={styles.container1} />
@@ -126,46 +124,40 @@ const RateScreen = props => {
               Total
             </CustomText>
             <CustomText isBold style={styles.h1}>
-              {`$${data?.type == 'Pets Delivery' || 'Parcel Delivery'
-                ? data?.amount
-                : data?.ride_info?.amount
-                }`}
+              ${data?.amount}
             </CustomText>
           </View>
         </View>
-        <Rating
+        {/* <Rating
           type="custom"
-          //   readonly
           startingValue={55}
           ratingCount={5}
           ratingColor={Color.yellow}
           imageSize={moderateScale(35, 0.3)}
           tintColor={Color.white}
-          style={{ marginTop: moderateScale(30, 0.6) }}
-        />
+          style={{marginTop: moderateScale(30, 0.6)}}
+        /> */}
         <View style={styles.btn_view}>
           <CustomButton
-            text={'submit'}
+            text={'complete'}
             fontSize={moderateScale(15, 0.3)}
             textColor={Color.white}
-            borderWidth={0}
+            borderWidth={1.5}
             borderColor={Color.white}
             borderRadius={moderateScale(30, 0.3)}
             width={windowWidth * 0.9}
             height={windowHeight * 0.075}
-            bgColor={Color.darkBlue}
+            bgColor={Color.btn_Color}
             textTransform={'capitalize'}
-            elevation={true}
+            elevation={false}
             onPress={() => {
-              navigationService.navigate('RecieptScreen', {
-                type: '',
-                data: data,
-              });
+              navigationService.navigate('Home');
+              // rbRef.current.open();
             }}
           />
-        </View>
 
-        {/* <ReviewModal setRef={rbRef} rbRef={rbRef} item={data} /> */}
+          {/* <ReviewModal setRef={rbRef} rbRef={rbRef} item={data} /> */}
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -178,6 +170,7 @@ const styles = StyleSheet.create({
     height: windowHeight,
     width: windowWidth,
     backgroundColor: Color.white,
+    paddingVertical : moderateScale(20,.6)
   },
   box: {
     height: windowHeight * 0.25,
@@ -246,15 +239,18 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(12, 0.6),
     color: Color.themeBlack,
     fontWeight: 'bold',
+    width: windowWidth * 0.5,
+
+    // backgroundColor :'red'
   },
   value: {
     fontSize: moderateScale(10, 0.6),
     color: Color.themeBlack,
-    width: windowWidth * 0.75,
+    width: '50%',
     fontWeight: 'bold',
   },
   rotate_View: {
-    transform: [{ rotate: '90deg' }],
+    transform: [{rotate: '90deg'}],
     position: 'absolute',
     width: windowWidth * 0.1,
     top: moderateScale(40, 0.6),
@@ -264,14 +260,14 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(10, 0.6),
     color: Color.themeBlack,
     fontWeight: 'bold',
-    width: '80%',
+    width: '70%',
   },
   trip_t: {
     fontSize: moderateScale(12, 0.6),
     color: Color.themeBlack,
     fontWeight: '600',
   },
-  row: { flexDirection: 'row', justifyContent: 'space-between' },
+  row: {flexDirection: 'row', justifyContent: 'space-between'},
   h1: {
     fontSize: moderateScale(12, 0.6),
     color: Color.themeBlack,
@@ -293,5 +289,5 @@ const styles = StyleSheet.create({
     bottom: moderateScale(30, 0.6),
     alignSelf: 'center',
   },
-  loca_con: { marginLeft: moderateScale(10, 0.6) },
+  loca_con: {marginLeft: moderateScale(10, 0.6)},
 });

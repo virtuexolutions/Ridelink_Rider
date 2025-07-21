@@ -1,4 +1,4 @@
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Alert, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import Header from '../Components/Header';
 import {windowHeight, windowWidth} from '../Utillity/utils';
@@ -6,11 +6,21 @@ import Color from '../Assets/Utilities/Color';
 import {moderateScale} from 'react-native-size-matters';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
+import moment from 'moment';
 
-const ConfirmationScreen = () => {
+const ConfirmationScreen = props => {
+  // const data = props?.route?.params?.data;
+  const transaction = props?.route?.params?.id;
+  const data = props?.route?.params?.withDraw_amount;
+  
   return (
-    <SafeAreaView>
-      <Header showBack={true} />
+    <SafeAreaView style={{
+      height : windowHeight ,
+      width : windowWidth ,
+      paddingVertical : moderateScale(20,.6),
+      backgroundColor : Color.lightGrey
+    }}>
+      <Header headerColor={Color.lightGrey}   showBack={true} />
 
       <View style={styles.con}>
         <View style={styles.image_Con}>
@@ -34,7 +44,7 @@ const ConfirmationScreen = () => {
             textAlign: 'center',
             color: Color.black,
           }}>
-          transaction sucessfully $12.6
+          transaction sucessfully {data?.user_info?.wallet?.transaction?.amount}
         </CustomText>
         <CustomText
           style={{
@@ -43,7 +53,7 @@ const ConfirmationScreen = () => {
           }}>
           Details
         </CustomText>
-        <View style={styles.row}>
+        {/* <View style={styles.row}>t
           <CustomText
             style={{
               fontSize: moderateScale(12, 0.6),
@@ -58,9 +68,9 @@ const ConfirmationScreen = () => {
               textAlign: 'center',
               color: Color.black,
             }}>
-            transaction sucessfully $12.6
+           {transaction}
           </CustomText>
-        </View>
+        </View> */}
 
         <View style={styles.row}>
           <CustomText
@@ -77,7 +87,7 @@ const ConfirmationScreen = () => {
               textAlign: 'center',
               color: Color.black,
             }}>
-            6 : 40 Pm
+            {moment(data?.wallet?.transaction?.created_at).format('LT')}
           </CustomText>
         </View>
         <View style={styles.row}>
@@ -95,10 +105,10 @@ const ConfirmationScreen = () => {
               textAlign: 'center',
               color: Color.black,
             }}>
-            6/3/2025
+            {moment(data?.wallet?.transaction?.created_at).format('l')}
           </CustomText>
         </View>
-        <View style={styles.row}>
+        {/* <View style={styles.row}>
           <CustomText
             style={{
               fontSize: moderateScale(12, 0.6),
@@ -113,9 +123,9 @@ const ConfirmationScreen = () => {
               textAlign: 'center',
               color: Color.black,
             }}>
-            card
+            {data?.wallet?.transaction?.type}
           </CustomText>
-        </View>
+        </View> */}
         <View style={styles.row}>
           <CustomText
             style={{
@@ -131,7 +141,7 @@ const ConfirmationScreen = () => {
               textAlign: 'center',
               color: Color.black,
             }}>
-            $12.6
+            {data?.user_info?.wallet?.transaction?.amount} 
           </CustomText>
         </View>
         <View style={styles.row}>
@@ -149,7 +159,7 @@ const ConfirmationScreen = () => {
               textAlign: 'center',
               color: Color.black,
             }}>
-            pending
+            {data?.user_info?.wallet?.transaction?.status} 
           </CustomText>
         </View>
       </View>
@@ -162,13 +172,14 @@ export default ConfirmationScreen;
 const styles = StyleSheet.create({
   con: {
     width: windowWidth * 0.9,
-    height: windowHeight * 0.53,
+    height: windowHeight * 0.45,
     marginVertical: moderateScale(20, 0.6),
     backgroundColor: Color.white,
     alignSelf: 'center',
     borderRadius: 20,
     paddingHorizontal: moderateScale(15, 0.6),
     paddingVertical: moderateScale(15, 0.6),
+    marginTop : windowHeight *0.1,
   },
   image_Con: {
     marginTop: windowHeight * 0.03,

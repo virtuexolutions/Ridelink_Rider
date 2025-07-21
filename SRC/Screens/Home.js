@@ -1,6 +1,6 @@
-import { useIsFocused } from '@react-navigation/native';
-import { Icon, ScrollView } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import {useIsFocused} from '@react-navigation/native';
+import {Icon, ScrollView} from 'native-base';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -15,26 +15,27 @@ import {
   View,
 } from 'react-native';
 
-import { getDatabase, onValue, ref } from '@react-native-firebase/database';
+import {getDatabase, onValue, ref} from '@react-native-firebase/database';
 import Geolocation from 'react-native-geolocation-service';
-import { moderateScale } from 'react-native-size-matters';
+import {moderateScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Get, Post } from '../Axios/AxiosInterceptorFunction';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import SearchbarComponent from '../Components/SearchbarComponent';
 import Userbox from '../Components/Userbox';
 import navigationService from '../navigationService';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import {position} from 'native-base/lib/typescript/theme/styled-system';
 
 const Home = () => {
   const token = useSelector(state => state.authReducer.token);
   console.log("🚀 ~ Home ~ token:", token)
-  const data = useSelector(state => state.commonReducer.userData)
+  const data = useSelector(state => state.commonReducer.userData);
   const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(false);
   const [requestList, setRequestList] = useState([]);
@@ -106,9 +107,10 @@ const Home = () => {
   const rideRequestList = async () => {
     const url = `auth/rider/ride-request-list?type[0]=${selectedService?.[0]}`;
     setIsLoading(true);
-    console.log('🚀 ~ rideRequestList ~ url:  >>>>>', url);
+    console.log("🚀 ~ rideRequestList ~ url:", url)
     try {
       const response = await Get(url, token);
+      console.log("🚀 ~ rideRequestList ~ response:", response?.data)
       if (response != undefined) {
         setRequestList(response?.data?.ride_info);
       } else {
@@ -121,6 +123,7 @@ const Home = () => {
   };
 
   const serviceArray = ['Parcel Delivery', 'ride', 'Pets Delivery'];
+  console.log("🚀 ~ Home ~ serviceArray:", serviceArray)
   useEffect(() => {
     console.log('helllllssslloooo from firebase');
     const db = getDatabase();
@@ -133,7 +136,6 @@ const Home = () => {
           id: key,
           ...data[key],
         }));
-        console.log('🚀 ~ allRequests ~ allRequests:', allRequests);
         if (
           selectedService.includes('ride') &&
           selectedService.includes('Parcel Delivery') &&
@@ -152,34 +154,6 @@ const Home = () => {
 
     return () => unsubscribe();
   }, [isFocused, activebutton, selectedService]);
-
-  // useEffect(() => {
-  //   console.log('helllllssslloooo fromfire base');
-  //   const db = getDatabase();
-  //   const requestsRef = ref(db, 'requests');
-  //   const unsubscribe = onValue(requestsRef, snapshot => {
-  //     if (snapshot.exists()) {
-  //       const data = snapshot.val();
-  //       const allRequests = Object.keys(data).map(key => ({
-  //         id: key,
-  //         ...data[key],
-  //       }));
-
-  //       // if (
-  //       //   selectedService.includes('ride') &&
-  //       //   selectedService.includes('delivery')
-  //       // ) {
-  //       rideRequestList();
-  //       //   deliveryRequest();
-  //       // } else if (selectedService.includes('ride')) {
-  //       //   rideRequestList();
-  //       // } else if (selectedService.includes('delivery')) {
-  //       //   deliveryRequest();
-  //       // }
-  //     }
-  //   });
-  //   return () => unsubscribe();
-  // }, [isFocused, activebutton]);
 
   useEffect(() => {
     updateLocation();
@@ -221,94 +195,87 @@ const Home = () => {
   return (
     <SafeAreaView style={styles.safe_area}>
       <Header title={'Driver Online'} />
-      <TouchableOpacity
-        onPress={() => {
-          setModalVisible(!modalVisible);
-        }}
-        style={styles.service}>
-        <CustomText isBold style={styles.ser_text}>
-          select service for today
-        </CustomText>
-        <Icon
-          name="down"
-          as={AntDesign}
-          size={moderateScale(15, 0.6)}
-          color={Color.black}
-        />
-      </TouchableOpacity>
-      {modalVisible && (
-        <View style={styles.con}>
-          {serviceArray?.map((item, index) => (
-            // console.log('itemmmmmmmmmmmmmmm hereeeeeeeeee ================= >>>>>> >>' ,item)
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <CustomText
-                onPress={() => {
-                  // setactivebutton(item === 'ride' ? 'ride' : 'delivery')
-                  setSelectedService(prev =>
-                    prev.includes(item)
-                      ? prev?.filter(ser => ser !== item)
-                      : [...prev, item],
-                  );
-                }}
-                style={{
-                  fontSize: moderateScale(14, 0.6),
-                  color: Color.black,
-                  paddingHorizontal: moderateScale(5, 0.6),
-                }}>
-                {item}
-              </CustomText>
-              {selectedService.includes(item) && (
-                <Icon
-                  style={{
-                    paddingTop: moderateScale(2, 0.6),
-                  }}
-                  name="check"
-                  as={AntDesign}
-                  size={moderateScale(10, 0.6)}
-                  color={Color.blue}
-                />
-              )}
-            </View>
-          ))}
-          {selectedService?.length > 0 && (
-            <TouchableOpacity
-              onPress={() => {
-                profileUpdate();
-              }}
-              style={{
-                backgroundColor: Color.blue,
-                width: '100%',
-                alignItems: 'center',
-                marginTop: moderateScale(10, 0.6),
-                borderRadius: moderateScale(20, 0.6)
-              }}>
-              {isLoading ? (
-                <ActivityIndicator size={'small'} color={Color.black} />
-              ) : (
+      <View
+        style={{
+          position: 'relative',
+          // top: 20,
+          zIndex: 1,
+        }}>
+        <TouchableOpacity
+          onPress={() => {
+            setModalVisible(!modalVisible);
+          }}
+          style={styles.service}>
+          <CustomText isBold style={styles.ser_text}>
+            select service for today
+          </CustomText>
+          <Icon
+            name="down"
+            as={AntDesign}
+            size={moderateScale(15, 0.6)}
+            color={Color.black}
+          />
+        </TouchableOpacity>
+        {modalVisible && (
+          <View style={styles.con}>
+            {serviceArray?.map((item, index) => (
+              <View style={styles.row}>
                 <CustomText
                   onPress={() => {
-                    profileUpdate();
+                    setSelectedService(prev =>
+                      prev.includes(item)
+                        ? prev?.filter(ser => ser !== item)
+                        : [...prev, item],
+                    );
                   }}
-                  style={{
-                    fontSize: moderateScale(12, 0.6),
-                  }}>
-                  done
+                  style={styles.row_txt}>
+                  {item}
                 </CustomText>
-              )}
-            </TouchableOpacity>
-          )}
-        </View>
-      )}
-
+                {selectedService.includes(item) && (
+                  <Icon
+                    style={{
+                      paddingTop: moderateScale(2, 0.6),
+                    }}
+                    name="check"
+                    as={AntDesign}
+                    size={moderateScale(10, 0.6)}
+                    color={Color.blue}
+                  />
+                )}
+              </View>
+            ))}
+            {selectedService?.length > 0 && (
+              <TouchableOpacity
+                onPress={() => {
+                  profileUpdate();
+                }}
+                style={styles.btn}>
+                {isLoading ? (
+                  <ActivityIndicator size={'small'} color={Color.black} />
+                ) : (
+                  <CustomText
+                    onPress={() => {
+                      profileUpdate();
+                    }}
+                    style={{
+                      fontSize: moderateScale(12, 0.6),
+                    }}>
+                    done
+                  </CustomText>
+                )}
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+      </View>
       <SearchbarComponent
         SearchStyle={{
           width: windowWidth * 0.9,
           height: windowHeight * 0.058,
+
           backgroundColor: Color.white,
+          // position: 'relative',
+          // zIndex: 1,
         }}
         placeholderName={null}
         isRightIcon={true}
@@ -326,32 +293,12 @@ const Home = () => {
               width: '100%',
             }}
             source={require('../Assets/Images/bgcimage.png')}>
-            <View
-              style={{
-                flexDirection: 'row',
-                height: '100%',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  marginTop: windowHeight * 0.12,
-                  paddingLeft: moderateScale(10, 0.6),
-                }}>
-                <CustomText
-                  style={{
-                    fontSize: moderateScale(10, 0.6),
-                    color: Color.themeBlack,
-                    width: windowWidth * 0.42,
-                  }}>
+            <View style={styles.sec_row}>
+              <View style={styles.row_con}>
+                <CustomText style={styles.txt}>
                   {' Request A Ride, Hop In, And Go.'}
                 </CustomText>
-                <CustomText
-                  style={{
-                    fontSize: moderateScale(24, 0.6),
-                    color: Color.themeBlack,
-                    width: windowWidth * 0.45,
-                    fontWeight: 'bold',
-                  }}>
+                <CustomText style={styles.h2}>
                   {' Go Anywhere With Ridelynk'}
                 </CustomText>
               </View>
@@ -416,37 +363,29 @@ const Home = () => {
           ) : (
             <FlatList
               ListEmptyComponent={
-                <CustomText
-                  style={{
-                    textAlign: 'center',
-                    fontSize: moderateScale(11, 0.6),
-                    color: Color.red,
-                  }}>
-                  no data found
-                </CustomText>
+                <CustomText style={styles.no_txt}>no data found</CustomText>
               }
               showsVerticalScrollIndicator={false}
               keyExtractor={item => item?.id}
               data={requestList}
-              contentContainerStyle={{ marginBottom: moderateScale(100, 0.6) }}
-              style={{ marginBottom: moderateScale(70, 0.6) }}
-              renderItem={({ item }) => {
-                console.log("🚀 ~ Home ~ item:", item)
+              contentContainerStyle={{marginBottom: moderateScale(100, 0.6)}}
+              style={{marginBottom: moderateScale(70, 0.6)}}
+              renderItem={({item}) => {
                 return (
                   <Userbox
                     data={item?.ride_info}
                     onPressDetails={() => {
                       item?.ride_info?.type == 'Parcel Delivery' ||
-                        item?.ride_info?.type == 'Pets Delivery'
+                      item?.ride_info?.type == 'Pets Delivery'
                         ? navigationService.navigate('PassengerDetails', {
-                          type: 'delivery',
-                          data: item?.ride_info,
-                          fromdelivery: true,
-                        })
+                            type: 'delivery',
+                            data: item?.ride_info,
+                            fromdelivery: true,
+                          })
                         : navigationService.navigate('RideRequest', {
-                          type: 'ride',
-                          data: item?.ride_info,
-                        });
+                            type: 'ride',
+                            data: item?.ride_info,
+                          });
                     }}
                   />
                 );
@@ -466,6 +405,7 @@ const styles = StyleSheet.create({
     width: windowWidth,
     height: windowHeight,
     backgroundColor: Color.white,
+    paddingVertical: moderateScale(25, 0.6),
   },
   indicatorStyle: {
     paddingRight: 5,
@@ -507,15 +447,6 @@ const styles = StyleSheet.create({
     marginTop: moderateScale(20, 0.6),
   },
 
-  text: {
-    fontSize: moderateScale(14, 0.6),
-    color: Color.black,
-  },
-  location: {
-    fontSize: moderateScale(12, 0.6),
-    color: Color.grey,
-  },
-
   service: {
     flexDirection: 'row',
     width: windowWidth,
@@ -535,8 +466,49 @@ const styles = StyleSheet.create({
     zIndex: 1,
     position: 'absolute',
     right: 20,
-    top: 115,
+    top: 30,
     paddingHorizontal: moderateScale(10, 0.6),
     paddingVertical: moderateScale(5, 0.6),
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  row_txt: {
+    fontSize: moderateScale(14, 0.6),
+    color: Color.black,
+    paddingHorizontal: moderateScale(5, 0.6),
+  },
+  btn: {
+    backgroundColor: Color.blue,
+    width: '100%',
+    alignItems: 'center',
+    marginTop: moderateScale(10, 0.6),
+    borderRadius: moderateScale(20, 0.6),
+  },
+  sec_row: {
+    flexDirection: 'row',
+    height: '100%',
+    alignItems: 'center',
+  },
+  row_con: {
+    marginTop: windowHeight * 0.12,
+    paddingLeft: moderateScale(10, 0.6),
+  },
+  txt: {
+    fontSize: moderateScale(10, 0.6),
+    color: Color.themeBlack,
+    width: windowWidth * 0.42,
+  },
+  h2: {
+    fontSize: moderateScale(24, 0.6),
+    color: Color.themeBlack,
+    width: windowWidth * 0.45,
+    fontWeight: 'bold',
+  },
+  no_txt: {
+    textAlign: 'center',
+    fontSize: moderateScale(11, 0.6),
+    color: Color.red,
   },
 });

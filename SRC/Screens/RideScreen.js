@@ -1,11 +1,11 @@
 import {Pusher} from '@pusher/pusher-websocket-react-native';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import database from '@react-native-firebase/database';
+import {useIsFocused} from '@react-navigation/native';
 import {getDistance, isValidCoordinate} from 'geolib';
 import {Icon} from 'native-base';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
-  Alert,
   Linking,
   SafeAreaView,
   StyleSheet,
@@ -20,48 +20,35 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import {Post} from '../Axios/AxiosInterceptorFunction';
-import AdditionalTimeModal from '../Components/AdditionalTimeModal';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
+import RideCancel from '../Components/RideCancel';
 import navigationService from '../navigationService';
 import {customMapStyle} from '../Utillity/mapstyle';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import database from '@react-native-firebase/database';
 
 const RideScreen = ({route}) => {
   const {data, type, ride_status} = route?.params;
-  console.log('🚀 ~ RideScreen ~ data:', data?.status);
   const rideData = route?.params?.data;
-  console.log('🚀 ~ RideScreen ~ rideData:', rideData);
-  const rider_arrived_time = route?.params?.rider_arrived_time;
 
   const token = useSelector(state => state.authReducer.token);
 
   const timeoutRef = useRef(null);
-  console.log('🚀 ~ RideScreen ~ timeoutRef:aaaaaaaa', timeoutRef?.current);
   const isFocused = useIsFocused();
   const mapRef = useRef(null);
   const pusher = Pusher.getInstance();
   const myChannel = useRef(null);
 
-  const [canCancel, setCanCancel] = useState(true);
-  console.log('🚀 ~ RideScreen ~ canCancel:', canCancel);
-  const [additionalTime, setAdditionalTime] = useState(false);
-  const [additionalTimeModal, setAdditionalTimeModal] = useState(false);
+  const [isVisible, setisVisible] = useState(false);
   const [isriderArrive, setIsRiderArrived] = useState(false);
-  console.log('🚀 ~ RideScreen ~ isriderArrive:', isriderArrive);
-  const [addTime, setAddTime] = useState(0);
   const [time, setTime] = useState(0);
-  const {user_type} = useSelector(state => state.authReducer);
   const [isLoading, setIsLoading] = useState(false);
-  // const [updatedStatus, setUpdatedStatus] = useState('');
-  // console.log("🚀 ~ RideScreen ~ updatedStatus:", updatedStatus)
+  const [updatedStatus, setUpdatedStatus] = useState('');
 
-  // const [Updatedride, setUpdatedRide] = useState([]);
-  const Updatedride = 'riderArrived';
-  console.log('🚀 ~ RideScreen ~ Updatedride: ====>', Updatedride);
+  const [Updatedride, setUpdatedRide] = useState(null);
+  console.log("🚀 ~ RideScreen ~ Updatedride:", Updatedride)
 
   const [currentPosition, setCurrentPosition] = useState({
     latitude: 0,
@@ -275,22 +262,21 @@ const RideScreen = ({route}) => {
     };
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
-    console.log('🚀 ~ RideScreen ~ response:', response?.data);
+
     setIsLoading(false);
     if (response != undefined) {
       if (response?.data?.ride_info?.status === 'complete') {
         navigationService.navigate('RateScreen', {
-          data: Updatedride?.ride_info,
+          data: response?.data?.ride_info,
         });
       } else if (response?.data?.ride_info?.status === 'cancel') {
         navigationService.navigate('Home');
       }
-      setUpdatedRide(response?.data);
+      setUpdatedRide(response?.data?.ride_info);
     }
   };
 
   const onPressStartNavigation = async () => {
-    console.log('inside fron fuction ===ddd===========', data?.pickup);
     rideUpdate('ontheway');
     const pickup = {
       latitude: parseFloat(data?.pickup_location_lat),
@@ -316,33 +302,25 @@ const RideScreen = ({route}) => {
     }
   };
 
-  // useEffect(() => {
-  //   const reference = database().ref(
-  //     `/requests/${data?.ride_info?.ride_id}`,
-  //   );
-  //   const listener = reference.on('value', snapshot => {
-  //     if (snapshot.exists()) {
-  //       const data = snapshot.val();
-  //       if (data?.ride_info) {
-  //         setUpdatedStatus(data?.ride_info?.status);
-  //       }
-  //     }
-  //   });
+  useEffect(() => {
+    const reference = database().ref(`/requests/${data?.ride_id}`);
+    const listener = reference.on('value', snapshot => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        if (data?.ride_info) {
+          setUpdatedStatus(data?.ride_info?.status);
+        }
+        if (data?.ride_info?.status === 'cancel') {
+          setisVisible(true);
+        }
+      }
+    });
 
-  //   return () => reference.off('value', listener);
-  // }, [data?.ride_info?.ride_id]);
+    return () => reference.off('value', listener);
+  }, [data?.ride_id]);
   return (
     <SafeAreaView style={styles.safe_are}>
-      <Header
-        showBack={true}
-        title={
-          additionalTime
-            ? 'Wait For Additional Time'
-            : user_type === 'Rider'
-            ? 'Navigation to Pickup'
-            : 'Waiting Pickup'
-        }
-      />
+      <Header showBack={true} title={'Navigation to Pickup'} />
       <View style={styles.main_view}>
         <MapView
           style={styles.map}
@@ -365,7 +343,6 @@ const RideScreen = ({route}) => {
               });
             }
           }}
-          // provider={PROVIDER_GOOGLE}
           customMapStyle={customMapStyle}>
           {Object.keys(origin)?.length > 0 && isValidCoordinate(origin) && (
             <Marker
@@ -420,13 +397,6 @@ const RideScreen = ({route}) => {
               top: 20,
             },
           ]}>
-          {/* <View
-          style={[
-            styles.latest_ride_view,
-            {
-              top: 20,
-            },
-          ]}> */}
           <View style={styles.latest_ride_subView}>
             <View style={styles.latest_ride_image_view}>
               <CustomImage
@@ -438,51 +408,23 @@ const RideScreen = ({route}) => {
                 }}
               />
             </View>
-            <View
-              style={{
-                marginLeft: moderateScale(10, 0.6),
-                width: windowWidth * 0.45,
-              }}>
-              <CustomText
-                isBold
-                style={{
-                  fontSize: moderateScale(13, 0.6),
-                  color: Color.black,
-                }}>
+            <View style={styles.icon_con}>
+              <CustomText isBold style={styles.user_name}>
                 {rideData?.user?.name}
               </CustomText>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <CustomText
-                  isBold
-                  style={{
-                    fontSize: moderateScale(11, 0.6),
-                    color: Color.black,
-                  }}>
+                <CustomText isBold style={styles.h1}>
                   status :
                 </CustomText>
-                <CustomText
-                  style={{
-                    fontSize: moderateScale(11, 0.6),
-                    color: Color.veryLightGray,
-                    marginLeft: moderateScale(8, 0.6),
-                  }}>
-                  {Updatedride}
+                <CustomText style={styles.status_txt}>
+                  {updatedStatus}
                 </CustomText>
               </View>
             </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                width: windowWidth * 0.2,
-                height: '100%',
-                paddingHorizontal: moderateScale(10, 0.6),
-                justifyContent: 'space-between',
-                paddingTop: moderateScale(5, 0.6),
-              }}>
+            <View style={styles.icon_row}>
               <Icon
                 onPress={() => {
                   Linking.openURL(`tel:${data?.user?.phone}`);
-                  //  ridedata?.ride_info?.rider?.phone
                 }}
                 style={styles.icons}
                 name={'call'}
@@ -506,16 +448,8 @@ const RideScreen = ({route}) => {
           </View>
         </View>
         <>
-          <View
-            style={{
-              alignItems: 'center',
-              width: windowWidth,
-              height: windowHeight * 0.2,
-              position: 'absolute',
-              bottom: 20,
-              backgroundColor: 'red',
-            }}>
-            {Updatedride == 'arrive' && (
+          <View style={styles.btn_con}>
+            {updatedStatus == 'arrive' && (
               <CustomButton
                 text={
                   isLoading ? (
@@ -541,32 +475,31 @@ const RideScreen = ({route}) => {
               />
             )}
 
-            {Updatedride === 'riderArrived' ||
-              (data?.status === 'riderArrived' && (
-                <CustomButton
-                  text={
-                    isLoading ? (
-                      <ActivityIndicator size={'small'} color={Color.white} />
-                    ) : (
-                      'Start Waiting'
-                    )
-                  }
-                  fontSize={moderateScale(14, 0.3)}
-                  textColor={Color.white}
-                  borderRadius={moderateScale(30, 0.3)}
-                  width={windowWidth * 0.85}
-                  height={windowHeight * 0.07}
-                  bgColor={Color.darkBlue}
-                  borderWidth={1}
-                  borderColor={Color.blue}
-                  textTransform={'capitalize'}
-                  isBold
-                  onPress={() => {
-                    rideUpdate('arrive');
-                  }}
-                />
-              ))}
-            {Updatedride == 'ontheway' && (
+            {updatedStatus === 'riderArrived' && (
+              <CustomButton
+                text={
+                  isLoading ? (
+                    <ActivityIndicator size={'small'} color={Color.white} />
+                  ) : (
+                    'Start Waiting'
+                  )
+                }
+                fontSize={moderateScale(14, 0.3)}
+                textColor={Color.white}
+                borderRadius={moderateScale(30, 0.3)}
+                width={windowWidth * 0.85}
+                height={windowHeight * 0.07}
+                bgColor={Color.darkBlue}
+                borderWidth={1}
+                borderColor={Color.blue}
+                textTransform={'capitalize'}
+                isBold
+                onPress={() => {
+                  rideUpdate('arrive');
+                }}
+              />
+            )}
+            {updatedStatus == 'ontheway' && (
               <View
                 style={{
                   position: 'absolute',
@@ -586,7 +519,6 @@ const RideScreen = ({route}) => {
                   textColor={Color.white}
                   borderRadius={moderateScale(30, 0.3)}
                   width={windowWidth * 0.85}
-                  // marginTop={moderateScale(10, 0.3)}
                   height={windowHeight * 0.07}
                   bgColor={Color.darkBlue}
                   borderWidth={1.5}
@@ -599,11 +531,11 @@ const RideScreen = ({route}) => {
                 />
               </View>
             )}
-            {isriderArrive && (
+            {isriderArrive && updatedStatus == 'riderOntheWay' && (
               <CustomButton
                 style={{
                   position: 'absolute',
-                  bottom: 100,
+                  bottom: 120,
                 }}
                 text={
                   isLoading ? (
@@ -625,16 +557,11 @@ const RideScreen = ({route}) => {
                   rideUpdate('riderArrived');
                 }}
               />
-            )}
+             )} 
           </View>
         </>
       </View>
-      {/* <AdditionalTimeModal
-        setAdditionalTime={setAdditionalTime}
-        modalvisibe={additionalTimeModal}
-        setTime={setAddTime}
-        setModalVisible={setAdditionalTimeModal}
-      /> */}
+      <RideCancel isVisible={isVisible} setisVisible={setisVisible} />
     </SafeAreaView>
   );
 };
@@ -645,6 +572,8 @@ const styles = StyleSheet.create({
   safe_are: {
     width: windowWidth,
     height: windowHeight,
+    backgroundColor:Color.white,
+    // paddingVertical : moderateScale(20,.6)
   },
 
   main_view: {
@@ -700,5 +629,37 @@ const styles = StyleSheet.create({
     borderRadius: (windowHeight * 0.04) / 2,
     paddingTop: moderateScale(7, 0.6),
     marginHorizontal: moderateScale(2.6),
+  },
+  status_txt: {
+    fontSize: moderateScale(11, 0.6),
+    color: Color.veryLightGray,
+    marginLeft: moderateScale(8, 0.6),
+  },
+  icon_row: {
+    flexDirection: 'row',
+    width: windowWidth * 0.2,
+    height: '100%',
+    paddingHorizontal: moderateScale(10, 0.6),
+    justifyContent: 'space-between',
+    paddingTop: moderateScale(5, 0.6),
+  },
+  icon_con: {
+    marginLeft: moderateScale(10, 0.6),
+    width: windowWidth * 0.45,
+  },
+  h1: {
+    fontSize: moderateScale(11, 0.6),
+    color: Color.black,
+  },
+  user_name: {
+    fontSize: moderateScale(13, 0.6),
+    color: Color.black,
+  },
+  btn_con: {
+    alignItems: 'center',
+    width: windowWidth,
+    height: windowHeight * 0.2,
+    position: 'absolute',
+    bottom: 20,
   },
 });

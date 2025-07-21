@@ -1,3 +1,4 @@
+import {getDistance, isValidCoordinate} from 'geolib';
 import {Icon} from 'native-base';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -7,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Geolocation from 'react-native-geolocation-service';
 import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import {moderateScale} from 'react-native-size-matters';
@@ -19,24 +21,15 @@ import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
-import PaymentMethodCard from '../Components/PaymentMethodCard';
+import {imageUrl} from '../Config';
 import navigationService from '../navigationService';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {baseUrl, imageUrl} from '../Config';
-import Geolocation from 'react-native-geolocation-service';
-import {getDistance} from 'geolib';
 
 const RideRequest = ({route}) => {
   const {type, data} = route.params;
-  console.log('🚀 ~ RideRequest ~ data:', data);
   const mapRef = useRef(null);
   const token = useSelector(state => state.authReducer.token);
-  const userData = useSelector(state => state.commonReducer.userData);
-  const [additionalTime, setAdditionalTime] = useState(false);
-  const [startNavigation, setStartnavigation] = useState(false);
-  const [dropoff, setDropOff] = useState(false);
-  const [done, setDone] = useState(false);
-  const [arrive, setArrive] = useState(false);
+
   const [decline, setDecline] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -44,7 +37,6 @@ const RideRequest = ({route}) => {
     latitude: 0,
     longitude: 0,
   });
-  const [fare, setFare] = useState(0);
   const [distance, setDistance] = useState(0);
   const [time, setTime] = useState(0);
 
@@ -143,23 +135,22 @@ const RideRequest = ({route}) => {
         data: data,
         rider_arrived_time: response?.data?.rider_arrived_time,
         ride_status: response?.data?.ride_info?.status,
-        currentPosition : currentPosition,
+        currentPosition: currentPosition,
       });
     }
   };
 
   const acceptDelivery = async status => {
     const url = `auth/rider/delivery_update/${data?.delivery_id}`;
+    console.log("🚀 ~ RideRequest ~ url:", url)
     const body = {
       status: status,
       lat: currentPosition?.latitude,
       lng: currentPosition?.longitude,
       rider_arrived_time: time,
     };
-    console.log('🚀 ~ RideRequest ~ body:', body);
     setIsLoading(true);
     const response = await Post(url, body, apiHeader(token));
-    console.log('🚀 ~ RideRequest ~ response:', response?.data);
     setIsLoading(false);
     if (response != undefined) {
       navigationService.navigate('DeliveryScreen', {
@@ -208,7 +199,10 @@ const RideRequest = ({route}) => {
 
   return (
     <SafeAreaView style={styles.safe_are}>
-      <Header  showBack={true} title={decline ? 'Cancel Ride' : 'Ride Request'} />
+      <Header
+        showBack={true}
+        title={decline ? 'Cancel Ride' : 'Ride Request'}
+      />
       <View style={styles.main_view}>
         <MapView
           ref={mapRef}
@@ -220,10 +214,12 @@ const RideRequest = ({route}) => {
             latitudeDelta: 0.0522,
             longitudeDelta: 0.0521,
           }}>
-          <Marker
-            coordinate={origin}
-            style={{width: 15, height: 10}}
-            pinColor={Color.red}></Marker>
+          {isValidCoordinate(origin) && (
+            <Marker
+              coordinate={origin}
+              style={{width: 15, height: 10}}
+              pinColor={Color.red}></Marker>
+          )}
           <MapViewDirections
             origin={origin}
             destination={destination}
@@ -231,398 +227,173 @@ const RideRequest = ({route}) => {
             strokeWidth={10}
             apikey="AIzaSyDacSuTjcDtJs36p3HTDwpDMLkvnDss4H8"
           />
-          <Marker
-            coordinate={destination}
-            style={{width: 15, height: 10}}
-            pinColor={Color.green}
-          />
+          {isValidCoordinate(destination) && (
+            <Marker
+              coordinate={destination}
+              style={{width: 15, height: 10}}
+              pinColor={Color.green}
+            />
+          )}
         </MapView>
-        {type === 'fromIdentity' ? (
-          <>
-            {startNavigation ? (
-              <>
-                {dropoff ? (
-                  <>
-                    {arrive === true ? (
-                      <View
-                        style={{
-                          position: 'absolute',
-                          bottom: 120,
-                          alignSelf: 'center',
-                        }}>
-                        <PaymentMethodCard
-                          isuserCard
-                          name={'Theodora J. Gardner'}
-                          // image={require('../Assets/Images/user_image2.png')}
-                          pickuplocation={'Fannie Street San Angelo, Texas'}
-                          dropofflocation={'Neville Street Salem, Colorado'}
-                          isButton
-                          iscomplete
-                          style={{marginBottom: moderateScale(20, 0.6)}}
-                        />
-                        <CustomButton
-                          text={'End Trip'}
-                          fontSize={moderateScale(14, 0.3)}
-                          textColor={!done ? Color.black : Color.white}
-                          borderRadius={moderateScale(30, 0.3)}
-                          width={windowWidth * 0.9}
-                          height={windowHeight * 0.075}
-                          bgColor={!done ? Color.white : Color.darkBlue}
-                          textTransform={'capitalize'}
-                          elevation
-                          isBold
-                          borderWidth={1.5}
-                          borderColor={Color.darkBlue}
-                          marginBottom={moderateScale(10, 0.6)}
-                          onPress={() =>
-                            navigationService.navigate('RateScreen')
-                          }
-                        />
-                      </View>
-                    ) : (
-                      <>
-                        {!done && (
-                          <CustomButton
-                            text={'DONE'}
-                            fontSize={moderateScale(14, 0.3)}
-                            textColor={Color.white}
-                            borderRadius={moderateScale(30, 0.3)}
-                            width={windowWidth * 0.9}
-                            height={windowHeight * 0.075}
-                            bgColor={Color.darkBlue}
-                            textTransform={'capitalize'}
-                            elevation
-                            isBold
-                            onPress={() => setDone(true)}
-                            // onPress={() =>
-                            //   navigationService.navigate('PassengerDetails', {
-                            //     type: '',
-                            //   })
-                            // }
-                          />
-                        )}
-                        <CustomButton
-                          text={!done ? 'Start' : 'Arrive'}
-                          fontSize={moderateScale(14, 0.3)}
-                          textColor={!done ? Color.black : Color.white}
-                          borderRadius={moderateScale(30, 0.3)}
-                          width={windowWidth * 0.9}
-                          height={windowHeight * 0.075}
-                          bgColor={!done ? Color.white : Color.darkBlue}
-                          textTransform={'capitalize'}
-                          elevation
-                          isBold
-                          marginTop={
-                            !done
-                              ? moderateScale(10, 0.6)
-                              : moderateScale(40, 0.6)
-                          }
-                          onPress={() => {
-                            if (done === true) {
-                              setArrive(true);
-                            } else {
-                              setDropOff(true);
-                            }
-                          }}
-                          borderWidth={1.5}
-                          borderColor={Color.darkBlue}
-                          // onPress={() =>
-                          //   navigationService.navigate('PassengerDetails', {
-                          //     type: '',
-                          //   })
-                          // }
-                        />
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <CustomButton
-                    text={'DROP-OFF'}
-                    fontSize={moderateScale(14, 0.3)}
-                    textColor={Color.white}
-                    borderRadius={moderateScale(30, 0.3)}
-                    width={windowWidth * 0.9}
-                    height={windowHeight * 0.075}
-                    bgColor={Color.darkBlue}
-                    textTransform={'capitalize'}
-                    elevation
-                    isBold
-                    marginTop={moderateScale(50, 0.6)}
-                    onPress={() => setDropOff(true)}
-                    // onPress={() =>
-                    //   navigationService.navigate('PassengerDetails', {
-                    //     type: '',
-                    //   })
-                    // }
-                  />
-                )}
-              </>
-            ) : (
-              <>
-                <CustomButton
-                  text={'START NAVIGATION'}
-                  fontSize={moderateScale(14, 0.3)}
-                  textColor={Color.white}
-                  borderRadius={moderateScale(30, 0.3)}
-                  width={windowWidth * 0.9}
-                  height={windowHeight * 0.075}
-                  bgColor={Color.darkBlue}
-                  textTransform={'capitalize'}
-                  elevation
-                  isBold
-                  onPress={() => setStartnavigation(true)}
-                  // onPress={() =>
-                  //   navigationService.navigate('PassengerDetails', {
-                  //     type: '',
-                  //   })
-                  // }
-                />
-                <CustomButton
-                  text={'Traffic Update'}
-                  fontSize={moderateScale(14, 0.3)}
-                  textColor={Color.black}
-                  borderRadius={moderateScale(30, 0.3)}
-                  width={windowWidth * 0.9}
-                  height={windowHeight * 0.075}
-                  bgColor={Color.white}
-                  textTransform={'capitalize'}
-                  elevation
-                  borderWidth={1.5}
-                  borderColor={Color.darkBlue}
-                  marginTop={moderateScale(10, 0.6)}
-                  isBold
-                  // onPress={() =>
-                  //   navigationService.navigate('PassengerDetails', {
-                  //     type: '',
-                  //   })
-                  // }
-                />
-              </>
-              // <></>
-            )}
-          </>
-        ) : (
-          <View
-            style={{
-              position: 'absolute',
-              bottom: 70,
-              alignItems: 'center',
-              justifyContent: 'center',
-              alignSelf: 'center',
-            }}>
-            <View style={styles.profile_view}>
-              <View style={styles.image_view}>
-                <CustomImage
-                  style={styles.image}
-                  source={{uri: imageUrl + data?.user?.photo}}
-                />
+
+        <View
+          style={{
+            position: 'absolute',
+            bottom: 70,
+            alignItems: 'center',
+            justifyContent: 'center',
+            alignSelf: 'center',
+          }}>
+          {/* <View style={styles.profile_view}>
+            <View style={styles.image_view}>
+              <CustomImage
+                style={styles.image}
+                source={{uri: imageUrl + data?.user?.photo}}
+              />
+            </View>
+             <View style={{width: '80%'}}>
+              <CustomText style={styles.name}>{data?.user?.name}</CustomText>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                }}>
+                <CustomText style={styles.model} isBold>
+                  Car Model :
+                </CustomText>
+                <CustomText style={styles.model}>
+                  Toyata Vios (CO21DJ3684)
+                </CustomText>
               </View>
-              <View style={{width: '80%'}}>
-                <CustomText style={styles.name}>{data?.user?.name}</CustomText>
+              <CustomText style={styles.model}>(4.5)</CustomText>
+            </View> 
+          </View> */}
+          <View style={styles.waiting_card}>
+            <View style={styles.seatView}>
+              <View>
                 <View
                   style={{
                     flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'flex-start',
+                    paddingVertical: moderateScale(5, 0.6),
                   }}>
-                  <CustomText style={styles.model} isBold>
-                    Car Model :
-                  </CustomText>
-                  <CustomText style={styles.model}>
-                    Toyata Vios (CO21DJ3684)
-                  </CustomText>
-                </View>
-                <CustomText style={styles.model}>(4.5)</CustomText>
-              </View>
-            </View>
-            <View style={styles.waiting_card}>
-              <View style={styles.seatView}>
-                <View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      paddingVertical: moderateScale(5, 0.6),
-                    }}>
-                    <Icon
-                      name="clock-o"
-                      as={FontAwesome}
-                      size={moderateScale(16, 0.6)}
-                      color={Color.darkBlue}
-                    />
-                    <View style={{alignItems: 'flex-start'}}>
-                      <CustomText style={[styles.text1]}>
-                        pickup from
-                      </CustomText>
-                      <CustomText isBold style={styles.text1}>
-                        {data?.location_from}
-                      </CustomText>
-                    </View>
+                  <Icon
+                    name="clock-o"
+                    as={FontAwesome}
+                    size={moderateScale(16, 0.6)}
+                    color={Color.darkBlue}
+                  />
+                  <View style={{alignItems: 'flex-start'}}>
+                    <CustomText style={[styles.text1]}>pickup from</CustomText>
+                    <CustomText isBold style={styles.text1}>
+                      {data?.location_from}
+                    </CustomText>
                   </View>
-                  <CustomText
-                    isBold
-                    style={[
-                      styles.text1,
-                      {
-                        position: 'absolute',
-                        color: Color.veryLightGray,
-                        top: 30,
-                        marginLeft: moderateScale(-8, 0.6),
-                        transform: [{rotate: '-90deg'}],
-                      },
-                    ]}>
-                    ------
-                  </CustomText>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      paddingVertical: moderateScale(10, 0.6),
-                    }}>
-                    <Icon
-                      name="map-marker"
-                      as={FontAwesome}
-                      size={moderateScale(16, 0.6)}
-                      color={Color.darkBlue}
-                    />
-                    <View style={{alignItems: 'flex-start'}}>
-                      <CustomText style={styles.text1}>
-                        {'DropOff Location'}
-                      </CustomText>
-                      <CustomText isBold style={styles.text1}>
-                        {data?.location_to}
-                      </CustomText>
-                    </View>
+                </View>
+                <CustomText
+                  isBold
+                  style={[
+                    styles.text1,
+                    {
+                      position: 'absolute',
+                      color: Color.veryLightGray,
+                      top: 30,
+                      marginLeft: moderateScale(-8, 0.6),
+                      transform: [{rotate: '-90deg'}],
+                    },
+                  ]}>
+                  ------
+                </CustomText>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    paddingVertical: moderateScale(10, 0.6),
+                  }}>
+                  <Icon
+                    name="map-marker"
+                    as={FontAwesome}
+                    size={moderateScale(16, 0.6)}
+                    color={Color.darkBlue}
+                  />
+                  <View style={{alignItems: 'flex-start'}}>
+                    <CustomText style={styles.text1}>
+                      {'DropOff Location'}
+                    </CustomText>
+                    <CustomText isBold style={styles.text1}>
+                      {data?.location_to}
+                    </CustomText>
                   </View>
                 </View>
               </View>
             </View>
-            {/* <View style={styles.waiting_card}>
-              <View style={styles.seatView}>
-                <View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      paddingVertical: moderateScale(5, 0.6),
-                    }}>
-                    <Icon
-                      name="clock-o"
-                      as={FontAwesome}
-                      size={moderateScale(16, 0.6)}
-                      color={Color.darkBlue}
-                    />
-                    <View style={{alignItems: 'flex-start'}}>
-                      <CustomText style={[styles.text1]}>
-                        pickup from
-                      </CustomText>
-                      <CustomText isBold style={styles.text1}>
-                        {data?.location_from}
-                      </CustomText>
-                    </View>
-                  </View>
-                  <CustomText
-                    isBold
-                    style={[
-                      styles.text1,
-                      {
-                        position: 'absolute',
-                        color: Color.veryLightGray,
-                        top: 30,
-                        marginLeft: moderateScale(-8, 0.6),
-                        transform: [{rotate: '-90deg'}],
-                      },
-                    ]}>
-                    ------
-                  </CustomText>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      paddingVertical: moderateScale(10, 0.6),
-                    }}>
-                    <Icon
-                      name="map-marker"
-                      as={FontAwesome}
-                      size={moderateScale(16, 0.6)}
-                      color={Color.darkBlue}
-                    />
-                    <View style={{alignItems: 'flex-start'}}>
-                      <CustomText style={styles.text1}>
-                        {'DropOff Location'}
-                      </CustomText>
-                      <CustomText isBold style={styles.text1}>
-                        {data?.location_to}
-                      </CustomText>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </View> */}
-            {decline === true ? (
+          </View>
+
+          {decline === true ? (
+            <CustomButton
+              text={'Decline'}
+              fontSize={moderateScale(14, 0.3)}
+              textColor={Color.white}
+              borderRadius={moderateScale(30, 0.3)}
+              width={windowWidth * 0.9}
+              height={windowHeight * 0.075}
+              bgColor={Color.darkBlue}
+              textTransform={'capitalize'}
+              elevation
+              loader={loading}
+              marginBottom={moderateScale(40, 0.6)}
+              onPress={() =>
+                navigationService.navigate('ChooseDeclineReasonScreen', {
+                  data: data,
+                })
+              }
+            />
+          ) : (
+            <View
+              style={{
+                flexDirection: 'row',
+                // alignItems: 'center',
+                top: -25,
+                justifyContent: 'space-between',
+                marginBottom: moderateScale(20, 0.6),
+              }}>
               <CustomButton
-                text={'Decline'}
+                text={
+                  isLoading ? (
+                    <ActivityIndicator size={'small'} color={'white'} />
+                  ) : (
+                    'Accept'
+                  )
+                }
                 fontSize={moderateScale(14, 0.3)}
                 textColor={Color.white}
                 borderRadius={moderateScale(30, 0.3)}
-                width={windowWidth * 0.9}
+                width={windowWidth * 0.7}
                 height={windowHeight * 0.075}
                 bgColor={Color.darkBlue}
                 textTransform={'capitalize'}
                 elevation
                 loader={loading}
-                marginBottom={moderateScale(40, 0.6)}
                 onPress={() =>
-                  navigationService.navigate('ChooseDeclineReasonScreen', {
-                    data: data,
-                  })
+                  time && type == 'delivery'
+                    ? acceptDelivery('accept')
+                    : onPressSendRequest('accept')
                 }
               />
-            ) : (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: moderateScale(20, 0.6),
-                }}>
-                <CustomButton
-                  text={
-                    isLoading ? (
-                      <ActivityIndicator size={'small'} color={'white'} />
-                    ) : (
-                      'Accept'
-                    )
-                  }
-                  fontSize={moderateScale(14, 0.3)}
-                  textColor={Color.white}
-                  borderRadius={moderateScale(30, 0.3)}
-                  width={windowWidth * 0.7}
-                  height={windowHeight * 0.075}
-                  bgColor={Color.darkBlue}
-                  textTransform={'capitalize'}
-                  elevation
-                  loader={loading}
-                  onPress={() =>
-                    time && type == 'delivery'
-                      ? acceptDelivery('accept')
-                      : onPressSendRequest('accept')
-                  }
+              <TouchableOpacity
+                onPress={() => {
+                  setDecline(true);
+                }}
+                style={styles.icon_view}>
+                <Icon
+                  name="cross"
+                  as={Entypo}
+                  size={moderateScale(24, 0.6)}
+                  color={Color.white}
                 />
-                <TouchableOpacity
-                  onPress={() => {
-                    // navigationService.navigate('ChooseDeclineReasonScreen')
-                    // onPressSendRequest('reject');
-                    setDecline(true);
-                  }}
-                  style={styles.icon_view}>
-                  <Icon
-                    name="cross"
-                    as={Entypo}
-                    size={moderateScale(24, 0.6)}
-                    color={Color.white}
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        )}
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -634,17 +405,15 @@ const styles = StyleSheet.create({
   safe_are: {
     width: windowWidth,
     height: windowHeight,
+    paddingVertical: moderateScale(25, 0.6),
+    backgroundColor: Color.white,
   },
   main_view: {
     width: windowWidth,
     height: windowHeight,
     backgroundColor: Color.white,
   },
-  map_view: {
-    height: windowHeight * 0.7,
-    width: windowWidth,
-    borderRadius: moderateScale(40, 0.6),
-  },
+
   image: {
     width: '100%',
     height: '100%',
@@ -658,7 +427,7 @@ const styles = StyleSheet.create({
   },
   text1: {
     fontSize: moderateScale(11, 0.6),
-    // textAlign: 'center',
+    color: Color.black,
   },
   waiting_card: {
     width: windowWidth * 0.9,
@@ -676,43 +445,9 @@ const styles = StyleSheet.create({
     elevation: 24,
     paddingHorizontal: moderateScale(15, 0.6),
     paddingVertical: moderateScale(15, 0.6),
-    bottom: 20,
+    bottom: 50,
   },
-  text_view: {
-    fontSize: moderateScale(15, 0.6),
-    textAlign: 'center',
-  },
-  row_view: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  location_text_view: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    height: moderateScale(40, 0.6),
-    borderWidth: 0.6,
-    borderColor: Color.lightGrey,
-    borderRadius: moderateScale(10, 0.6),
-    marginTop: moderateScale(20, 0.6),
-  },
-  text: {
-    fontSize: moderateScale(12, 0.6),
-    color: Color.veryLightGray,
-    marginLeft: moderateScale(10, 0.6),
-  },
-  text2: {
-    fontSize: moderateScale(12, 0.6),
-    color: Color.black,
-    marginLeft: moderateScale(5, 0.6),
-    fontWeight: '600',
-  },
-  time: {
-    fontSize: moderateScale(35, 0.6),
-    color: Color.black,
-    textAlign: 'center',
-  },
+
   profile_view: {
     width: windowWidth * 0.89,
     height: windowHeight * 0.1,
@@ -743,10 +478,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: Color.grey,
   },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
+
   name: {
     fontSize: moderateScale(13, 0.6),
     color: Color.white,

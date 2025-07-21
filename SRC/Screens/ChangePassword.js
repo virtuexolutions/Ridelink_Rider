@@ -185,7 +185,8 @@ const styles = ScaledSheet.create({
     width: windowWidth,
     alignItems: 'center',
     backgroundColor: 'white',
-    justifyContent: 'center',
+    paddingTop : windowHeight*0.1,
+    // justifyContent: 'center',
   },
 
   text_input: {
@@ -193,7 +194,7 @@ const styles = ScaledSheet.create({
     borderWidth: 1,
     width: windowWidth * 0.9,
     borderColor: Color.mediumGray,
-    height: windowHeight * 0.52,
+    height: windowHeight * 0.47,
     borderRadius: 20,
     paddingTop: windowHeight * 0.03,
     paddingHorizontal: moderateScale(20, 0.6),
@@ -220,7 +221,7 @@ const styles = ScaledSheet.create({
     width: windowWidth,
     backgroundColor: 'white',
     paddingHorizontal: moderateScale(10, 0.6),
-    paddingTop: moderateScale(5, 0.3),
+    paddingTop: moderateScale(40, 0.3),
   },
   headert: {
     fontSize: moderateScale(18, 0.6),

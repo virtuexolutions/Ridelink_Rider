@@ -22,14 +22,14 @@ const ChooseDeclineReasonScreen = prop => {
   const data = prop?.route?.params?.data;
   const token = useSelector(state => state.authReducer.token);
   const array = [
-    {id: 1, reason: 'Price too High', checked: true},
-    {id: 2, reason: 'Long Wait Time', checked: true},
-    {id: 3, reason: 'Poor Vehicle Condition', checked: true},
-    {id: 4, reason: 'Safety Concerns', checked: true},
-    {id: 5, reason: 'Inconvenient Payment Options', checked: true},
-    {id: 6, reason: 'Negative Past Experience', checked: true},
-    {id: 7, reason: 'Preference for Ride-Hailing Apps', checked: true},
-    {id: 8, reason: 'Unfamiliarity with the Service', checked: true},
+    // {id: 1, reason: 'Price too High', checked: true},
+    // {id: 2, reason: 'Long Wait Time', checked: true},
+    // {id: 3, reason: 'Poor Vehicle Condition', checked: true},
+    // {id: 4, reason: 'Safety Concerns', checked: true},
+    // {id: 5, reason: 'Inconvenient Payment Options', checked: true},
+    // {id: 6, reason: 'Negative Past Experience', checked: true},
+    // {id: 7, reason: 'Preference for Ride-Hailing Apps', checked: true},
+    // {id: 8, reason: 'Unfamiliarity with the Service', checked: true},
     {id: 9, reason: 'Route Concerns', checked: true},
     {id: 10, reason: 'Rider no-show', checked: true},
     {id: 11, reason: 'Wrong address', checked: true},
@@ -42,12 +42,15 @@ const ChooseDeclineReasonScreen = prop => {
   const [isLoading, setIsLoading] = useState(false);
   const [reason, setReason] = useState({});
 
-  const rideCancel = async () => {
+
+
+    const rideCancel = async () => {
     const body = {
       ride_status: 'pending',
-      // ride_status: data?.status,
+      rider_id: data?.user?.id,
       status: 'cancel',
       reason: reason?.reason,
+      cancel_from: 'rider',
     };
     const url = `auth/ride_cancel/${data?.ride_id}`;
     setIsLoading(true);
@@ -67,7 +70,6 @@ const ChooseDeclineReasonScreen = prop => {
       />
       <View style={styles.mainView}>
         {array?.map((item, index) => {
-          console.log("🚀 ~ {array?.map ~ item:", item)
           return (
             <TouchableOpacity
               onPress={() => {

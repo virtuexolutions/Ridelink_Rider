@@ -30,7 +30,8 @@ import {addYourCarSchema} from '../Constant/schema';
 import {setUserData} from '../Store/slices/common';
 import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 import navigationService from '../navigationService';
-import {color} from 'native-base/lib/typescript/theme/styled-system';
+import {color, position} from 'native-base/lib/typescript/theme/styled-system';
+import DropDownSingleSelect from './DropDownSingleSelect';
 
 const AddYourCar = props => {
   const dispatch = useDispatch();
@@ -50,6 +51,7 @@ const AddYourCar = props => {
   const [ssnPicker, setSsnPicker] = useState(false);
   const [licencePicker, setLicencePicker] = useState(false);
   const [cabSubCategory, setCabSubCategory] = useState({});
+  console.log('🚀 ~ cabSubCategory:', cabSubCategory);
   const [toolTip, setToolTip] = useState(false);
   const [imageLoading, setImageLoading] = useState({
     license: false,
@@ -177,7 +179,7 @@ const AddYourCar = props => {
     const url = 'auth/rider/car_update';
     setIsLoading(true);
     const response = await Post(url, formData, apiHeader(token, true));
-   
+
     setIsLoading(false);
     if (response != undefined) {
       Platform.OS == 'android'
@@ -224,8 +226,6 @@ const AddYourCar = props => {
       prevImagesRef.current[key] = currentValue;
     });
   }, [licenceImages, ssnImages, insuranceImage, registrationImage, carImages]);
-
-
 
   return (
     <SafeAreaView
@@ -433,19 +433,26 @@ const AddYourCar = props => {
                     placeHolder={'select car category'}
                   /> */}
                   <DropDown
-                    // style={styles.drop}
                     array={carType}
                     data={selectedCabCategory}
                     setData={setSelectedCabCategory}
                     placeHolder={'select car standard'}
                   />
-                  <View>
+                  <View
+                    style={{
+                      position: 'relative',
+                      // height:cabSubCategory?.name !== '' ?  windowHeight * 0.18 :windowHeight * 0.1,
+                      // backgroundColor: 'green',
+                    }}>
                     {selectedCabCategory !== '' && (
                       <View
                         style={{
                           flexDirection: 'row',
                           width: '100%',
                           backgroundColor: 'white',
+                          // height : windowHeight *0.2,
+                          // backgroundColor: 'red',
+                          // marginVertical : moderateScale()
                         }}>
                         <DropDown
                           array={
@@ -460,7 +467,6 @@ const AddYourCar = props => {
                           setData={setCabSubCategory}
                           placeHolder={'Select car sub category'}
                           labelKey="name"
-                          fromobject={true}
                         />
 
                         <TouchableOpacity
@@ -474,7 +480,8 @@ const AddYourCar = props => {
                             }
                           }}
                           style={{
-                            marginTop: moderateScale(30, 0.6),
+                            height: windowHeight * 0.04,
+                            marginTop: moderateScale(20, 0.6),
                             width: '10%',
                             alignItems: 'center',
                           }}>
@@ -512,14 +519,28 @@ const AddYourCar = props => {
                       {errors.category}
                     </CustomText>
                   )}
-                  <CustomText style={styles.image_headindg}>
+                  <CustomText
+                    style={[
+                      styles.image_headindg,
+                      {
+                        position: 'relative',
+                        zIndex: 1,
+                      },
+                    ]}>
                     Add Car Image
                     <CustomText style={styles.sub_heading}>
                       (Front, Back, and Driver Side of the Vehicle) :
                     </CustomText>
                   </CustomText>
 
-                  <View style={styles.imagesContainer}>
+                  <View
+                    style={[
+                      styles.imagesContainer,
+                      {
+                        position: 'relative',
+                        zIndex: 1,
+                      },
+                    ]}>
                     <FlatList
                       scrollEnabled={false}
                       horizontal
@@ -949,6 +970,8 @@ const AddYourCar = props => {
                         fontSize: moderateScale(12, 0.6),
                         color: Color.red,
                         fontWeight: '500',
+                        position: 'relative',
+                        zIndex: 1,
                       }}>
                       Instructions :
                     </CustomText>
@@ -956,6 +979,8 @@ const AddYourCar = props => {
                       style={{
                         fontSize: moderateScale(11, 0.6),
                         color: Color.grey,
+                        position: 'relative',
+                        zIndex: 1,
                       }}>
                       Please add valid Imformation about your Car add front and
                       clear image.
@@ -1093,12 +1118,16 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     flexDirection: 'row',
     alignSelf: 'flex-start',
+    position: 'relative',
+    zIndex: 1,
   },
   image_headindg: {
     color: Color.black,
     fontSize: moderateScale(12, 0.3),
     textAlign: 'left',
     width: '90%',
+    position: 'relative',
+    zIndex: 1,
   },
   sub_heading: {
     color: Color.black,

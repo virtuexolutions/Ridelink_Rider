@@ -1,18 +1,18 @@
-import { useNavigation } from '@react-navigation/native';
-import { Icon } from 'native-base';
-import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { moderateScale } from 'react-native-size-matters';
+import {useNavigation} from '@react-navigation/native';
+import {Icon} from 'native-base';
+import React, {useState} from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {moderateScale} from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import { baseUrl } from '../Config';
-import { setUserLogoutAuth, setUserToken } from '../Store/slices/auth';
-import { setUserLogOut } from '../Store/slices/common';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import {baseUrl} from '../Config';
+import {setUserLogoutAuth, setUserToken} from '../Store/slices/auth';
+import {setUserLogOut} from '../Store/slices/common';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 
 const Drawer = React.memo(() => {
   const dispatch = useDispatch();
@@ -24,13 +24,13 @@ const Drawer = React.memo(() => {
   const [isLoading, setIsLoading] = useState(false);
 
   const adminData = [
-    {
-      id: 1,
-      name: 'Inbox',
-      onPress: () => {
-        navigation.navigate('HomeScreen');
-      },
-    },
+    // {
+    //   id: 1,
+    //   name: 'Inbox',
+    //   onPress: () => {
+    //     navigation.navigate('HomeScreen');
+    //   },
+    // },
     {
       id: 2,
       name: 'Refer Friends',
@@ -52,10 +52,6 @@ const Drawer = React.memo(() => {
       name: 'Earnings',
       onPress: () => {
         navigation.navigate('Walletscreen');
-        // navigation.navigate('MyWallet');
-        // navigation.navigate('Earningsscreen');
-
-
       },
     },
     {
@@ -142,7 +138,7 @@ const Drawer = React.memo(() => {
           </CustomText>
           <CustomText style={styles.text}>Diver : Car Name</CustomText>
         </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => {
             setIsActive(!isActive);
           }}
@@ -173,7 +169,7 @@ const Drawer = React.memo(() => {
               />
             )}
           </TouchableOpacity>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <View
           style={{
             height: '60%',

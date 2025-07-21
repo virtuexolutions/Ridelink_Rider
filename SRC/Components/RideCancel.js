@@ -9,7 +9,7 @@ import Modal from 'react-native-modal';
 import CustomButton from './CustomButton';
 import navigationService from '../navigationService';
 
-const RideCancel = isVisible => {
+const RideCancel =({ isVisible ,setisVisible}) => {
   return (
     <Modal
       isVisible={isVisible}

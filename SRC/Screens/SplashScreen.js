@@ -12,12 +12,11 @@ const SplashScreen = () => {
     <View style={styles.container}>
       <View style={styles.logo_Container}>
         <CustomImage
-          // source={require('../Assets/Images/logo.png')}
+          source={require('../Assets/Images/logo.png')}
           style={styles.logo}
         />
       </View>
       <CustomText style={styles.text}>
-        
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas
         efficitur consectetur ligula eget ultrices.
       </CustomText>
@@ -45,13 +44,12 @@ const styles = ScaledSheet.create({
     width: windowWidth * 0.4,
     height: windowWidth * 0.3,
   },
-  text:{
-    width:'80%',
-    textAlign:'center',
-    fontSize:moderateScale(11,.6),
-    position:'absolute',
-    bottom:35,
-
+  text: {
+    width: '80%',
+    textAlign: 'center',
+    fontSize: moderateScale(11, 0.6),
+    position: 'absolute',
+    bottom: 35,
   },
 
   LogoText: {

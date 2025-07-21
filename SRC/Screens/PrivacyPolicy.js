@@ -1,69 +1,32 @@
-import {
-  ImageBackground,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Icon } from 'native-base';
 import React from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
-import CustomText from '../Components/CustomText';
-import {ScaledSheet, moderateScale} from 'react-native-size-matters';
-import {useNavigation} from '@react-navigation/native';
-import {Icon} from 'native-base';
+import {
+  ScrollView,
+  TouchableOpacity,
+  View
+} from 'react-native';
+import { ScaledSheet, moderateScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Color from '../Assets/Utilities/Color';
+import CustomText from '../Components/CustomText';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import Header from '../Components/Header';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const PrivacyPolicy = () => {
   const navigation = useNavigation();
 
   return (
-    <ScrollView
+    <SafeAreaView
       style={{
         width: windowWidth,
         minHeight: windowHeight,
         backgroundColor: Color.white,
-        paddingBottom: moderateScale(40, 0.6),
+        paddingBottom: moderateScale(25, 0.6),
       }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          width: windowWidth,
-          backgroundColor: 'white',
-          paddingHorizontal: moderateScale(10, 0.6),
-          marginTop : moderateScale(5,.3)
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => {
-            navigation.goBack();
-          }}
-          style={styles.back}>
-          <Icon
-            name="arrowleft"
-            as={AntDesign}
-            style={styles.icon2}
-            color={Color.white}
-            size={moderateScale(20, 0.3)}
-            onPress={() => {
-              navigation.goBack();
-            }}
-          />
-        </TouchableOpacity>
-        <CustomText
-          style={{
-            fontSize: moderateScale(18, 0.6),
-            color: Color.black,
-            width: windowWidth * 0.8,
-            textAlign: 'center',
-            paddingTop: moderateScale(8, 0.6),
-          }}>
-          privacy policy
-        </CustomText>
-      </View>
-      {/* <Header title={'privacy Policy'} showBack={true} hideUser={true} /> */}
+    
+      <Header title={'privacy Policy'} showBack={true} hideUser={true} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{
@@ -83,7 +46,7 @@ const PrivacyPolicy = () => {
           }
         </CustomText>
       </ScrollView>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 

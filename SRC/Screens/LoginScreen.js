@@ -1,24 +1,23 @@
 import messaging from '@react-native-firebase/messaging';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {useNavigation} from '@react-navigation/native';
-import {Formik} from 'formik';
-import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {moderateScale} from 'react-native-size-matters';
-import {useDispatch, useSelector} from 'react-redux';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useNavigation } from '@react-navigation/native';
+import { Formik } from 'formik';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { moderateScale } from 'react-native-size-matters';
+import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
-import CustomImage from '../Components/CustomImage';
 import CustomStatusBar from '../Components/CustomStatusBar';
 import CustomText from '../Components/CustomText';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import {loginSchema} from '../Constant/schema';
-import {SetFCMToken, setUserToken} from '../Store/slices/auth-slice';
-import {setUserData} from '../Store/slices/common';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { loginSchema } from '../Constant/schema';
+import { SetFCMToken, setUserToken } from '../Store/slices/auth-slice';
+import { setUserData } from '../Store/slices/common';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
 const LoginScreen = props => {
   const dispatch = useDispatch();
@@ -85,21 +84,6 @@ const LoginScreen = props => {
           paddingBottom: moderateScale(90, 0.6),
         }}
         showsVerticalScrollIndicator={false}>
-        <View
-          style={{
-            height: windowHeight * 0.1,
-            width: windowHeight * 0.2,
-            marginTop: windowHeight * 0.04,
-          }}>
-          <CustomImage
-            resizeMode="contain"
-            // source={require('../Assets/Images/logo.png')}
-            style={{
-              width: '100%',
-              height: '100%',
-            }}
-          />
-        </View>
         <CustomText isBold style={styles.text}>
           Sign in
         </CustomText>
@@ -157,7 +141,6 @@ const LoginScreen = props => {
                     backgroundColor={'transparent'}
                     borderColor={Color.lightGrey}
                     marginTop={moderateScale(10, 0.3)}
-                    // color={Color.white}
                     placeholderColor={Color.darkGray}
                     titleStlye={{right: 10}}
                   />
@@ -294,7 +277,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(24, 0.6),
     color: Color.themeBlack,
     paddingVertical: moderateScale(10, 0.6),
-    paddingTop: windowHeight * 0.02,
+    paddingTop: windowHeight * 0.1,
   },
   feild_container: {
     borderWidth: 0.5,

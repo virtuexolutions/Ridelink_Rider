@@ -1,8 +1,8 @@
-import { Pusher } from '@pusher/pusher-websocket-react-native';
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { Icon } from 'native-base';
-import React, { useCallback, useEffect, useState } from 'react';
-import { KeyboardAvoidingView, SafeAreaView, View } from 'react-native';
+import {Pusher} from '@pusher/pusher-websocket-react-native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {Icon} from 'native-base';
+import React, {useCallback, useEffect, useState} from 'react';
+import {KeyboardAvoidingView, SafeAreaView, View} from 'react-native';
 import {
   Actions,
   Bubble,
@@ -11,36 +11,34 @@ import {
   InputToolbar,
   Send,
 } from 'react-native-gifted-chat';
-import { moderateScale, ScaledSheet } from 'react-native-size-matters';
+import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Get, Post } from '../Axios/AxiosInterceptorFunction';
+import {Get, Post} from '../Axios/AxiosInterceptorFunction';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
-import { baseUrl } from '../Config';
+import {baseUrl} from '../Config';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
-const MessagesScreen = ({ route }) => {
-  const isfocused = useIsFocused();
-  const { data, from_delivery } = route.params;
-  console.log("🚀 ~ MessagesScreen ~ data:", data)
-  const userRole = useSelector(state => state.commonReducer.selectedRole);
+const MessagesScreen = ({route}) => {
+  const {data, from_delivery} = route.params;
   const userData = useSelector(state => state.commonReducer.userData);
   const token = useSelector(state => state.authReducer.token);
-  console.log("🚀 ~ MessagesScreen ~ token:", token)
+
+  const isfocused = useIsFocused();
   const pusher = Pusher.getInstance();
   let myChannel = null;
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
   const [messages, setMessages] = useState([]);
   const [loading, setIsLoading] = useState(false);
-  const user_type = useSelector(state => state.authReducer.user_type);
 
   useEffect(() => {
     const connectPusher = async () => {
@@ -94,14 +92,14 @@ const MessagesScreen = ({ route }) => {
 
     return () => {
       if (myChannel?.current) {
-        pusher.unsubscribe({ channelName: `my-channel-${userData?.id}` });
+        pusher.unsubscribe({channelName: `my-channel-${userData?.id}`});
       }
     };
   }, [isfocused]);
 
   const startChat = async body => {
     const url = 'auth/send_message';
-    console.log("🚀 ~ MessagesScreen ~ body:", body)
+    console.log('🚀 ~ MessagesScreen ~ body:', body);
     try {
       const response = await Post(url, body, apiHeader(token));
       if (!response || response.error) {
@@ -167,7 +165,7 @@ const MessagesScreen = ({ route }) => {
     [messages],
   );
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
       <Header headerColor={['white', 'white']} title={'Chat'} showBack={true} />
 
       <GiftedChat
@@ -311,57 +309,4 @@ const MessagesScreen = ({ route }) => {
 
 export default MessagesScreen;
 
-const styles = ScaledSheet.create({
-  header: {
-    color: Color.black,
-    fontSize: moderateScale(18, 0.3),
-    width: windowWidth * 0.9,
-  },
-  image: {
-    marginHorizontal: moderateScale(10, 0.3),
-    width: windowWidth * 0.1,
-    height: windowWidth * 0.1,
-    borderRadius: windowWidth * 0.7,
-    backgroundColor: 'white',
-    overflow: 'hidden',
-  },
-  text: {
-    fontSize: moderateScale(12, 0.6),
-    paddingTop: moderateScale(5, 0.6),
-  },
-  row: {
-    width: windowWidth,
-    height: windowHeight * 0.06,
-    paddingHorizontal: moderateScale(20, 0.6),
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: moderateScale(20, 0.6),
-    justifyContent: 'space-between',
-  },
-  text2: {
-    fontSize: moderateScale(10, 0.6),
-    marginTop: moderateScale(-3, 0.6),
-  },
-  messageContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-  avatar: {
-    marginRight: 8,
-  },
-  bubble: {
-    backgroundColor: '#e0f7fa',
-    borderRadius: 10,
-    padding: 10,
-    maxWidth: '80%',
-  },
-  userName: {
-    fontWeight: 'bold',
-    color: '#007aff',
-  },
-  messageText: {
-    color: '#333333',
-  },
-});
+const styles = ScaledSheet.create({});

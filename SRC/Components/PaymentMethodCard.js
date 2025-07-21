@@ -40,7 +40,8 @@ const PaymentMethodCard = ({
               /> */}
               <CustomImage
                 style={styles.image}
-                source={{uri: `${baseUrl}/${image}`}}
+                source={require('../Assets/Images/user.png')}
+                // source={{uri: `${baseUrl}/${image} `}}
               />
             </View>
             <CustomText
@@ -256,11 +257,13 @@ const styles = StyleSheet.create({
     borderRadius: windowHeight,
     // backgroundColor :'green' ,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: Color.black,
   },
   image: {
     width: '100%',
     height: '100%',
-    // backgroundColor :'red'
+    // backgroundColor: 'red',
   },
   profile_view: {
     flexDirection: 'row',

@@ -1,16 +1,15 @@
-import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect} from 'react';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { useIsFocused } from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { moderateScale } from 'react-native-size-matters';
+import { useDispatch, useSelector } from 'react-redux';
+import Color from '../Assets/Utilities/Color';
+import { Get } from '../Axios/AxiosInterceptorFunction';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
-import {moderateScale} from 'react-native-size-matters';
-import Color from '../Assets/Utilities/Color';
-import {useDispatch, useSelector} from 'react-redux';
-import {Get} from '../Axios/AxiosInterceptorFunction';
-import {useIsFocused} from '@react-navigation/native';
-import {setUserData} from '../Store/slices/common';
-import {setUserLogoutAuth} from '../Store/slices/auth';
-import {position} from 'native-base/lib/typescript/theme/styled-system';
+import { setUserLogoutAuth } from '../Store/slices/auth';
+import { setUserData } from '../Store/slices/common';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 
 const AccountVerificationScreen = () => {
   const token = useSelector(state => state.authReducer.token);
@@ -23,9 +22,11 @@ const AccountVerificationScreen = () => {
   }, []);
 
   const checkAccountStatus = async () => {
+    console.log('here')
     const url = 'auth/userinfo';
     const response = await Get(url, token);
-    if (response?.data?.user_info?.acc_active != null) {
+    if (response?.data != undefined) {
+      console.log(response?.data?.user_info)
       dispatch(setUserData(response?.data?.user_info));
     }
   };
@@ -47,7 +48,6 @@ const AccountVerificationScreen = () => {
 
       <CustomText
         onPress={() => {
-          console.log('======================== >>>>>> ');
           dispatch(setUserLogoutAuth({}));
           dispatch(setUserData({}));
         }}

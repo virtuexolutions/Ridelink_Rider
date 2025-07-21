@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Header from '../Components/Header';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import {moderateScale} from 'react-native-size-matters';
@@ -18,14 +18,18 @@ import CustomImage from '../Components/CustomImage';
 import CashoutModal from '../Components/CashoutModal';
 import {useSelector} from 'react-redux';
 import navigationService from '../navigationService';
+import {Get} from '../Axios/AxiosInterceptorFunction';
+import moment from 'moment';
 
 const Walletscreen = () => {
   const firstCashout = useSelector(state => state.commonReducer.cashout);
   const userData = useSelector(state => state.commonReducer.userData);
-  console.log('🚀 ~ Walletscreen ~ userData:', userData?.wallet);
+  const token = useSelector(state => state.authReducer.token);
   const [isVisible, setIsVisible] = useState(false);
   const [isHistory, setIsHistory] = useState(false);
-
+  const [finalAmount, setfinalAmount] = useState(false);
+  
+  const [data, setData] = useState([]);
   const dummyarray = [
     {
       id: 1,
@@ -51,25 +55,39 @@ const Walletscreen = () => {
       status: 'completed',
       amount: '60$',
     },
-    {
-      id: 4,
-      date: '4-5-2025',
-      transfer_methode: 'card',
-      time: '4:50 pm ',
-      status: 'completed',
-      amount: '60$',
-    },
   ];
+
+  const transactionhistory = async () => {
+    const url = 'auth/transaction';
+    const response = await Get(url, token);
+    if (response != undefined) {
+      setIsHistory(!isHistory);
+      setData(response?.data?.date?.transactions);
+    }
+  };
+
+  useEffect(() => {
+    data?.map((item, index) => {
+      const wallet_amount = userData?.wallet?.balance - item?.amount;
+   setfinalAmount(wallet_amount) 
+    });
+  }, [data?.status === 'approved' && userData.wallet.balance > data?.amount]);
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{
+      height : windowHeight ,
+      width : windowWidth,
+      paddingVertical : moderateScale(25,.6),
+
+    }}>
       <Header
+      headerColor={Color.lightGrey}
         showBack={true}
         textstyle={{fontWeight: 'regular'}}
         title={' your Wallet'}
       />
-      <ScrollView showsVerticalScrollIndicator={false}>
+      {/* <ScrollView showsVerticalScrollIndicator={false}> */}
         <View style={styles.mainContainer}>
-          <View style={styles.cardStyle}>
+          <View style={styles.cardStyle}> 
             {/* <View
               style={{
                 flexDirection: 'row',
@@ -153,7 +171,7 @@ const Walletscreen = () => {
             />
             <CustomButton
               onPress={() => {
-                setIsHistory(!isHistory);
+                transactionhistory();
               }}
               text={'Cashout history '}
               fontSize={moderateScale(10, 0.6)}
@@ -169,11 +187,16 @@ const Walletscreen = () => {
           {isHistory && (
             <FlatList
               showsVerticalScrollIndicator={false}
-              data={dummyarray}
+              data={data}
+              // data={[1,2,3,4,5,6,7,8,9]}
+              style={{
+                // backgroundColor :'red'
+              }}
               contentContainerStyle={{
                 paddingBottom: moderateScale(80, 0.6),
               }}
               renderItem={({item, index}) => {
+                console.log('================== >>>', item);
                 return (
                   <View style={styles.card}>
                     <View
@@ -184,7 +207,7 @@ const Walletscreen = () => {
                       <CustomText>date :</CustomText>
                       <CustomText
                         style={{paddingHorizontal: moderateScale(10, 0.6)}}>
-                        {item?.date}
+                        {moment(item?.created_at).format('l')}
                       </CustomText>
                     </View>
                     <View
@@ -195,7 +218,9 @@ const Walletscreen = () => {
                       <CustomText>time :</CustomText>
                       <CustomText
                         style={{paddingHorizontal: moderateScale(10, 0.6)}}>
-                        {item?.time}
+                        {moment(data?.wallet?.transaction?.created_at).format(
+                          'LT',
+                        )}
                       </CustomText>
                     </View>
                     <View
@@ -206,7 +231,7 @@ const Walletscreen = () => {
                       <CustomText>Transfer Method :</CustomText>
                       <CustomText
                         style={{paddingHorizontal: moderateScale(10, 0.6)}}>
-                        {item?.transfer_methode}
+                        {item?.type}
                       </CustomText>
                     </View>
                     <View
@@ -234,10 +259,20 @@ const Walletscreen = () => {
                   </View>
                 );
               }}
+              ListEmptyComponent={() => {
+                <CustomText
+                  style={{
+                    color: Color.black,
+                    textAlign: 'center',
+                    fontSize: moderateScale(12, 0.6),
+                  }}>
+                  No transaction yet{' '}
+                </CustomText>;
+              }}
             />
           )}
         </View>
-      </ScrollView>
+      {/* </ScrollView> */}
       <CashoutModal isVisible={isVisible} setIsVisible={setIsVisible} />
     </SafeAreaView>
   );
@@ -249,6 +284,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     height: windowHeight,
     width: windowWidth,
+    paddingVertical : moderateScale(25,.6),
     paddingHorizontal: moderateScale(15, 0.6),
     alignItems: 'center',
   },

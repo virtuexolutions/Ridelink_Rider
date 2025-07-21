@@ -16,17 +16,18 @@ export const loginSchema = Yup.object({
 
 const phoneRegExp =
   /^(\+1\s?)?(\([0-9]{3}\)|[0-9]{3})[\s.-]?[0-9]{3}[\s.-]?[0-9]{4}$/;
+
 export const SignupSchema = Yup.object({
   name: Yup.string().required('Name is required'),
   email: Yup.string()
     .email('Invalid email address')
     .required('Email is requried !'),
-  contact: Yup.string()
-  // .matches(phoneRegExp, 'Phone number is not valid')
-    // .matches(/^\d+$/, 'Mobile number must contain only digits')
-    // .min(10, 'Mobile number must be at least 10 digits')
-    // .max(15, 'Mobile number cannot exceed 15 digits')
-    .required('Mobile number is required'),
+  // contact: Yup.string()
+  //   .matches(phoneRegExp, 'Phone number is not valid')
+  //   .matches(/^\d+$/, 'Mobile number must contain only digits')
+  //   .min(10, 'Mobile number must be at least 10 digits')
+  //   .max(15, 'Mobile number cannot exceed 15 digits')
+  //   .required('Mobile number is required'),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref('password'), null], 'Passwords must match')
     .required('Confirm Password is required'),
@@ -37,6 +38,22 @@ export const SignupSchema = Yup.object({
   termsAccepted: Yup.boolean()
     .oneOf([true], 'You must accept the terms and conditions')
     .required('Required'),
+
+  // country: Yup.string()
+  //   .required('Country is required'),
+
+  // state: Yup.string().required('State is required'),
+
+  // city: Yup.string().required('City is required'),
+
+  // zipCode: Yup.string()
+  //   .matches(/^[0-9A-Za-z -]{4,10}$/, 'Invalid ZIP code')
+  //   .required('ZIP Code is required'),
+
+  // address: Yup.string()
+  //   .min(5, 'Address is too short')
+  //   .max(255, 'Address is too long')
+  //   .required('Address is required'),
   // modal: Yup.boolean().required('Car number is required'),
   // number: Yup.boolean().required('Car number is required'),
   // seat: Yup.bool().required('Seat is required'),

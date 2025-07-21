@@ -1,5 +1,6 @@
-import {Icon} from 'native-base';
-import React, {useEffect, useState} from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import { Icon } from 'native-base';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -8,77 +9,38 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {moderateScale} from 'react-native-size-matters';
-import Entypo from 'react-native-vector-icons/Entypo';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { moderateScale } from 'react-native-size-matters';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import PaymentMethodCard from '../Components/PaymentMethodCard';
-import {baseUrl} from '../Config';
+import { baseUrl } from '../Config';
 import navigationService from '../navigationService';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
-import {Post} from '../Axios/AxiosInterceptorFunction';
-import {useSelector} from 'react-redux';
-import {useIsFocused} from '@react-navigation/native';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
 const PassengerDetails = ({route}) => {
   const {type, data, ride_status, fromdelivery, currentPosition} = route.params;
-  const token = useSelector(state => state.authReducer.token);
+  console.log("🚀 ~ PassengerDetails ~ type:", type)
+
+  const token = useSelector(state => state.authReducer.token)
   const rider_arrived_time = route?.params?.rider_arrived_time;
+
   const isFocused = useIsFocused();
-  // const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-  // const isFocused = useIsFocused();
-  // const [paymentMethod, setPaymentMethod] = useState('Card');
-  // const [isPaymentCom, setPaymentCom] = useState(false);
-  // const [isEnabled, setIsEnabled] = useState(false);
-  // const {user_type} = useSelector(state => state.authReducer);
-  // const [modalVisible, setModalVisible] = useState(false);
-  // const [ridedata, setRideData] = useState('');
+
   const [selectedData, setSelectedData] = useState('pickup');
   const [isLoading, setIsLoading] = useState(false);
+  const [updatedStatus, setUpdatedStatus] = useState('');
 
-  //  useEffect(() => {
-  //     getCurrentLocation();
-  //   }, [isFocused]);
 
-  //   const getCurrentLocation = async () => {
-  //     try {
-  //       const position = await new Promise((resolve, reject) => {
-  //         Geolocation.getCurrentPosition(
-  //           position => {
-  //             const coords = {
-  //               latitude: position.coords.latitude,
-  //               longitude: position.coords.longitude,
-  //             };
-  //             resolve(coords);
-  //             getAddressFromCoordinates(
-  //               position.coords.latitude,
-  //               position.coords.longitude,
-  //             );
-  //           },
-  //           error => {
-  //             reject(new Error(error.message));
-  //           },
-  //           {
-  //             enableHighAccuracy: true,
-  //             timeout: 15000,
-  //             maximumAge: 10000,
-  //           },
-  //         );
-  //       });
-  //       setCurrentPosition(position);
-  //     } catch (error) {
-  //       console.error('Error getting location:', error);
-  //       throw error;
-  //     }
-  //   };
+  
 
   const rideUpdate = async status => {
     const url = `auth/rider/ride_update/${data?.ride_id}`;
@@ -96,10 +58,10 @@ const PassengerDetails = ({route}) => {
         data: data,
         type: 'details',
         rider_arrived_time: rider_arrived_time,
-        ride_status: ride_status,
+        ride_status: updatedStatus,
       });
 
-      // setUpdatedRide(response?.data);
+      setUpdatedStatus(response?.data?.ride_info?.status);
     }
   };
 
@@ -337,7 +299,7 @@ const PassengerDetails = ({route}) => {
             btn_text={'Decline'}
           />
         )}
-        {type === 'passangerIdentity' ? (
+        {/* {type === 'passangerIdentity' ? (
           <View>
             <View
               style={[
@@ -474,8 +436,8 @@ const PassengerDetails = ({route}) => {
             />
           </View>
         ) : (
-          <>
-            <View style={styles.search_conatiner}>
+          <> */}
+            {/* <View style={styles.search_conatiner}>
               <CustomText isBold style={styles.heading}>
                 Payment Method
               </CustomText>
@@ -529,7 +491,7 @@ const PassengerDetails = ({route}) => {
                 placeholderTextColor={Color.veryLightGray}
                 style={{borderBottomWidth: 0.5}}
               />
-            </View>
+            </View> */}
             <View style={styles.expensesContainer}>
               <View style={styles.amountView}>
                 <CustomText>Trip Fare Breakdown</CustomText>
@@ -559,10 +521,8 @@ const PassengerDetails = ({route}) => {
                 <CustomText isBold style={{fontSize: moderateScale(24, 0.4)}}>
                   {'$ ' + data?.amount}
                 </CustomText>
-                {/* Resolved Design's calculations issues */}
               </View>
             </View>
-            {/* <Viewsosition: 'absolute', bottom: moderateScale(70, 0.6)}}> */}
             <CustomButton
               width={windowWidth * 0.9}
               height={windowHeight * 0.07}
@@ -591,8 +551,8 @@ const PassengerDetails = ({route}) => {
               }}
             />
             {/* </View> */}
-          </>
-        )}
+          {/* </> */}
+        {/* // )} */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -605,6 +565,7 @@ const styles = StyleSheet.create({
     width: windowWidth,
     height: windowHeight,
     backgroundColor: Color.white,
+    paddingVertical : moderateScale(25,.6)
   },
   main_view: {
     width: windowWidth,
@@ -652,11 +613,6 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'space-between',
     flexDirection: 'row',
-  },
-
-  logo: {
-    tintColor: 'red',
-    opacity: 1,
   },
   detail_con: {
     marginTop: moderateScale(20, 0.6),

@@ -1,53 +1,46 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
-  Image,
-  Dimensions,
-  ImageBackground,
+  ActivityIndicator,
   Platform,
+  SafeAreaView,
   ToastAndroid,
   TouchableOpacity,
   View,
-  ActivityIndicator,
-  SafeAreaView,
 } from 'react-native';
-import { ScaledSheet, moderateScale } from 'react-native-size-matters';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {ScaledSheet, moderateScale} from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useDispatch, useSelector } from 'react-redux';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import TextInputWithTitle from '../Components/TextInputWithTitle';
+import {useDispatch} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
+import CustomButton from '../Components/CustomButton';
 import CustomStatusBar from '../Components/CustomStatusBar';
 import CustomText from '../Components/CustomText';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
-import CustomButton from '../Components/CustomButton';
+import TextInputWithTitle from '../Components/TextInputWithTitle';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
-import { Icon } from 'native-base';
-import { useNavigation } from '@react-navigation/native';
-import { Post } from '../Axios/AxiosInterceptorFunction';
-import { Formik } from 'formik';
-import { forgotpasswordSchema } from '../Constant/schema';
+import {useNavigation} from '@react-navigation/native';
+import {Formik} from 'formik';
+import {Icon} from 'native-base';
+import {Post} from '../Axios/AxiosInterceptorFunction';
+import {forgotpasswordSchema} from '../Constant/schema';
 
 const VerifyEmail = props => {
   const dispatch = useDispatch();
   const navigationN = useNavigation();
-  const { user_type } = useSelector(state => state.authReducer);
   const [isLoading, setIsLoading] = useState(false);
 
   const sendOTP = async values => {
-    console.log('asdhkasdjagsdjags');
     const url = 'password/email';
-
     setIsLoading(true);
-    const response = await Post(url, { email: values.email }, apiHeader());
+    const response = await Post(url, {email: values.email}, apiHeader());
     setIsLoading(false);
-    console.log('response data =========================>', response?.data);
     if (response != undefined) {
       Platform.OS == 'android'
         ? ToastAndroid.show(`OTP sent to ${values.email}`, ToastAndroid.SHORT)
         : alert(`OTP sent to ${values.email}`);
       // fromForgot
       //   ?
-      navigationN.navigate('VerifyNumber', { email: values.email });
+      navigationN.navigate('VerifyNumber', {email: values.email});
       // : navigationService.navigate('VerifyNumber', {
       //     email: `${email}`,
       //   });
@@ -55,11 +48,11 @@ const VerifyEmail = props => {
   };
 
   return (
-    <SafeAreaView style={{
-      height :windowHeight ,
-      width: windowWidth ,
-      backgroundColor :'red'
-    }}>
+    <SafeAreaView
+      style={{
+        height: windowHeight,
+        width: windowWidth,
+      }}>
       <CustomStatusBar
         backgroundColor={Color.white}
         barStyle={'dark-content'}
@@ -97,12 +90,7 @@ const VerifyEmail = props => {
             }}
             validationSchema={forgotpasswordSchema}
             onSubmit={sendOTP}>
-            {({ values, handleChange, handleSubmit, touched, errors }) => {
-              console.log(
-                '🚀 ~ VerifyEmail ~ errors:',
-                errors.email,
-                '======================= uuuuuuu',
-              );
+            {({values, handleChange, handleSubmit, touched, errors}) => {
               return (
                 <View style={styles.text_input}>
                   <TextInputWithTitle
@@ -127,19 +115,20 @@ const VerifyEmail = props => {
                     </CustomText>
                   )}
                   <CustomButton
-                    text={isLoading ? <ActivityIndicator size={'small'} color={Color.white} /> : 'submit'}
+                    text={
+                      isLoading ? (
+                        <ActivityIndicator size={'small'} color={Color.white} />
+                      ) : (
+                        'submit'
+                      )
+                    }
                     textColor={Color.white}
                     width={windowWidth * 0.8}
                     height={windowHeight * 0.06}
                     marginTop={moderateScale(20, 0.3)}
-                    onPress={
-                      handleSubmit
-                      // navigationN.navigate('VerifyNumber');
-                    }
+                    onPress={handleSubmit}
                     borderRadius={30}
-                    bgColor={
-                      Color.darkBlue
-                    }
+                    bgColor={Color.darkBlue}
                   />
                 </View>
               );
@@ -171,7 +160,7 @@ const styles = ScaledSheet.create({
   },
   back: {
     position: 'absolute',
-    top: moderateScale(20, 0.3),
+    top: moderateScale(50, 0.3),
     left: moderateScale(20, 0.3),
     height: moderateScale(30, 0.3),
     width: moderateScale(30, 0.3),
@@ -201,7 +190,6 @@ const styles = ScaledSheet.create({
   schemaText: {
     fontSize: moderateScale(10, 0.6),
     color: Color.red,
-    // backgroundColor: 'green',
     alignSelf: 'flex-start',
   },
 });
