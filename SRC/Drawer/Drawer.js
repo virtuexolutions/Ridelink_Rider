@@ -199,7 +199,7 @@ const Drawer = React.memo(() => {
             style={styles.end_btn}>
             <CustomText style={styles.txt}>Help</CustomText>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               navigation.navigate('LearningCenter');
             }}
@@ -211,7 +211,7 @@ const Drawer = React.memo(() => {
               }}>
               Learning Center
             </CustomText>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() => {
               dispatch(setUserToken(''));
