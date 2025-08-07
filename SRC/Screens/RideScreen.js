@@ -42,7 +42,7 @@ const RideScreen = ({route}) => {
   const myChannel = useRef(null);
 
   const [isVisible, setisVisible] = useState(false);
-  const [isriderArrive, setIsRiderArrived] = useState(false);
+  const [isriderArrive, setIsRiderArrived] = useState(true);
   const [time, setTime] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [updatedStatus, setUpdatedStatus] = useState('');
@@ -186,6 +186,7 @@ const RideScreen = ({route}) => {
         const targetLat = !isriderArrive ? origin?.lat : destination?.lat;
         const targetLng = !isriderArrive ? origin?.lng : destination?.lng;
 
+        console.log("🚀 ~ RideScreen ~ isLocationClose(latitude, targetLat, longitude, targetLng):", isLocationClose(latitude, targetLat, longitude, targetLng))
         if (isLocationClose(latitude, targetLat, longitude, targetLng)) {
           console.log('🚗 Rider arrived at the destination!');
           setIsRiderArrived(true);

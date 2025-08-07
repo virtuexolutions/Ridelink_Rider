@@ -33,7 +33,7 @@ const PlaceHolderScreen = () => {
         const status = ride?.status?.toLowerCase();
         console.log('🚀 ~ rideRequestList ~ status:', status);
         console.log('🚀 ~ rideRequestList ~ status:', status);
-        const goHomeStatuses = ['pending', 'cancel', 'completed', 'reviewed' , 'ride_completed' ,'Delivered'];
+        const goHomeStatuses = ['pending', 'cancel', 'complete', 'reviewed' , 'ride_completed' ,'Delivered'];
         console.log(
           '🚀 ~ rideRequestList ~ goHomeStatuses:',
           goHomeStatuses.includes(status),
