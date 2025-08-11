@@ -87,14 +87,14 @@ const Drawer = React.memo(() => {
       id: 9,
       name: 'privacy policy ',
       onPress: () => {
-        navigation.navigate('PrivacyPolicy');
+        navigation.navigate("MyDrawer",{screen: 'PrivacyPolicy'});
       },
     },
     {
       id: 10,
       name: 'terms & conditions',
       onPress: () => {
-        navigation.navigate('TermsAndConditions');
+        navigation.navigate("MyDrawer",{screen:'TermsAndConditions'});
       },
     },
   ];
