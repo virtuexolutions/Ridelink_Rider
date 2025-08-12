@@ -101,11 +101,8 @@ const AppNavigator = () => {
 
 
           {/* <RootNav.Screen name="History" component={History} /> */}
-          <RootNav.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
-          <RootNav.Screen
-            name="TermsAndConditions"
-            component={TermsAndConditions}
-          />
+          {/* <RootNav.Screen name="PrivacyPolicy" component={PrivacyPolicy} /> */}
+          
           <RootNav.Screen name="HelpAndSupport" component={HelpAndSupport} />
           {/* <RootNav.Screen
             name="ReferFriendScreen"
@@ -272,6 +269,14 @@ export const MyDrawer = () => {
       <DrawerNavigation.Screen
         name="ReferFriendScreen"
         component={ReferFriendScreen}
+      />
+      <DrawerNavigation.Screen
+        name="PrivacyPolicy" component={PrivacyPolicy}
+      />
+     
+       <DrawerNavigation.Screen
+        name="TermsAndConditions"
+        component={TermsAndConditions}
       />
 
       {/* <DrawerNavigation.Screen name="MapScreen" component={MapScreen} />             */}

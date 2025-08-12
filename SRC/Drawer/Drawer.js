@@ -31,21 +31,21 @@ const Drawer = React.memo(() => {
     //     navigation.navigate('HomeScreen');
     //   },
     // },
-    {
-      id: 2,
-      name: 'Refer Friends',
-      onPress: () => {
-        // setIsModalVisible(true);
-        navigation.navigate('ReferFriendScreen');
-      },
-    },
-    {
-      id: 3,
-      name: 'Oppurtunities',
-      onPress: () => {
-        navigation.navigate('MyJourneys');
-      },
-    },
+    // {
+    //   id: 2,
+    //   name: 'Refer Friends',
+    //   onPress: () => {
+    //     // setIsModalVisible(true);
+    //     navigation.navigate('ReferFriendScreen');
+    //   },
+    // },
+    // {
+    //   id: 3,
+    //   name: 'Oppurtunities',
+    //   onPress: () => {
+    //     navigation.navigate('MyJourneys');
+    //   },
+    // },
 
     {
       id: 4,
@@ -87,14 +87,14 @@ const Drawer = React.memo(() => {
       id: 9,
       name: 'privacy policy ',
       onPress: () => {
-        navigation.navigate('PrivacyPolicy');
+        navigation.navigate("MyDrawer",{screen: 'PrivacyPolicy'});
       },
     },
     {
       id: 10,
       name: 'terms & conditions',
       onPress: () => {
-        navigation.navigate('TermsAndConditions');
+        navigation.navigate("MyDrawer",{screen:'TermsAndConditions'});
       },
     },
   ];
@@ -198,19 +198,6 @@ const Drawer = React.memo(() => {
             }}
             style={styles.end_btn}>
             <CustomText style={styles.txt}>Help</CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('LearningCenter');
-            }}
-            style={styles.le_btn}>
-            <CustomText
-              style={{
-                fontSize: moderateScale(14, 0.6),
-                color: Color.black,
-              }}>
-              Learning Center
-            </CustomText>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
