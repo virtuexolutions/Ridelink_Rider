@@ -136,15 +136,6 @@ const Walletscreen = () => {
                 }}>
                 {userData?.wallet?.balance}
               </CustomText>
-              <CustomText
-                style={{
-                  paddingTop: moderateScale(12, 0.6),
-                  fontSize: moderateScale(10, 0.6),
-                  color: Color.white,
-                  textAlign: 'center',
-                }}>
-                lorem ipsum
-              </CustomText>
             </View>
           </View>
           <View
@@ -290,7 +281,7 @@ const styles = StyleSheet.create({
   },
   cardStyle: {
     width: windowWidth * 0.9,
-    height: windowHeight * 0.18,
+    height: windowHeight * 0.15,
     backgroundColor: Color.darkBlue,
     marginTop: moderateScale(10, 0.3),
     borderRadius: moderateScale(20, 0.6),
