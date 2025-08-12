@@ -1,8 +1,8 @@
-import {AddIcon, View} from 'native-base';
+import { AddIcon, View } from 'native-base';
 import React from 'react';
 import FastImage from 'react-native-fast-image';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 
@@ -17,8 +17,7 @@ const SplashScreen = () => {
         />
       </View>
       <CustomText style={styles.text}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas
-        efficitur consectetur ligula eget ultrices.
+        Book rides with ease and track your journey in real-time.
       </CustomText>
     </View>
   );
