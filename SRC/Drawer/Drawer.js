@@ -24,48 +24,48 @@ const Drawer = React.memo(() => {
   const [isLoading, setIsLoading] = useState(false);
 
   const adminData = [
+    {
+      id: 1,
+      name: 'Home',
+      onPress: () => {
+        navigation.navigate('MyDrawer', {screen: 'Home'});
+      },
+    },
     // {
-    //   id: 1,
-    //   name: 'Inbox',
+    //   id: 2,
+    //   name: 'Refer Friends',
     //   onPress: () => {
-    //     navigation.navigate('HomeScreen');
+    //     // setIsModalVisible(true);
+    //     navigation.navigate('ReferFriendScreen');
     //   },
     // },
-    {
-      id: 2,
-      name: 'Refer Friends',
-      onPress: () => {
-        // setIsModalVisible(true);
-        navigation.navigate('ReferFriendScreen');
-      },
-    },
-    {
-      id: 3,
-      name: 'Oppurtunities',
-      onPress: () => {
-        navigation.navigate('MyJourneys');
-      },
-    },
+    // {
+    //   id: 3,
+    //   name: 'Oppurtunities',
+    //   onPress: () => {
+    //     navigation.navigate('MyJourneys');
+    //   },
+    // },
 
     {
       id: 4,
       name: 'Earnings',
       onPress: () => {
-        navigation.navigate('Walletscreen');
+        navigation.navigate('MyDrawer', {screen: 'Walletscreen'});
       },
     },
-    {
-      id: 5,
-      name: 'History',
-      onPress: () => {
-        navigation.navigate('History');
-      },
-    },
+    // {
+    //   id: 5,
+    //   name: 'History',
+    //   onPress: () => {
+    //     navigation.navigate('History');
+    //   },
+    // },
     {
       id: 6,
       name: 'Update vehicle',
       onPress: () => {
-        navigation.navigate('AddYourCar');
+        navigation.navigate('MyDrawer', {screen: 'AddYourCar'});
       },
     },
 
@@ -73,28 +73,28 @@ const Drawer = React.memo(() => {
       id: 7,
       name: 'Accounts ',
       onPress: () => {
-        navigation.navigate('Profile');
+        navigation.navigate('MyDrawer', {screen: 'Profile'});
       },
     },
     {
       id: 8,
       name: 'Change password ',
       onPress: () => {
-        navigation.navigate('ChangePassword');
+        navigation.navigate('MyDrawer', {screen: 'ChangePassword'});
       },
     },
     {
       id: 9,
       name: 'privacy policy ',
       onPress: () => {
-        navigation.navigate('PrivacyPolicy');
+        navigation.navigate('MyDrawer', {screen: 'PrivacyPolicy'});
       },
     },
     {
       id: 10,
       name: 'terms & conditions',
       onPress: () => {
-        navigation.navigate('TermsAndConditions');
+        navigation.navigate('MyDrawer', {screen: 'TermsAndConditions'});
       },
     },
   ];
@@ -136,7 +136,9 @@ const Drawer = React.memo(() => {
           <CustomText isBold style={styles.heading_text}>
             {userData?.name}
           </CustomText>
-          <CustomText style={styles.text}>Diver : Car Name</CustomText>
+          <CustomText style={styles.text}>
+            Diver : {userData?.car_info?.name}
+          </CustomText>
         </View>
         {/* <TouchableOpacity
           onPress={() => {
@@ -192,13 +194,13 @@ const Drawer = React.memo(() => {
           ))}
         </View>
         <View style={styles.end_view}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               navigation.navigate('HelpAndSupport');
             }}
             style={styles.end_btn}>
             <CustomText style={styles.txt}>Help</CustomText>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           {/* <TouchableOpacity
             onPress={() => {
               navigation.navigate('LearningCenter');

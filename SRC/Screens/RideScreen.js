@@ -48,7 +48,7 @@ const RideScreen = ({route}) => {
   const [updatedStatus, setUpdatedStatus] = useState('');
 
   const [Updatedride, setUpdatedRide] = useState(null);
-  console.log("🚀 ~ RideScreen ~ Updatedride:", Updatedride)
+  console.log('🚀 ~ RideScreen ~ Updatedride:', Updatedride);
 
   const [currentPosition, setCurrentPosition] = useState({
     latitude: 0,
@@ -186,6 +186,10 @@ const RideScreen = ({route}) => {
         const targetLat = !isriderArrive ? origin?.lat : destination?.lat;
         const targetLng = !isriderArrive ? origin?.lng : destination?.lng;
 
+        console.log(
+          '🚀 ~ RideScreen ~ isLocationClose(latitude, targetLat, longitude, targetLng):',
+          isLocationClose(latitude, targetLat, longitude, targetLng),
+        );
         if (isLocationClose(latitude, targetLat, longitude, targetLng)) {
           console.log('🚗 Rider arrived at the destination!');
           setIsRiderArrived(true);
@@ -557,7 +561,7 @@ const RideScreen = ({route}) => {
                   rideUpdate('riderArrived');
                 }}
               />
-             )} 
+            )}
           </View>
         </>
       </View>
@@ -572,7 +576,7 @@ const styles = StyleSheet.create({
   safe_are: {
     width: windowWidth,
     height: windowHeight,
-    backgroundColor:Color.white,
+    backgroundColor: Color.white,
     // paddingVertical : moderateScale(20,.6)
   },
 

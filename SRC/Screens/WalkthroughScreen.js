@@ -23,20 +23,20 @@ const WalkThroughScreen = props => {
     {
       key: '1',
       image: require('../Assets/Images/walk1.jpg'),
-      title: 'CHEVY CRUZ',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas efficitur consectetur ligula eget ultrices. Cras ac risus sodales, posuere nibh et, molestie',
+      title: 'Accept Rides & Navigate Easily',
+      text: 'Get ride requests instantly and start earning on your schedule. Our smart navigation helps you reach your customer quickly and efficiently.',
     },
     {
       key: '2',
       image: require('../Assets/Images/walk2.jpg'),
-      title: 'LOREM IPSUM DOLOR SIT',
-      text: `Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit. Pellentesque Eu Pulvinar Metus, Fringilla Semper Enim. Etiam Viverra Porttitor Nunc Laoreet Faucibus. Fusce Accumsan Mauris At Sem Finibus Gravida. Donec Cursus Tincidunt Eros In Efficitur. Maecenas Cursus Pretium Dui, In Tristique Turpis Finibus Nec. Class Aptent.`,
+      title: 'Deliver Parcels & Earn More',
+      text: `Expand your earnings by delivering parcels. Whether small packages or urgent documents, we connect you with customers who need fast and secure delivery.`,
     },
     {
       key: '3',
       image: require('../Assets/Images/walk3.jpg'),
-      title: 'DODGE CARAVAN',
-      text: `Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit. Pellentesque Eu Pulvinar Metus, Fringilla Semper Enim. Etiam Viverra Porttitor Nunc Laoreet Faucibus. Fusce Accumsan Mauris At Sem Finibus Gravida. Donec Cursus Tincidunt Eros In Efficitur. Maecenas Cursus Pretium Dui, In Tristique Turpis Finibus Nec. Class Aptent.`,
+      title: 'Pet-Friendly Rides',
+      text: `Offer specialized pet transportation services. Ensure a safe and comfortable trip for pets while unlocking extra income opportunities.`,
     },
   ];
   console.log(slidesref.current, 'indexxxxxxx');
@@ -55,9 +55,10 @@ const WalkThroughScreen = props => {
           backgroundColor: 'white',
         }}
         source={item.image}>
+          
         <CustomText
           style={{
-            fontSize: moderateScale(11, 0.6),
+            fontSize: moderateScale(12, 0.6),
             position: 'absolute',
             bottom: '46%',
             width: '80%',

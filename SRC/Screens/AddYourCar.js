@@ -38,6 +38,7 @@ const AddYourCar = props => {
   const ref = useRef();
   const token = useSelector(state => state.authReducer.token);
   const userData = useSelector(state => state.commonReducer.userData);
+  console.log("🚀 ~ AddYourCar ~ userData:", userData?.car_info)
   const [isLoading, setIsLoading] = useState(false);
   const [imagePicker, setImagePicker] = useState(false);
   const [selectedCabCategory, setSelectedCabCategory] = useState('');
@@ -249,7 +250,7 @@ const AddYourCar = props => {
         }}
         showsVerticalScrollIndicator={false}>
         {userData?.car_info ? (
-          <Header title={'Update Your Vehicle'} showBack hideUser />
+          <Header title={'Update Your Vehicle'} showBack={false} hideUser />
         ) : (
           <CustomText isBold style={styles.text}>
             Add Your vehicle

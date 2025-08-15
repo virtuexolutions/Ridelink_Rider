@@ -24,6 +24,8 @@ import {useSelector} from 'react-redux';
 import {Formik} from 'formik';
 import {changePasswordSchema} from '../Constant/schema';
 import {Post} from '../Axios/AxiosInterceptorFunction';
+import Header from '../Components/Header';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ChangePassword = () => {
   const navigation = useNavigation();
@@ -49,8 +51,10 @@ const ChangePassword = () => {
   };
 
   return (
+    <SafeAreaView style={{backgroundColor :Color.white}}>
+
     <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
@@ -69,7 +73,9 @@ const ChangePassword = () => {
           />
         </TouchableOpacity>
         <CustomText style={styles.headert}>change password</CustomText>
-      </View>
+      </View> */}
+      
+      <Header title={'Change password'} showBack={false} hideUser={true} />
       <View style={styles.main_container}>
         <Formik
           validationSchema={changePasswordSchema}
@@ -175,6 +181,7 @@ const ChangePassword = () => {
         </Formik>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 };
 

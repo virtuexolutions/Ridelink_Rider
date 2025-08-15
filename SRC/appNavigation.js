@@ -77,35 +77,32 @@ const AppNavigator = () => {
           <RootNav.Screen name="FareScreen" component={FareScreen} />
           <RootNav.Screen name="VerifyEmail" component={VerifyEmail} />
           <RootNav.Screen name="ResetPassword" component={ResetPassword} />
-          <RootNav.Screen name="ChangePassword" component={ChangePassword} />
+          {/* <RootNav.Screen name="ChangePassword" component={ChangePassword} /> */}
           <RootNav.Screen name="Signup" component={Signup} />
           {/* <RootNav.Screen name="MapScreen" component={MapScreen} /> */}
           <RootNav.Screen name="RideRequest" component={RideRequest} />
           <RootNav.Screen name="PaymentScreen" component={PaymentScreen} />
           <RootNav.Screen name="VerifyNumber" component={VerifyNumber} />
-          <RootNav.Screen name="Profile" component={Profile} />
+          {/* <RootNav.Screen name="Profile" component={Profile} /> */}
           <RootNav.Screen name="RateScreen" component={RateScreen} />
           <RootNav.Screen name="MessagesScreen" component={MessagesScreen} />
           <RootNav.Screen
             name="PlaceHolderScreen"
             component={PlaceHolderScreen}
           />
-          <RootNav.Screen name="Home" component={Home} />
+          {/* <RootNav.Screen name="Home" component={Home} /> */}
           <RootNav.Screen
             name="AccountVerificationScreen"
             component={AccountVerificationScreen}
           />
-          <RootNav.Screen name="AddYourCar" component={AddYourCar} />
+          {/* <RootNav.Screen name="AddYourCar" component={AddYourCar} /> */}
           <RootNav.Screen name="Walletscreen" component={Walletscreen} />
           <RootNav.Screen name="RideScreen" component={RideScreen} />
 
 
           {/* <RootNav.Screen name="History" component={History} /> */}
-          <RootNav.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
-          <RootNav.Screen
-            name="TermsAndConditions"
-            component={TermsAndConditions}
-          />
+          {/* <RootNav.Screen name="PrivacyPolicy" component={PrivacyPolicy} /> */}
+          
           <RootNav.Screen name="HelpAndSupport" component={HelpAndSupport} />
           {/* <RootNav.Screen
             name="ReferFriendScreen"
@@ -269,9 +266,21 @@ export const MyDrawer = () => {
       <DrawerNavigation.Screen name="PaymentScreen" component={PaymentScreen} />
       <DrawerNavigation.Screen name="History" component={History} />
       <DrawerNavigation.Screen name="AddYourCar" component={AddYourCar} />
+      <DrawerNavigation.Screen name="ChangePassword" component={ChangePassword} />
+      <DrawerNavigation.Screen name="Profile" component={Profile} />
+
+
       <DrawerNavigation.Screen
         name="ReferFriendScreen"
         component={ReferFriendScreen}
+      />
+      <DrawerNavigation.Screen
+        name="PrivacyPolicy" component={PrivacyPolicy}
+      />
+     
+       <DrawerNavigation.Screen
+        name="TermsAndConditions"
+        component={TermsAndConditions}
       />
 
       {/* <DrawerNavigation.Screen name="MapScreen" component={MapScreen} />             */}
