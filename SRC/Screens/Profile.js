@@ -5,7 +5,6 @@ import React, {useState} from 'react';
 import {
   ActivityIndicator,
   Platform,
-  SafeAreaView,
   ScrollView,
   ToastAndroid,
   TouchableOpacity,
@@ -26,6 +25,7 @@ import {Post} from '../Axios/AxiosInterceptorFunction';
 import {setUserData} from '../Store/slices/common';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Profile = () => {
   const navigation = useNavigation();
@@ -70,7 +70,9 @@ const Profile = () => {
       style={styles.main}
       // style={{}}
     >
-      <Header showBack={true} title={'update Profile'} />
+      
+      <Header title={'update Profile'} showBack={false} hideUser={true} />
+      {/* <Header showBack={true} title={'update Profile'} /> */}
 
       {/* <View
         style={{
@@ -244,7 +246,7 @@ const styles = ScaledSheet.create({
     width: windowWidth,
     minHeight: windowHeight,
     paddingBottom: moderateScale(40, 0.6),
-    paddingTop: moderateScale(10, 0.6),
+    // paddingTop: moderateScale(10, 0.6),
     alignItems: 'center',
     backgroundColor: Color.white,
   },

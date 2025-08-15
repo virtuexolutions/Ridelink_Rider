@@ -1,18 +1,18 @@
-import { useNavigation } from '@react-navigation/native';
-import { Icon } from 'native-base';
-import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { moderateScale } from 'react-native-size-matters';
+import {useNavigation} from '@react-navigation/native';
+import {Icon} from 'native-base';
+import React, {useState} from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {moderateScale} from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import { baseUrl } from '../Config';
-import { setUserLogoutAuth, setUserToken } from '../Store/slices/auth';
-import { setUserLogOut } from '../Store/slices/common';
-import { windowHeight, windowWidth } from '../Utillity/utils';
+import {baseUrl} from '../Config';
+import {setUserLogoutAuth, setUserToken} from '../Store/slices/auth';
+import {setUserLogOut} from '../Store/slices/common';
+import {windowHeight, windowWidth} from '../Utillity/utils';
 
 const Drawer = React.memo(() => {
   const dispatch = useDispatch();
@@ -28,7 +28,7 @@ const Drawer = React.memo(() => {
       id: 1,
       name: 'Home',
       onPress: () => {
-        navigation.navigate('Home');
+        navigation.navigate('MyDrawer', {screen: 'Home'});
       },
     },
     // {
@@ -51,7 +51,7 @@ const Drawer = React.memo(() => {
       id: 4,
       name: 'Earnings',
       onPress: () => {
-        navigation.navigate('Walletscreen');
+        navigation.navigate('MyDrawer', {screen: 'Walletscreen'});
       },
     },
     // {
@@ -65,7 +65,7 @@ const Drawer = React.memo(() => {
       id: 6,
       name: 'Update vehicle',
       onPress: () => {
-        navigation.navigate('AddYourCar');
+        navigation.navigate('MyDrawer', {screen: 'AddYourCar'});
       },
     },
 
@@ -73,28 +73,28 @@ const Drawer = React.memo(() => {
       id: 7,
       name: 'Accounts ',
       onPress: () => {
-        navigation.navigate('Profile');
+        navigation.navigate('MyDrawer', {screen: 'Profile'});
       },
     },
     {
       id: 8,
       name: 'Change password ',
       onPress: () => {
-        navigation.navigate('ChangePassword');
+        navigation.navigate('MyDrawer', {screen: 'ChangePassword'});
       },
     },
     {
       id: 9,
       name: 'privacy policy ',
       onPress: () => {
-        navigation.navigate("MyDrawer", { screen: 'PrivacyPolicy' });
+        navigation.navigate('MyDrawer', {screen: 'PrivacyPolicy'});
       },
     },
     {
       id: 10,
       name: 'terms & conditions',
       onPress: () => {
-        navigation.navigate("MyDrawer", { screen: 'TermsAndConditions' });
+        navigation.navigate('MyDrawer', {screen: 'TermsAndConditions'});
       },
     },
   ];
@@ -127,7 +127,7 @@ const Drawer = React.memo(() => {
               style={styles.image}
               source={
                 userData?.photo
-                  ? { uri: `${baseUrl}${userData?.photo}` }
+                  ? {uri: `${baseUrl}${userData?.photo}`}
                   : require('../Assets/Images/user.png')
               }
             />
@@ -136,7 +136,9 @@ const Drawer = React.memo(() => {
           <CustomText isBold style={styles.heading_text}>
             {userData?.name}
           </CustomText>
-          <CustomText style={styles.text}>Diver : Car Name</CustomText>
+          <CustomText style={styles.text}>
+            Diver : {userData?.car_info?.name}
+          </CustomText>
         </View>
         {/* <TouchableOpacity
           onPress={() => {
@@ -192,13 +194,26 @@ const Drawer = React.memo(() => {
           ))}
         </View>
         <View style={styles.end_view}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               navigation.navigate('HelpAndSupport');
             }}
             style={styles.end_btn}>
             <CustomText style={styles.txt}>Help</CustomText>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          {/* <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('LearningCenter');
+            }}
+            style={styles.le_btn}>
+            <CustomText
+              style={{
+                fontSize: moderateScale(14, 0.6),
+                color: Color.black,
+              }}>
+              Learning Center
+            </CustomText>
+          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() => {
               dispatch(setUserToken(''));

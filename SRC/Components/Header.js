@@ -29,6 +29,9 @@ const Header = props => {
   const dispatch = useDispatch();
   const notification = useSelector(state => state.commonReducer.notification);
   const cartData = useSelector(state => state.commonReducer.cart);
+  const userData = useSelector(state => state.commonReducer.userData);
+  console.log("🚀 ~ Header ~ userData:", userData)
+
   const navigationN = useNavigation();
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -221,7 +224,7 @@ const Header = props => {
               // navigation.navigate('Profile')
               // dispatch(setUserLogoutAuth());
             }}
-            source={require('../Assets/Images/user_Image.png')}
+            source={ require('../Assets/Images/user_Image.png')}
             style={{ width: windowHeight * 0.06, height: windowHeight * 0.06 }}
           />
           <View

@@ -1,7 +1,6 @@
 import {
   FlatList,
   ImageBackground,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -20,6 +19,7 @@ import {useSelector} from 'react-redux';
 import navigationService from '../navigationService';
 import {Get} from '../Axios/AxiosInterceptorFunction';
 import moment from 'moment';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const Walletscreen = () => {
   const firstCashout = useSelector(state => state.commonReducer.cashout);
@@ -28,7 +28,7 @@ const Walletscreen = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isHistory, setIsHistory] = useState(false);
   const [finalAmount, setfinalAmount] = useState(false);
-  
+
   const [data, setData] = useState([]);
   const dummyarray = [
     {
@@ -69,26 +69,27 @@ const Walletscreen = () => {
   useEffect(() => {
     data?.map((item, index) => {
       const wallet_amount = userData?.wallet?.balance - item?.amount;
-   setfinalAmount(wallet_amount) 
+      setfinalAmount(wallet_amount);
     });
   }, [data?.status === 'approved' && userData.wallet.balance > data?.amount]);
   return (
-    <SafeAreaView style={{
-      height : windowHeight ,
-      width : windowWidth,
-      paddingVertical : moderateScale(25,.6),
-
-    }}>
+    <SafeAreaView
+      style={{
+        height: windowHeight,
+        width: windowWidth,
+        // paddingVertical : moderateScale(25,.6),
+        backgroundColor: Color.white,
+      }}>
       <Header
-      headerColor={Color.lightGrey}
-        showBack={true}
+        headerColor={Color.white}
+        showBack={false}
         textstyle={{fontWeight: 'regular'}}
         title={' your Wallet'}
       />
       {/* <ScrollView showsVerticalScrollIndicator={false}> */}
-        <View style={styles.mainContainer}>
-          <View style={styles.cardStyle}> 
-            {/* <View
+      <View style={styles.mainContainer}>
+        <View style={styles.cardStyle}>
+          {/* <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -115,154 +116,159 @@ const Walletscreen = () => {
                 **** **** **** 1234
               </CustomText>
             </View> */}
-            <View
-              style={{
-                // flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: moderateScale(40, 0.6),
-              }}>
-              <CustomText
-                style={{
-                  fontSize: moderateScale(16, 0.6),
-                  color: Color.white,
-                }}>
-                total Balance
-              </CustomText>
-              <CustomText
-                style={{
-                  fontSize: moderateScale(22, 0.6),
-                  color: Color.white,
-                  textAlign: 'center',
-                }}>
-                {userData?.wallet?.balance}
-              </CustomText>
-            </View>
-          </View>
           <View
             style={{
-              flexDirection: 'row',
-              gap: moderateScale(10, 0.6),
-              marginTop: moderateScale(15, 0.6),
+              // flexDirection: 'row',
+              justifyContent: 'space-between',
+              marginTop: moderateScale(40, 0.6),
             }}>
-            <CustomButton
-              onPress={() => {
-                firstCashout == true
-                  ? navigationService.navigate('CashoutScreen')
-                  : setIsVisible(true);
-              }}
-              text={'instant cashout'}
-              fontSize={moderateScale(10, 0.6)}
-              textColor={Color.white}
-              borderRadius={moderateScale(30, 0.3)}
-              width={windowWidth * 0.39}
-              height={windowHeight * 0.06}
-              bgColor={Color.darkBlue}
-              textTransform={'capitalize'}
-              elevation
-            />
-            <CustomButton
-              onPress={() => {
-                transactionhistory();
-              }}
-              text={'Cashout history '}
-              fontSize={moderateScale(10, 0.6)}
-              textColor={Color.themeDarkGray}
-              borderRadius={moderateScale(30, 0.3)}
-              width={windowWidth * 0.39}
-              height={windowHeight * 0.06}
-              bgColor={Color.white}
-              textTransform={'capitalize'}
-              elevation
-            />
-          </View>
-          {isHistory && (
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              data={data}
-              // data={[1,2,3,4,5,6,7,8,9]}
+            <CustomText
               style={{
-                // backgroundColor :'red'
-              }}
-              contentContainerStyle={{
-                paddingBottom: moderateScale(80, 0.6),
-              }}
-              renderItem={({item, index}) => {
-                console.log('================== >>>', item);
-                return (
-                  <View style={styles.card}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                      }}>
-                      <CustomText>date :</CustomText>
-                      <CustomText
-                        style={{paddingHorizontal: moderateScale(10, 0.6)}}>
-                        {moment(item?.created_at).format('l')}
-                      </CustomText>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                      }}>
-                      <CustomText>time :</CustomText>
-                      <CustomText
-                        style={{paddingHorizontal: moderateScale(10, 0.6)}}>
-                        {moment(data?.wallet?.transaction?.created_at).format(
-                          'LT',
-                        )}
-                      </CustomText>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                      }}>
-                      <CustomText>Transfer Method :</CustomText>
-                      <CustomText
-                        style={{paddingHorizontal: moderateScale(10, 0.6)}}>
-                        {item?.type}
-                      </CustomText>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                      }}>
-                      <CustomText>status :</CustomText>
-                      <CustomText
-                        style={{paddingHorizontal: moderateScale(10, 0.6)}}>
-                        {item?.status}
-                      </CustomText>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                      }}>
-                      <CustomText>amount :</CustomText>
-                      <CustomText
-                        style={{paddingHorizontal: moderateScale(10, 0.6)}}>
-                        {item?.amount}
-                      </CustomText>
-                    </View>
-                  </View>
-                );
-              }}
-              ListEmptyComponent={() => {
-                <CustomText
-                  style={{
-                    color: Color.black,
-                    textAlign: 'center',
-                    fontSize: moderateScale(12, 0.6),
-                  }}>
-                  No transaction yet{' '}
-                </CustomText>;
-              }}
-            />
-          )}
+                fontSize: moderateScale(16, 0.6),
+                color: Color.white,
+              }}>
+              total Balance
+            </CustomText>
+            <CustomText
+              style={{
+                fontSize: moderateScale(22, 0.6),
+                color: Color.white,
+                textAlign: 'center',
+              }}>
+              {userData?.wallet?.balance}
+            </CustomText>
+          </View>
         </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: moderateScale(10, 0.6),
+            marginTop: moderateScale(15, 0.6),
+          }}>
+          <CustomButton
+            onPress={() => {
+              firstCashout == true
+                ? navigationService.navigate('CashoutScreen')
+                : setIsVisible(true);
+            }}
+            text={'instant cashout'}
+            fontSize={moderateScale(10, 0.6)}
+            textColor={Color.white}
+            borderRadius={moderateScale(30, 0.3)}
+            width={windowWidth * 0.39}
+            height={windowHeight * 0.06}
+            bgColor={Color.darkBlue}
+            textTransform={'capitalize'}
+            elevation
+          />
+          <CustomButton
+            onPress={() => {
+              transactionhistory();
+            }}
+            text={'Cashout history '}
+            fontSize={moderateScale(10, 0.6)}
+            textColor={Color.themeDarkGray}
+            borderRadius={moderateScale(30, 0.3)}
+            width={windowWidth * 0.39}
+            height={windowHeight * 0.06}
+            bgColor={Color.white}
+            textTransform={'capitalize'}
+            elevation
+          />
+        </View>
+        {isHistory && (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            data={data}
+            // data={[]}
+            style={
+              {
+                // backgroundColor :'red'
+              }
+            }
+            contentContainerStyle={{
+              paddingBottom: moderateScale(80, 0.6),
+            }}
+            renderItem={({item, index}) => {
+              console.log('================== >>>', item);
+              return (
+                <View style={styles.card}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <CustomText>date :</CustomText>
+                    <CustomText
+                      style={{paddingHorizontal: moderateScale(10, 0.6)}}>
+                      {moment(item?.created_at).format('l')}
+                    </CustomText>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <CustomText>time :</CustomText>
+                    <CustomText
+                      style={{paddingHorizontal: moderateScale(10, 0.6)}}>
+                      {moment(data?.wallet?.transaction?.created_at).format(
+                        'LT',
+                      )}
+                    </CustomText>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <CustomText>Transfer Method :</CustomText>
+                    <CustomText
+                      style={{paddingHorizontal: moderateScale(10, 0.6)}}>
+                      {item?.type}
+                    </CustomText>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <CustomText>status :</CustomText>
+                    <CustomText
+                      style={{paddingHorizontal: moderateScale(10, 0.6)}}>
+                      {item?.status}
+                    </CustomText>
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <CustomText>amount :</CustomText>
+                    <CustomText
+                      style={{paddingHorizontal: moderateScale(10, 0.6)}}>
+                      {item?.amount}
+                    </CustomText>
+                  </View>
+                </View>
+              );
+            }}
+            ListEmptyComponent={
+              <CustomText
+                style={{
+                  height: '100%',
+                  width: '100%',
+                  color: Color.black,
+                  textAlign: 'center',
+                  paddingTop: windowHeight * 0.15,
+                  fontSize: moderateScale(12, 0.6),
+                }}>
+                No transaction yet !{' '}
+              </CustomText>
+            }
+          />
+        )}
+      </View>
       {/* </ScrollView> */}
       <CashoutModal isVisible={isVisible} setIsVisible={setIsVisible} />
     </SafeAreaView>
@@ -275,7 +281,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     height: windowHeight,
     width: windowWidth,
-    paddingVertical : moderateScale(25,.6),
+    paddingVertical: moderateScale(25, 0.6),
     paddingHorizontal: moderateScale(15, 0.6),
     alignItems: 'center',
   },

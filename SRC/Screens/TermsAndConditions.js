@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {ScrollView, TouchableOpacity, View} from 'react-native';
 import {ScaledSheet, moderateScale} from 'react-native-size-matters';
@@ -10,6 +9,7 @@ import {Icon} from 'native-base';
 import {windowHeight, windowWidth} from '../Utillity/utils';
 import {useNavigation} from '@react-navigation/native';
 import TernsComponent from '../Components/TernsComponent';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const TermsAndConditions = () => {
   // const navigation = useNavigation();
@@ -228,43 +228,7 @@ const TermsAndConditions = () => {
   ];
 
   return (
-    <>
-      {/* <View
-        style={{
-          flexDirection: 'row',
-          width: windowWidth,
-          backgroundColor: 'white',
-          paddingHorizontal: moderateScale(10, 0.6),
-          paddingTop: moderateScale(5, 0.3),
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => {
-            navigation.goBack();
-          }}
-          style={styles.back}>
-          <Icon
-            name="arrowleft"
-            as={AntDesign}
-            style={styles.icon2}
-            color={Color.white}
-            size={moderateScale(20, 0.3)}
-            onPress={() => {
-              navigation.goBack();
-            }}
-          />
-        </TouchableOpacity>
-        <CustomText
-          style={{
-            fontSize: moderateScale(18, 0.6),
-            color: Color.black,
-            width: windowWidth * 0.8,
-            textAlign: 'center',
-            paddingTop: moderateScale(8, 0.6),
-          }}>
-          Terms & condition
-        </CustomText>
-      </View> */}
+    <SafeAreaView style={{backgroundColor : Color.white}}>
       <Header title={'Terms & Conditions'} showBack={false} hideUser={true} />
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -292,13 +256,11 @@ const TermsAndConditions = () => {
           }
         </CustomText>
         {terms.map((term, index) => {
-          return (
-           <TernsComponent termData={term}/>
-          );
+          return <TernsComponent termData={term} />;
         })}
-        <View style={{height:windowHeight * 0.05}}/>
+        <View style={{height: windowHeight * 0.05}} />
       </ScrollView>
-    </>
+    </SafeAreaView>
   );
 };
 
@@ -320,5 +282,4 @@ const styles = ScaledSheet.create({
     backgroundColor: Color.themeBlack,
     justifyContent: 'center',
   },
-  
 });

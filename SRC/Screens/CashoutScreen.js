@@ -112,7 +112,7 @@ const CashoutScreen = () => {
             }}>
             {userData?.wallet?.balance}
           </CustomText>
-          <CustomText
+          {/* <CustomText
             style={{
               paddingTop: moderateScale(12, 0.6),
               fontSize: moderateScale(10, 0.6),
@@ -120,7 +120,7 @@ const CashoutScreen = () => {
               textAlign: 'center',
             }}>
             lorem ipsum
-          </CustomText>
+          </CustomText> */}
         </View>
       </View>
       <TextInputWithTitle

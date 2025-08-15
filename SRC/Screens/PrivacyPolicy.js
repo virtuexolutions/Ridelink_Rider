@@ -18,6 +18,7 @@ import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Color from '../Assets/Utilities/Color';
 import Header from '../Components/Header';
 import PolicyComponent from '../Components/PolicyComponent';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const PrivacyPolicy = () => {
   // const navigation = useNavigation();
@@ -220,44 +221,7 @@ const PrivacyPolicy = () => {
   ];
 
   return (
-    <>
-      {/* <View
-        style={{
-          flexDirection: 'row',
-          width: windowWidth,
-          backgroundColor: 'white',
-          paddingHorizontal: moderateScale(10, 0.6),
-          marginTop: moderateScale(5, 0.3),
-        }}>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => {
-            // navigation.goBack();
-          }}
-          style={styles.back}>
-          <Icon
-            name="arrowleft"
-            as={AntDesign}
-            style={styles.icon2}
-            color={Color.white}
-            size={moderateScale(20, 0.3)}
-            onPress={() => {
-              navigation.goBack();
-            }}
-          />
-        </TouchableOpacity>
-        <CustomText
-          style={{
-            fontSize: moderateScale(18, 0.6),
-            color: Color.black,
-            width: windowWidth * 0.8,
-            textAlign: 'center',
-            paddingTop: moderateScale(8, 0.6),
-          }}>
-          privacy policy
-        </CustomText>
-      </View> */}
-
+    <SafeAreaView style={{backgroundColor :Color.white}}>
       <Header title={'privacy Policy'} showBack={false} hideUser={true} />
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -294,22 +258,24 @@ const PrivacyPolicy = () => {
           }
         </CustomText>
         {policyArray.map((item, index) => {
-          return (
-           <PolicyComponent item={item}/>
-          );
+          return <PolicyComponent item={item} />;
         })}
         <View style={styles.contactContainer}>
           <Icon as={Entypo} color={Color.black} name="mail" />
-          <CustomText style={{color:Color.themeBgColor}}>{'privacy@ridelynk.com'}</CustomText>
+          <CustomText style={{color: Color.themeBgColor}}>
+            {'privacy@ridelynk.com'}
+          </CustomText>
         </View>
         <View style={styles.contactContainer}>
           <Icon as={FontAwesome6} color={Color.red} name="phone" />
-          <CustomText style={{color:Color.themeBgColor}}>{'(712) 259-4334'}</CustomText>
+          <CustomText style={{color: Color.themeBgColor}}>
+            {'(712) 259-4334'}
+          </CustomText>
         </View>
         <View style={{height: windowHeight * 0.045}} />
       </ScrollView>
       {/* </ScrollView> */}
-    </>
+    </SafeAreaView>
   );
 };
 
@@ -331,7 +297,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  
+
   contactContainer: {
     marginLeft: moderateScale(10, 0.2),
     marginTop: moderateScale(5, 0.2),
