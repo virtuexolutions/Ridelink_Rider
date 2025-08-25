@@ -95,7 +95,7 @@ const AppNavigator = () => {
             name="AccountVerificationScreen"
             component={AccountVerificationScreen}
           />
-          {/* <RootNav.Screen name="AddYourCar" component={AddYourCar} /> */}
+          <RootNav.Screen name="AddYourCar" component={AddYourCar} />
           <RootNav.Screen name="Walletscreen" component={Walletscreen} />
           <RootNav.Screen name="RideScreen" component={RideScreen} />
 
