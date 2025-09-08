@@ -5,37 +5,37 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import Color from '../Assets/Utilities/Color';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import CustomImage from './CustomImage';
 import CustomText from './CustomText';
-import {Icon} from 'native-base';
+import { Icon } from 'native-base';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomButton from './CustomButton';
-import {Rating} from 'react-native-ratings';
-import {getDistance} from 'geolib';
-import {baseUrl} from '../Config';
+import { Rating } from 'react-native-ratings';
+import { getDistance } from 'geolib';
+import { baseUrl } from '../Config';
 import {
   CodeField,
   Cursor,
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import {Post} from '../Axios/AxiosInterceptorFunction';
-import {setPhoneUserData, setUserData} from '../Store/slices/common';
-import {setUserToken} from '../Store/slices/auth';
-import {useDispatch} from 'react-redux';
+import { Post } from '../Axios/AxiosInterceptorFunction';
+import { setPhoneUserData, setUserData } from '../Store/slices/common';
+import { setUserToken } from '../Store/slices/auth';
+import { useDispatch } from 'react-redux';
 
-const ContactPassword = ({setIsModalVisible, isModalVisible, contact ,setContact}) => {
+const ContactPassword = ({ setIsModalVisible, isModalVisible, contact, setContact }) => {
   const dispatch = useDispatch();
   const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState('');
 
   const CELL_COUNT = 4;
-  const ref = useBlurOnFulfill({code, cellCount: CELL_COUNT});
+  const ref = useBlurOnFulfill({ code, cellCount: CELL_COUNT });
   const [abcd, getCellOnLayoutHandler] = useClearByFocusCell({
     code,
     setCode,
@@ -67,7 +67,7 @@ const ContactPassword = ({setIsModalVisible, isModalVisible, contact ,setContact
       dispatch(setUserData(response?.data?.user_info));
       dispatch(setPhoneUserData(response?.data?.user_info));
       // dispatch(setUserToken({token: 'ahjfhjkhasdjk fhkj haskdhfkj hasjkd'}));
-      dispatch(setUserToken({token: response?.data?.token}));
+      dispatch(setUserToken({ token: response?.data?.token }));
       setIsNumberCheck(true);
       setContact('');
       //   navigation.navigate('VerifyNumber', {phoneNumber: contact , });
@@ -109,7 +109,7 @@ const ContactPassword = ({setIsModalVisible, isModalVisible, contact ,setContact
               paddingVertical: moderateScale(10, 0.6),
             }}>
             {
-              'Set a 5-digit code to keep your RideLink \n account secure and easy to access.'
+              'Set a 4-digit code to keep your RideLink \n account secure and easy to access.'
             }
           </CustomText>
           <CodeField
@@ -121,13 +121,13 @@ const ContactPassword = ({setIsModalVisible, isModalVisible, contact ,setContact
             rootStyle={styles.codeFieldRoot}
             keyboardType="number-pad"
             textContentType="oneTimeCode"
-            renderCell={({index, symbol, isFocused}) => (
+            renderCell={({ index, symbol, isFocused }) => (
               <View
                 onLayout={getCellOnLayoutHandler(index)}
                 key={index}
                 style={[styles.cellRoot, isFocused && styles.focusCell]}>
                 <CustomText
-                  style={[styles.cellText, isFocused && {color: Color.black}]}>
+                  style={[styles.cellText, isFocused && { color: Color.black }]}>
                   {symbol || (isFocused ? <Cursor /> : null)}
                 </CustomText>
               </View>

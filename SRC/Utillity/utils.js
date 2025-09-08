@@ -1,7 +1,7 @@
 import React from 'react';
-import {Dimensions, PermissionsAndroid} from 'react-native';
-import {useDispatch} from 'react-redux';
-import {setLoaction} from '../Store/slices/common';
+import { Dimensions, PermissionsAndroid } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { setLoaction } from '../Store/slices/common';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -71,24 +71,27 @@ const windowHeight = Dimensions.get('window').height;
 //     console.warn(err);
 //   }
 // };
-
-
 const requestLocationPermission = async () => {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: 'Location Access Required',
-        message: 'This App needs to Access your location',
-      },
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('You can use the Location');
-    } else {
-      console.log('Location permission denied');
+  if (Platform.OS === 'android') {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Location Access Required',
+          message: 'This App needs to Access your location',
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK"
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('You can use the Location');
+      } else {
+        console.log('Location permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
     }
-  } catch (err) {
-    console.warn(err);
   }
 };
 
