@@ -14,6 +14,7 @@ import Color from '../Assets/Utilities/Color';
 import CustomText from '../Components/CustomText';
 import {setWalkThrough} from '../Store/slices/auth-slice';
 import {windowHeight, windowWidth} from '../Utillity/utils';
+import { StatusBar } from 'react-native';
 
 const WalkThroughScreen = props => {
   const dispatch = useDispatch();
@@ -55,6 +56,7 @@ const WalkThroughScreen = props => {
           backgroundColor: 'white',
         }}
         source={item.image}>
+        <StatusBar barStyle="dark-content" backgroundColor={Color.white} />
           
         <CustomText
           style={{

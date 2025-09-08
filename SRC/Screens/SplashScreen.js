@@ -5,11 +5,14 @@ import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import { windowHeight, windowWidth } from '../Utillity/utils';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
+import { StatusBar } from 'react-native';
+import Color from '../Assets/Utilities/Color';
 
 const SplashScreen = () => {
   // const backgroundImage = require('../Assets/Images/splash.gif');
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor={Color.white} />
       <View style={styles.logo_Container}>
         <CustomImage
           source={require('../Assets/Images/logo.png')}

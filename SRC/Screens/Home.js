@@ -36,6 +36,7 @@ const Home = () => {
   const token = useSelector(state => state.authReducer.token);
   console.log("🚀 ~ Home ~ token:", token)
   const data = useSelector(state => state.commonReducer.userData);
+  // console.log("🚀 ~ Home ~ data:", data)
   const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(false);
   const [requestList, setRequestList] = useState([]);

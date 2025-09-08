@@ -30,6 +30,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Icon } from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const VerifyNumber = props => {
   const SelecteduserRole = useSelector(
@@ -109,7 +110,7 @@ const VerifyNumber = props => {
 
 
   return (
-    <>
+    <SafeAreaView>
       <CustomStatusBar
         backgroundColor={Color.white}
         barStyle={'dark-content'}
@@ -204,7 +205,7 @@ const VerifyNumber = props => {
           bgColor={Color.darkBlue}
         />
       </KeyboardAwareScrollView>
-    </>
+    </SafeAreaView>
   );
 };
 

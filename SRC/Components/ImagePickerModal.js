@@ -100,26 +100,41 @@ const ImagePickerModal = props => {
       }
     }
     launchCamera(options, response => {
-      if (Platform.OS == 'ios') {
-        setShow(false);
-      } else {
-        setFileObject &&
-          setFileObject({
-            uri: response?.assets[0]?.uri,
-            type: response?.assets[0]?.type,
-            name: response?.assets[0]?.fileName,
-          });
+       if (response.didCancel) {
+      console.log("User cancelled image picker");
+      return;
+    }
+    if (response.errorCode) {
+      console.log("ImagePicker Error: ", response.errorMessage);
+      return;
+    }
+    if (!response.assets || response.assets.length === 0) {
+      console.log("No image selected");
+      return;
+    }
 
-        setMultiImages &&
-          setMultiImages(x => [
-            ...x,
-            {
-              uri: response?.assets[0]?.uri,
-              type: response?.assets[0]?.type,
-              name: response?.assets[0]?.fileName,
-            },
-          ]);
-      }
+    const image = response.assets[0];
+
+    if (Platform.OS === 'ios') {
+      setShow(false);
+    } else {
+      setFileObject &&
+        setFileObject({
+          uri: image.uri,
+          type: image.type,
+          name: image.fileName,
+        });
+
+      setMultiImages &&
+        setMultiImages(x => [
+          ...x,
+          {
+            uri: image.uri,
+            type: image.type,
+            name: image.fileName,
+          },
+        ]);
+    }
     });
   };
 

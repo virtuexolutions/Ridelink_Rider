@@ -50,6 +50,7 @@ const CustomButton = props => {
     fontcase,
     style,
   } = props;
+    
   return (
     <TouchableOpacity
       activeOpacity={activeOpacity ? activeOpacity : 0.9}

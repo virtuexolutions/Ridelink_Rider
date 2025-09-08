@@ -1,3 +1,4 @@
+import {set} from '@react-native-firebase/database';
 import {createSlice} from '@reduxjs/toolkit';
 import moment from 'moment';
 
@@ -17,8 +18,17 @@ const initialState = {
   location: '',
   pickupLocatin: {},
   dropoffLocation: {},
-  cashout : false ,
+  cashout: false,
+  numberVerify: false,
+  phoneUserData: {},
+  isSiginWithGoogle: false,
 };
+console.log(
+  '🚀 ~ initialState.setPhoneUserData:',
+  initialState.setPhoneUserData,
+);
+console.log('🚀 ~ setUserData ~ state.userData:', initialState.userData);
+
 const CommonSlice = createSlice({
   name: 'commonReducer',
   initialState: initialState,
@@ -34,6 +44,7 @@ const CommonSlice = createSlice({
     },
     setUserData(state, action) {
       state.userData = action?.payload;
+      console.log('🚀 ~ setUserData ~ state.userData:', state.userData);
     },
     setUserLogOut(state, action) {
       state.userData = {};
@@ -123,7 +134,6 @@ const CommonSlice = createSlice({
       }
     },
     setServiceBooking(state, action) {
-
       state.bookings.push(action.payload);
     },
 
@@ -187,11 +197,21 @@ const CommonSlice = createSlice({
     setLoaction(state, action) {
       state.location = action.payload;
     },
-    setCashOut(state,action){
-      state.cashout =action?.payload
+    setCashOut(state, action) {
+      state.cashout = action?.payload;
 
-      console.log("🚀 ~ setCashOut ~ state.cashout:", state.cashout)
-    }
+      console.log('🚀 ~ setCashOut ~ state.cashout:', state.cashout);
+    },
+    setIsNumberVerify(state, action) {
+      state.numberVerify = action?.payload;
+    },
+    setIsSiginWithGoogle(state, action) {
+      state.isSiginWithGoogle = action?.payload;
+    },
+
+    setPhoneUserData(state, action) {
+      state.phoneUserData = action?.payload;
+    },
   },
 });
 
@@ -221,7 +241,10 @@ export const {
   setLoaction,
   setPickupLocation,
   setDropoffLocation,
-  setCashOut
+  setCashOut,
+  setIsNumberVerify,
+  setPhoneUserData,
+  setIsSiginWithGoogle,
 } = CommonSlice.actions;
 
 export default CommonSlice.reducer;
