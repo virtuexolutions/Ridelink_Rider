@@ -38,6 +38,7 @@ import Walletscreen from './Screens/Walletscreen';
 import TermsAndConditions from './Screens/TermsAndConditions';
 import HelpAndSupport from './Screens/HelpAndSupport';
 import PrivacyPolicy from './Screens/PrivacyPolicy';
+import PhoneRegistration from './Screens/PhoneRegistration';
 // import ReferFriendScreen from './Screens/ReferFriendScreen';
 // import LearningCenter from './Screens/LearningCenter';
 // import PrivacyPolicy from './Screens/PrivacyPolicy';
@@ -46,22 +47,24 @@ enableScreens();
 const AppNavigator = () => {
   const walkThrough = useSelector(state => state.authReducer.userWalkThrough);
   const token = useSelector(state => state.authReducer.token);
+  console.log('🚀 ~ AppNavigator ~ token:', token);
   const userData = useSelector(state => state.commonReducer.userData);
-  console.log('🚀 ~ AppNavigator ~ userData:', userData);
-
+  console.log('🚀 ~ AppNavigator ~ userData: ===================', userData?.car_info);
   const RootNav = createNativeStackNavigator();
 
   const AppNavigatorContainer = () => {
     const firstScreen =
       walkThrough == false
-        ? 'WalkThroughScreen'
-        : token == null
+        ? 'WalkThroughScreen' :
+        [null ,'' ,undefined].includes(token)
+        // : token == null
         ? 'LoginScreen'
         : userData?.car_info == null
         ? 'AddYourCar'
         : userData?.acc_active == 'pending'
         ? 'AccountVerificationScreen'
         : 'MyDrawer';
+    console.log('🚀 ~ AppNavigatorContainer ~ firstScreen:', firstScreen);
 
     return (
       <NavigationContainer ref={navigationService.navigationRef}>
@@ -98,11 +101,14 @@ const AppNavigator = () => {
           <RootNav.Screen name="AddYourCar" component={AddYourCar} />
           <RootNav.Screen name="Walletscreen" component={Walletscreen} />
           <RootNav.Screen name="RideScreen" component={RideScreen} />
-
+          <RootNav.Screen
+            name="PhoneRegistration"
+            component={PhoneRegistration}
+          />
 
           {/* <RootNav.Screen name="History" component={History} /> */}
           {/* <RootNav.Screen name="PrivacyPolicy" component={PrivacyPolicy} /> */}
-          
+
           <RootNav.Screen name="HelpAndSupport" component={HelpAndSupport} />
           {/* <RootNav.Screen
             name="ReferFriendScreen"
@@ -266,19 +272,19 @@ export const MyDrawer = () => {
       <DrawerNavigation.Screen name="PaymentScreen" component={PaymentScreen} />
       <DrawerNavigation.Screen name="History" component={History} />
       <DrawerNavigation.Screen name="AddYourCar" component={AddYourCar} />
-      <DrawerNavigation.Screen name="ChangePassword" component={ChangePassword} />
+      <DrawerNavigation.Screen
+        name="ChangePassword"
+        component={ChangePassword}
+      />
       <DrawerNavigation.Screen name="Profile" component={Profile} />
-
 
       <DrawerNavigation.Screen
         name="ReferFriendScreen"
         component={ReferFriendScreen}
       />
+      <DrawerNavigation.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+
       <DrawerNavigation.Screen
-        name="PrivacyPolicy" component={PrivacyPolicy}
-      />
-     
-       <DrawerNavigation.Screen
         name="TermsAndConditions"
         component={TermsAndConditions}
       />

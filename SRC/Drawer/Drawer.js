@@ -18,6 +18,10 @@ const Drawer = React.memo(() => {
   const dispatch = useDispatch();
   const userData = useSelector(state => state.commonReducer.userData);
   const token = useSelector(state => state.authReducer.token);
+  const isSiginWithGoogle = useSelector(
+    state => state.commonReducer.isSiginWithGoogle,
+  );
+  console.log('🚀 ~ isSiginWithGoogl ===============>e:', isSiginWithGoogle);
 
   const navigation = useNavigation();
   const [isActive, setIsActive] = useState(false);
@@ -216,9 +220,16 @@ const Drawer = React.memo(() => {
           </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() => {
-              dispatch(setUserToken(''));
-              dispatch(setUserLogOut());
-              dispatch(setUserLogoutAuth());
+              console.log('isSiginWithGoogle ===>', isSiginWithGoogle);
+              if (!isSiginWithGoogle) {
+                console.log('logout and empty userdata');
+                dispatch(setUserToken({token: ''}));
+                dispatch(setUserLogOut());
+                dispatch(setUserLogoutAuth());
+              } else {
+                console.log('logout and remove token ');
+                dispatch(setUserToken({token: ''}));
+              }
             }}
             style={styles.logout_btn}>
             <CustomText style={styles.btn_txt}>Logout</CustomText>

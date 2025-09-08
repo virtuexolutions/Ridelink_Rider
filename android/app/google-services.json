@@ -13,7 +13,20 @@
           "package_name": "com.ridelink"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "926398445960-etl46digtm7v1qd2s562n3dijerjaq7u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ridelink",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "926398445960-6f98tf5ga88hlm4qna4m847eguv4m8vk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBtz3KEd4ev6FZiEBtvtMEY7oUyei5cI3s"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "926398445960-6f98tf5ga88hlm4qna4m847eguv4m8vk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     },
@@ -32,7 +50,20 @@
           "package_name": "com.ridelink_rider"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "926398445960-jhugqe1ujk11fgket0dp6jiga8e9a0s5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ridelink_rider",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "926398445960-6f98tf5ga88hlm4qna4m847eguv4m8vk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBtz3KEd4ev6FZiEBtvtMEY7oUyei5cI3s"
@@ -40,7 +71,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "926398445960-6f98tf5ga88hlm4qna4m847eguv4m8vk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

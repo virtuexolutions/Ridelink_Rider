@@ -1,41 +1,122 @@
 import messaging from '@react-native-firebase/messaging';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { useNavigation } from '@react-navigation/native';
-import { Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { moderateScale } from 'react-native-size-matters';
-import { useDispatch, useSelector } from 'react-redux';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {useNavigation} from '@react-navigation/native';
+import {Formik} from 'formik';
+import React, {useEffect, useState} from 'react';
+import {
+  ActivityIndicator,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  ToastAndroid,
+  View,
+} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {moderateScale} from 'react-native-size-matters';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Post } from '../Axios/AxiosInterceptorFunction';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomStatusBar from '../Components/CustomStatusBar';
 import CustomText from '../Components/CustomText';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import { loginSchema } from '../Constant/schema';
-import { SetFCMToken, setUserToken } from '../Store/slices/auth-slice';
-import { setUserData } from '../Store/slices/common';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {loginSchema} from '../Constant/schema';
+import {SetFCMToken, setUserToken} from '../Store/slices/auth-slice';
+import {setIsSiginWithGoogle, setUserData} from '../Store/slices/common';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import ContactPassword from '../Components/ContactPassword';
 
 const LoginScreen = props => {
   const dispatch = useDispatch();
   const token = useSelector(state => state.authReducer.token);
+  const userData = useSelector(state => state.commonReducer.userData);
+  console.log(
+    '🚀 ~ ~ssssssssssssssssssss userData: ===================',
+    userData,
+  );
+  const numberVerify = useSelector(state => state.commonReducer.numberVerify);
+  console.log('🚀 ~ LoginScreen ~ numberVerify:', numberVerify);
+
+  const isSiginWithGoogle = useSelector(
+    state => state.commonReducer.isSiginWithGoogle,
+  );
+  console.log('🚀 ~ isSiginWithGoogl ===============>e:', isSiginWithGoogle);
+
   const [isLoading, setIsLoading] = useState(false);
+  console.log('🚀 ~ LoginScreen ~ isLoading:', isLoading);
   const [imagePicker, setImagePicker] = useState(false);
   const [image, setImage] = useState({});
   const navigation = useNavigation();
   const [loginMethod, setLoginMethod] = useState('');
   const [device_token, setDeviceToken] = useState(null);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const loginWithGoogle = async response1 => {
-    const body = {...response1?.data};
+    const body = {...response1?.data, role: 'rider'};
+
     const url = 'google-login';
+    setGoogleLoading(true);
     const response = await Post(url, body, apiHeader(token));
+    console.log('🚀 ~ loginWithGoogle ~ response:', response?.data);
+    setGoogleLoading(false);
     if (response != undefined) {
       dispatch(setUserToken({token: response?.data?.token}));
-      dispatch(setUserData(response?.user_info));
+      dispatch(setUserData(response?.data?.user_info));
+      dispatch(setIsSiginWithGoogle(true));
+    }
+  };
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      offlineAccess: true,
+      webClientId:
+        '926398445960-6f98tf5ga88hlm4qna4m847eguv4m8vk.apps.googleusercontent.com', // <-- WEB CLIENT ID
+      // forceCodeForRefreshToken: true, // optional
+    });
+  }, []);
+
+  const handleGoogleSignIn = async () => {
+    if (googleLoading) return; // prevent double tap
+
+    try {
+      setGoogleLoading(true);
+
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+
+      // (optional) stuck state me helpful
+      // await GoogleSignin.signOut();
+      // await GoogleSignin.revokeAccess();
+
+      const userInfo = await GoogleSignin.signIn();
+      console.log(
+        'userInfo ===> ================== ',
+        JSON.stringify(userInfo, null, 2),
+      );
+
+      // TODO: yahan apni API call
+      await loginWithGoogle(userInfo);
+    } catch (e) {
+      console.log('🚀 ~ handleGoogleSignIn ~ e:=====================', e);
+      // Friendly error mapping
+      if (e.code === statusCodes.IN_PROGRESS) {
+        // ye wahi error tha
+        Platform.OS === 'android' &&
+          ToastAndroid.show('Sign-in already in progress', ToastAndroid.SHORT);
+      } else if (e.code === statusCodes.SIGN_IN_CANCELLED) {
+        Platform.OS === 'android' &&
+          ToastAndroid.show('Sign-in cancelled', ToastAndroid.SHORT);
+      } else if (e.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        Platform.OS === 'android' &&
+          ToastAndroid.show('Update Google Play services', ToastAndroid.SHORT);
+      } else {
+        Platform.OS === 'android' &&
+          ToastAndroid.show(String(e.message || e), ToastAndroid.SHORT);
+      }
+      console.log('Google Sign-In Error ==> ', e);
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -196,35 +277,17 @@ const LoginScreen = props => {
             onPress={() => {
               setLoginMethod('Google');
 
-              GoogleSignin.configure({
-                offlineAccess: true,
-                webClientId:
-                  '679685403786-posjs7qgk9l5n3f4c13ni6soaf9dv0bb.apps.googleusercontent.com',
-              });
-
-              GoogleSignin.hasPlayServices()
-                .then(hasPlayService => {
-                  if (hasPlayService) {
-                    GoogleSignin.signIn()
-                      .then(userInfo => {
-                        console.log(
-                          'helllllllllllooooooooooooooooo',
-                          JSON.stringify(userInfo, null, 2),
-                        );
-                        loginWithGoogle(userInfo);
-                      })
-                      .catch(e => {
-                        console.log(
-                          'ERROR IS=============: ' + JSON.stringify(e.message),
-                        );
-                      });
-                  }
-                })
-                .catch(e => {
-                  console.log('ERROR IS: ' + JSON.stringify(e, null, 2));
-                });
+              handleGoogleSignIn();
             }}
-            text={'connect with google'}
+            text={
+              googleLoading ? (
+                <ActivityIndicator size={'small'} color={Color.white} />
+              ) : isSiginWithGoogle ? (
+                `sign in with ${userData?.name}`
+              ) : (
+                'connect with google'
+              )
+            }
             fontSize={moderateScale(12, 0.3)}
             textColor={Color.white}
             borderWidth={1.5}
@@ -236,7 +299,9 @@ const LoginScreen = props => {
             textTransform={'capitalize'}
           />
           <CustomButton
-            onPress={() => {}}
+            onPress={() => {
+              navigation.navigate('PhoneRegistration');
+            }}
             text={'connect with number'}
             fontSize={moderateScale(13, 0.3)}
             textColor={Color.themeBlack}
@@ -268,6 +333,12 @@ const LoginScreen = props => {
           setFileObject={setImage}
         />
       </ScrollView>
+      {numberVerify == true && (
+        <ContactPassword
+          isModalVisible={isModalVisible}
+          setIsModalVisible={setIsModalVisible}
+        />
+      )}
     </SafeAreaView>
   );
 };

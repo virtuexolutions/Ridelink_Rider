@@ -243,7 +243,7 @@ const AddYourCar = props => {
         style={{
           height: windowHeight,
           width: windowWidth,
-          backgroundColor: Color.lightGrey,
+          backgroundColor: Color.white,
         }}
         contentContainerStyle={{
           alignItems: 'center',

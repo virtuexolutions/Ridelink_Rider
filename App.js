@@ -4,7 +4,7 @@ import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import {StripeProvider} from '@stripe/stripe-react-native';
 import {NativeBaseProvider} from 'native-base';
-import {TouchableOpacity, View} from 'react-native';
+import {LogBox, TouchableOpacity, View} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
 import CustomImage from './SRC/Components/CustomImage';
 import CustomText from './SRC/Components/CustomText';
@@ -33,6 +33,12 @@ const App = () => {
   const [notification, setNotification] = useState();
   const [notificationModal, setNotificationModal] = useState(false);
 
+
+    LogBox.ignoreLogs([
+    'Warning: ...',
+    'VirtualizedLists should never be nested',
+  ]);
+  LogBox.ignoreAllLogs();
   return (
     <StripeProvider
       publishableKey={

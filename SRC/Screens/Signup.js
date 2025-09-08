@@ -1,7 +1,7 @@
-import { useNavigation } from '@react-navigation/native';
-import { Formik } from 'formik';
-import { Icon } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import {useNavigation} from '@react-navigation/native';
+import {Formik} from 'formik';
+import {Icon} from 'native-base';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { moderateScale, ScaledSheet } from 'react-native-size-matters';
+import {moderateScale, ScaledSheet} from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
@@ -22,18 +22,18 @@ import {
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
 import CountryPicker from 'react-native-country-picker-modal';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import { Post } from '../Axios/AxiosInterceptorFunction';
+import {Post} from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomText from '../Components/CustomText';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import SearchLocationModal from '../Components/SearchLocationModal';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import { SignupSchema } from '../Constant/schema';
-import { setUserToken } from '../Store/slices/auth';
-import { setUserData } from '../Store/slices/common';
-import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
+import {SignupSchema} from '../Constant/schema';
+import {setUserToken} from '../Store/slices/auth';
+import {setUserData} from '../Store/slices/common';
+import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -110,7 +110,7 @@ const Signup = () => {
       if (body[key] == '') {
         return Platform.OS == 'android'
           ? ToastAndroid.show(` ${key} field is empty`, ToastAndroid.SHORT)
-          : Alert.alert( 'error',`${key} field is empty`);
+          : Alert.alert('error', `${key} field is empty`);
       }
     }
     if (!usPhoneRegex.test(`+1 ${number}`)) {
@@ -119,13 +119,13 @@ const Signup = () => {
             'Please enter a valid US phone number',
             ToastAndroid.SHORT,
           )
-        : Alert.alert( 'error','Please enter a valid US phone number');
+        : Alert.alert('error', 'Please enter a valid US phone number');
       // return null
     }
     const url = 'register';
     // setIsLoading(true);
     const response = await Post(url, body, apiHeader());
-    console.log("🚀 ~ Signup ~ response:", response?.data)
+    console.log('🚀 ~ Signup ~ response:', response?.data);
     // setIsLoading(false);
     if (response != undefined) {
       navigation.navigate('AddYourCar');
@@ -144,7 +144,7 @@ const Signup = () => {
     const url = 'email/verify/send';
     setloading(true);
     const response = await Post(url, body, apiHeader());
-    console.log("🚀 ~ Signup ~ response:", response?.data)
+    console.log('🚀 ~ Signup ~ response:', response?.data);
     setloading(false);
     if (response != undefined) {
       setIsmail(true);
@@ -177,10 +177,10 @@ const Signup = () => {
     };
 
     const url = 'phone/verify/send';
-    // setIsLoading(true)
+    setIsLoading(true)
     const response = await Post(url, body, apiHeader());
-    console.log("🚀 ~ Signup ~ response:", response?.data)
-    // setIsLoading(false)
+    console.log('🚀 ~ Signup ~ response:', response?.data);
+    setIsLoading(false)
     if (response != undefined) {
       setIsNumber(true);
     }
@@ -194,7 +194,7 @@ const Signup = () => {
     const url = 'phone/verify/check';
     // setloading(true)
     const response = await Post(url, body, apiHeader());
-    console.log("🚀 ~ Signup ~ response:", response?.data)
+    console.log('🚀 ~ Signup ~ response:', response?.data);
     // setloading(false)
     if (response != undefined) {
       setContact_Code('');
@@ -324,13 +324,16 @@ const Signup = () => {
 
                 {values.email != '' && !isEmailVerified ? (
                   <CustomText
-                  disabled={ismail}
+                    disabled={ismail}
                     onPress={() => {
                       emailVerify(values);
                     }}
-                    style={[styles.verify_email ,{
-                         color: ismail ? Color.darkGray:Color.darkBlue,
-                    }]}>
+                    style={[
+                      styles.verify_email,
+                      {
+                        color: ismail ? Color.darkGray : Color.darkBlue,
+                      },
+                    ]}>
                     verify now
                   </CustomText>
                 ) : (
@@ -581,7 +584,7 @@ const Signup = () => {
                 )} */}
                 {number != '' && !isContactVerified ? (
                   <CustomText
-                  disable={isnumber}
+                    disable={isnumber}
                     onPress={() => {
                       contactVerify(values);
                     }}
@@ -589,7 +592,7 @@ const Signup = () => {
                       fontSize: moderateScale(11, 0.6),
                       alignSelf: 'flex-end',
                       paddingTop: moderateScale(5, 0.6),
-                      color:isnumber ? Color.darkGray : Color.darkBlue,
+                      color: isnumber ? Color.darkGray : Color.darkBlue,
                     }}>
                     verify now
                   </CustomText>
@@ -940,7 +943,6 @@ const styles = ScaledSheet.create({
     fontSize: moderateScale(11, 0.6),
     alignSelf: 'flex-end',
     paddingTop: moderateScale(5, 0.6),
- 
   },
   birthday: {
     width: windowWidth * 0.8,
