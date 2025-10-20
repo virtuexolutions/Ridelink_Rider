@@ -40,6 +40,7 @@ const Home = () => {
   const isFocused = useIsFocused();
   const [isLoading, setIsLoading] = useState(false);
   const [requestList, setRequestList] = useState([]);
+  console.log(requestList, 'requestListrequestListrequestList')
   const [currentPosition, setCurrentPosition] = useState({});
   console.log(currentPosition, '==============>currentPosition')
   const [modalVisible, setModalVisible] = useState(false);
@@ -109,20 +110,28 @@ const Home = () => {
   const rideRequestList = async () => {
     const url = `auth/rider/ride-request-list?type[0]=${selectedService?.[0]}`;
     setIsLoading(true);
-    console.log("🚀 ~ rideRequestList ~ url:", url)
+    console.log("🚀 ~ rideRequestList ~ url:", url);
+
     try {
       const response = await Get(url, token);
-      console.log("🚀 ~ rideRequestList ~ response:", response?.data)
-      if (response != undefined) {
-        setRequestList(response?.data?.ride_info);
+      console.log("🚀 ~ rideRequestList ~ response:", response?.data);
+
+      if (response?.data) {
+        const pendingRides = response?.data?.ride_info?.filter(
+          item => item?.ride_info?.status?.toLowerCase() === "pending"
+        );
+
+        setRequestList(pendingRides);
       } else {
         setRequestList([]);
       }
     } catch (error) {
-      console.error('Error festchaaing ride requests:', error);
+      console.error("❌ Error fetching ride requests:", error);
     }
+
     setIsLoading(false);
   };
+
 
   const serviceArray = ['Parcel Delivery', 'ride', 'Pets Delivery'];
   console.log("🚀 ~ Home ~ serviceArray:", serviceArray)

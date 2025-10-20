@@ -1,12 +1,12 @@
 // RideStatusPlaceholderScreen.js
 
-import {useIsFocused, useNavigation} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {moderateScale} from 'react-native-size-matters';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { moderateScale } from 'react-native-size-matters';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import {useSelector} from 'react-redux';
-import {Get} from '../Axios/AxiosInterceptorFunction';
+import { useSelector } from 'react-redux';
+import { Get } from '../Axios/AxiosInterceptorFunction';
 import navigationService from '../navigationService';
 
 const PlaceHolderScreen = () => {
@@ -23,42 +23,51 @@ const PlaceHolderScreen = () => {
   const rideRequestList = async () => {
     const url = `auth/rider/ride-request-list?type[0]=ride`;
     setIsLoading(true);
+
     try {
       const response = await Get(url, token);
       const rides = response?.data?.ride_info;
 
+      console.log(rides, '==========================> rides');
+
       if (Array.isArray(rides) && rides.length > 0) {
-        const ride = rides[0]?.ride_info;
-        console.log('🚀 ~ rideRequestList ~ ride:', ride);
-        const status = ride?.status?.toLowerCase();
-        console.log('🚀 ~ rideRequestList ~ status:', status);
-        console.log('🚀 ~ rideRequestList ~ status:', status);
-        const goHomeStatuses = ['pending', 'cancel', 'complete', 'reviewed' , 'ride_completed' ,'Delivered'];
-        console.log(
-          '🚀 ~ rideRequestList ~ goHomeStatuses:',
-          goHomeStatuses.includes(status),
+        const activeStatuses = ['accept', 'arrive', 'ontheway', 'riderarrived'];
+        const goHomeStatuses = [
+          'pending',
+          'cancel',
+          'complete',
+          'reviewed',
+          'ride_completed',
+          'delivered',
+        ];
+
+        const activeRide = rides.find(item =>
+          activeStatuses.includes(item?.ride_info?.status?.toLowerCase())
         );
-        if (goHomeStatuses.includes(status)) {
-          navigationService.navigate('Home');
-        } else if (ride != undefined) {
+        console.log(activeRide, 'activeRide')
+
+        if (activeRide) {
           navigationService.navigate('RideScreen', {
-            data: ride,
+            data: activeRide.ride_info,
             type: 'details',
           });
+        } else {
+          navigationService.navigate('Home');
         }
-
         setRequestList(rides);
       } else {
         setRequestList([]);
         navigationService.navigate('Home');
       }
     } catch (error) {
-      console.error('Error fetching ride requests:', error);
+      console.error('❌ Error fetching ride requests:', error);
       navigationService.navigate('Home');
     }
 
     setIsLoading(false);
   };
+
+
 
   return (
     <View style={styles.container}>
