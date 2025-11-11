@@ -39,6 +39,7 @@ import TermsAndConditions from './Screens/TermsAndConditions';
 import HelpAndSupport from './Screens/HelpAndSupport';
 import PrivacyPolicy from './Screens/PrivacyPolicy';
 import PhoneRegistration from './Screens/PhoneRegistration';
+import Notification from './Screens/Notification';
 // import ReferFriendScreen from './Screens/ReferFriendScreen';
 // import LearningCenter from './Screens/LearningCenter';
 // import PrivacyPolicy from './Screens/PrivacyPolicy';
@@ -272,6 +273,7 @@ export const MyDrawer = () => {
       <DrawerNavigation.Screen name="PaymentScreen" component={PaymentScreen} />
       <DrawerNavigation.Screen name="History" component={History} />
       <DrawerNavigation.Screen name="AddYourCar" component={AddYourCar} />
+      <DrawerNavigation.Screen name="Notification" component={Notification} />
       <DrawerNavigation.Screen
         name="ChangePassword"
         component={ChangePassword}

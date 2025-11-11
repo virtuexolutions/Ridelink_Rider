@@ -291,6 +291,7 @@ const RideScreen = ({ route }) => {
       setUpdatedRide(response?.data?.ride_info);
     }
   };
+  
   const getDrivingDistance = async (pickup, dropoff) => {
     const origin = `${pickup.latitude},${pickup.longitude}`;
     const destination = `${dropoff.latitude},${dropoff.longitude}`;
@@ -353,6 +354,7 @@ const RideScreen = ({ route }) => {
 
     return () => reference.off('value', listener);
   }, [data?.ride_id]);
+
   return (
     <SafeAreaView style={styles.safe_are}>
       <Header showBack={true} title={'Navigation to Pickup'} />

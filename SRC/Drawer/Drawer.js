@@ -1,18 +1,18 @@
-import {useNavigation} from '@react-navigation/native';
-import {Icon} from 'native-base';
-import React, {useState} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import {moderateScale} from 'react-native-size-matters';
+import { useNavigation } from '@react-navigation/native';
+import { Icon } from 'native-base';
+import React, { useState } from 'react';
+import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
+import { moderateScale } from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import ScreenBoiler from '../Components/ScreenBoiler';
-import {baseUrl} from '../Config';
-import {setUserLogoutAuth, setUserToken} from '../Store/slices/auth';
-import {setUserLogOut} from '../Store/slices/common';
-import {windowHeight, windowWidth} from '../Utillity/utils';
+import { baseUrl } from '../Config';
+import { setUserLogoutAuth, setUserToken } from '../Store/slices/auth';
+import { setUserLogOut } from '../Store/slices/common';
+import { windowHeight, windowWidth } from '../Utillity/utils';
 
 const Drawer = React.memo(() => {
   const dispatch = useDispatch();
@@ -22,6 +22,7 @@ const Drawer = React.memo(() => {
     state => state.commonReducer.isSiginWithGoogle,
   );
   console.log('🚀 ~ isSiginWithGoogl ===============>e:', isSiginWithGoogle);
+  const [isOnline, setIsOnline] = useState(false);
 
   const navigation = useNavigation();
   const [isActive, setIsActive] = useState(false);
@@ -29,97 +30,76 @@ const Drawer = React.memo(() => {
 
   const adminData = [
     {
+      id: 0,
+      name: isOnline ? 'Go Offline' : 'Go Online',
+      type: 'switch',
+    },
+    {
       id: 1,
       name: 'Home',
       onPress: () => {
-        navigation.navigate('MyDrawer', {screen: 'Home'});
+        navigation.navigate('MyDrawer', { screen: 'Home' });
       },
     },
-    // {
-    //   id: 2,
-    //   name: 'Refer Friends',
-    //   onPress: () => {
-    //     // setIsModalVisible(true);
-    //     navigation.navigate('ReferFriendScreen');
-    //   },
-    // },
-    // {
-    //   id: 3,
-    //   name: 'Oppurtunities',
-    //   onPress: () => {
-    //     navigation.navigate('MyJourneys');
-    //   },
-    // },
-
     {
       id: 4,
       name: 'Earnings',
       onPress: () => {
-        navigation.navigate('MyDrawer', {screen: 'Walletscreen'});
+        navigation.navigate('MyDrawer', { screen: 'Walletscreen' });
       },
     },
-    // {
-    //   id: 5,
-    //   name: 'History',
-    //   onPress: () => {
-    //     navigation.navigate('History');
-    //   },
-    // },
     {
       id: 6,
       name: 'Update vehicle',
       onPress: () => {
-        navigation.navigate('MyDrawer', {screen: 'AddYourCar'});
+        navigation.navigate('MyDrawer', { screen: 'AddYourCar' });
       },
     },
 
     {
       id: 7,
-      name: 'Accounts ',
+      name: 'Notifications ',
       onPress: () => {
-        navigation.navigate('MyDrawer', {screen: 'Profile'});
+        navigation.navigate('MyDrawer', { screen: 'Notification' });
       },
     },
     {
       id: 8,
-      name: 'Change password ',
+      name: 'Accounts ',
       onPress: () => {
-        navigation.navigate('MyDrawer', {screen: 'ChangePassword'});
+        navigation.navigate('MyDrawer', { screen: 'Profile' });
       },
     },
     {
+      id: 8,
+      name: 'Referral ',
+      // onPress: () => {
+      //   navigation.navigate('MyDrawer', { screen: 'Profile' });
+      // },
+    },
+
+    {
       id: 9,
+      name: 'Change password ',
+      onPress: () => {
+        navigation.navigate('MyDrawer', { screen: 'ChangePassword' });
+      },
+    },
+    {
+      id: 10,
       name: 'privacy policy ',
       onPress: () => {
-        navigation.navigate('MyDrawer', {screen: 'PrivacyPolicy'});
+        navigation.navigate('MyDrawer', { screen: 'PrivacyPolicy' });
       },
     },
     {
       id: 10,
       name: 'terms & conditions',
       onPress: () => {
-        navigation.navigate('MyDrawer', {screen: 'TermsAndConditions'});
+        navigation.navigate('MyDrawer', { screen: 'TermsAndConditions' });
       },
     },
   ];
-  // const profileUpdate = async () => {
-  //   const body = {
-  //     work_category: selectedService,
-  //   };
-
-  //   const url = 'auth/profile';
-  //   setIsLoading(true);
-  //   const response = await Post(url, body, apiHeader(token));
-  //   setIsLoading(false);
-  //   if (response != undefined) {
-  //     setModalVisible(false);
-  //     dispatch(setUserData(response?.data?.user_info));
-  //     Platform.OS == 'android'
-  //       ? ToastAndroid.show('services added  Successfully', ToastAndroid.SHORT)
-  //       : alert(' services added Successfully');
-  //   }
-  // };
-
   return (
     <ScreenBoiler
       statusBarBackgroundColor={'white'}
@@ -131,7 +111,7 @@ const Drawer = React.memo(() => {
               style={styles.image}
               source={
                 userData?.photo
-                  ? {uri: `${baseUrl}${userData?.photo}`}
+                  ? { uri: `${baseUrl}${userData?.photo}` }
                   : require('../Assets/Images/user.png')
               }
             />
@@ -144,91 +124,59 @@ const Drawer = React.memo(() => {
             Diver : {userData?.car_info?.name}
           </CustomText>
         </View>
-        {/* <TouchableOpacity
-          onPress={() => {
-            setIsActive(!isActive);
-          }}
-          style={styles.row}>
-          <CustomText
-            style={[
-              styles.text,
-              {
-                fontSize: moderateScale(13, 0.6),
-              },
-            ]}>
-            active
-          </CustomText>
-          <TouchableOpacity
-            onPress={() => {
-              setIsActive(!isActive);
-            }}
-            style={styles.btn}>
-            {isActive && (
-              <Icon
-                onPress={() => {
-                  setIsActive(!isActive);
-                }}
-                as={Entypo}
-                size={moderateScale(15, 0.6)}
-                color={Color.black}
-                name="check"
-              />
-            )}
-          </TouchableOpacity>
-        </TouchableOpacity> */}
-        <View
-          style={{
-            height: '60%',
-          }}>
-          {adminData.map((item, index) => (
-            <>
-              <TouchableOpacity
-                key={item.id}
-                onPress={item.onPress}
-                style={styles.arraybtn}>
-                <CustomText
-                  style={{
-                    fontSize: moderateScale(14, 0.6),
-                    color: Color.black,
-                  }}>
-                  {item.name}
-                </CustomText>
-              </TouchableOpacity>
-            </>
+        <View style={{ height: '60%' }}>
+          {adminData.map((item) => (
+            <View key={item.id}>
+              {item.type === 'switch' ? (
+                <View
+                  style={[
+                    styles.arraybtn,
+                    { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+                  ]}>
+                  <CustomText
+                    style={{
+                      fontSize: moderateScale(14, 0.6),
+                      color: Color.black,
+                    }}>
+                    {isOnline ? 'Go Offline' : 'Go Online'}
+                  </CustomText>
+
+                  <Switch
+                    value={isOnline}
+                    onValueChange={(value) => {
+                      setIsOnline(value);
+                      console.log(value ? '🟢 Online' : '🔴 Offline');
+                    }}
+                    thumbColor={isOnline ? Color.themeColor : '#ccc'}
+                  />
+                </View>
+              ) : (
+                <TouchableOpacity onPress={item.onPress} style={styles.arraybtn}>
+                  <CustomText
+                    style={{
+                      fontSize: moderateScale(14, 0.6),
+                      color: Color.black,
+                    }}>
+                    {item.name}
+                  </CustomText>
+                </TouchableOpacity>
+              )}
+            </View>
           ))}
         </View>
+
         <View style={styles.end_view}>
-          {/* <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('HelpAndSupport');
-            }}
-            style={styles.end_btn}>
-            <CustomText style={styles.txt}>Help</CustomText>
-          </TouchableOpacity> */}
-          {/* <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('LearningCenter');
-            }}
-            style={styles.le_btn}>
-            <CustomText
-              style={{
-                fontSize: moderateScale(14, 0.6),
-                color: Color.black,
-              }}>
-              Learning Center
-            </CustomText>
-          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() => {
               console.log('isSiginWithGoogle ===>', isSiginWithGoogle);
               if (!isSiginWithGoogle) {
                 console.log('logout and empty userdata');
-                dispatch(setUserToken({token: ''}));
+                dispatch(setUserToken({ token: '' }));
                 dispatch(setUserLogOut());
                 dispatch(setUserLogoutAuth());
               } else {
                 console.log('logout and remove token ');
-                dispatch(setUserToken({token: ''}));
+                dispatch(setUserToken({ token: '' }));
               }
             }}
             style={styles.logout_btn}>
