@@ -18,12 +18,12 @@ const PlaceHolderScreen = () => {
 
   useEffect(() => {
     rideRequestList();
+    console.log('ye wala function chl raha h')
   }, [isFocused]);
 
   const rideRequestList = async () => {
-    const url = `auth/rider/ride-request-list?type[0]=ride`;
+    const url = `auth/rider/ride-request-list?type[0]=['ride']`;
     setIsLoading(true);
-
     try {
       const response = await Get(url, token);
       const rides = response?.data?.ride_info;
@@ -31,7 +31,7 @@ const PlaceHolderScreen = () => {
       console.log(rides, '==========================> rides');
 
       if (Array.isArray(rides) && rides.length > 0) {
-        const activeStatuses = ['accept', 'arrive', 'ontheway', 'riderarrived'];
+        const activeStatuses = ['accept', 'arrive', 'ontheway', 'riderarrived', 'riderOntheWay'];
         const goHomeStatuses = [
           'pending',
           'cancel',
@@ -66,8 +66,6 @@ const PlaceHolderScreen = () => {
 
     setIsLoading(false);
   };
-
-
 
   return (
     <View style={styles.container}>

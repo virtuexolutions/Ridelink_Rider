@@ -568,6 +568,7 @@ const RideScreen = ({ route }) => {
                 />
               </View>
             )}
+            
             {isriderArrive && updatedStatus == 'riderOntheWay' && (
               <CustomButton
                 style={{

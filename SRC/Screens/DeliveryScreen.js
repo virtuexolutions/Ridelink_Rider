@@ -1,7 +1,7 @@
-import {useIsFocused} from '@react-navigation/native';
-import {getDistance, isValidCoordinate} from 'geolib';
-import {Icon} from 'native-base';
-import React, {useEffect, useRef, useState} from 'react';
+import { useIsFocused } from '@react-navigation/native';
+import { getDistance, isValidCoordinate } from 'geolib';
+import { Icon } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Linking,
@@ -10,23 +10,23 @@ import {
   View,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
 import navigationService from '../navigationService';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
-const DeliveryScreen = ({route}) => {
-  const {data, type, ride_status} = route?.params;
+const DeliveryScreen = ({ route }) => {
+  const { data, type, ride_status } = route?.params;
   const rideData = route?.params?.data;
 
   const token = useSelector(state => state.authReducer.token);
@@ -49,12 +49,12 @@ const DeliveryScreen = ({route}) => {
       type === 'details'
         ? currentPosition?.latitude
         : parseFloat(data?.delivery_info?.pickup_location_lat) ||
-          currentPosition?.latitude,
+        currentPosition?.latitude,
     lng:
       type === 'details'
         ? currentPosition?.longitude
         : parseFloat(data?.delivery_info?.pickup_location_lng) ||
-          currentPosition?.longitude,
+        currentPosition?.longitude,
   };
   const destination = {
     lat:
@@ -107,7 +107,7 @@ const DeliveryScreen = ({route}) => {
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
       position => {
-        const {latitude, longitude} = position.coords;
+        const { latitude, longitude } = position.coords;
         setCurrentPosition(prevLocation => ({
           ...prevLocation,
           latitude,
@@ -200,7 +200,7 @@ const DeliveryScreen = ({route}) => {
       setUpdatesStatus(response?.data?.delivery_info?.status);
 
       if (response?.data?.delivery_info?.status === 'Delivered') {
-        navigationService.navigate('RateScreen', {data: data});
+        navigationService.navigate('RateScreen', { data: data });
       } else if (
         response?.data?.delivery_info?.status === 'heading to pick up'
       ) {
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingHorizontal: moderateScale(10, 0.6),
     justifyContent: 'space-between',
-    alignItems :'center',
+    alignItems: 'center',
   },
   main_view: {
     width: windowWidth,

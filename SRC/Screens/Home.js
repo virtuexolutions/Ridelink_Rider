@@ -44,7 +44,8 @@ const Home = () => {
   const [currentPosition, setCurrentPosition] = useState({});
   console.log(currentPosition, '==============>currentPosition')
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedService, setSelectedService] = useState([]);
+  const [selectedService, setSelectedService] = useState(['ride']);
+  console.log('selecred location', selectedService)
   const [deliveryData, setDeliveryData] = useState([]);
   const [activebutton, setactivebutton] = useState('ride');
   useEffect(() => {
@@ -108,7 +109,7 @@ const Home = () => {
   };
 
   const rideRequestList = async () => {
-    const url = `auth/rider/ride-request-list?type[0]=${selectedService?.[0]}`;
+    const url = `auth/rider/ride-request-list?type[0]=${selectedService}`;
     setIsLoading(true);
     console.log("🚀 ~ rideRequestList ~ url:", url);
 

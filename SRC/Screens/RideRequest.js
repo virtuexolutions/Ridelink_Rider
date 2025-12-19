@@ -1,6 +1,6 @@
-import {getDistance, isValidCoordinate} from 'geolib';
-import {Icon} from 'native-base';
-import React, {useEffect, useRef, useState} from 'react';
+import { getDistance, isValidCoordinate } from 'geolib';
+import { Icon } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -9,24 +9,24 @@ import {
   View,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import {moderateScale} from 'react-native-size-matters';
+import { moderateScale } from 'react-native-size-matters';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomImage from '../Components/CustomImage';
 import CustomText from '../Components/CustomText';
 import Header from '../Components/Header';
-import {imageUrl} from '../Config';
+import { imageUrl } from '../Config';
 import navigationService from '../navigationService';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
-const RideRequest = ({route}) => {
-  const {type, data} = route.params;
+const RideRequest = ({ route }) => {
+  const { type, data } = route.params;
   const mapRef = useRef(null);
   const token = useSelector(state => state.authReducer.token);
 
@@ -217,7 +217,7 @@ const RideRequest = ({route}) => {
           {isValidCoordinate(origin) && (
             <Marker
               coordinate={origin}
-              style={{width: 15, height: 10}}
+              style={{ width: 15, height: 10 }}
               pinColor={Color.red}></Marker>
           )}
           <MapViewDirections
@@ -230,7 +230,7 @@ const RideRequest = ({route}) => {
           {isValidCoordinate(destination) && (
             <Marker
               coordinate={destination}
-              style={{width: 15, height: 10}}
+              style={{ width: 15, height: 10 }}
               pinColor={Color.green}
             />
           )}
@@ -238,11 +238,10 @@ const RideRequest = ({route}) => {
 
         <View
           style={{
-            position: 'absolute',
-            bottom: 70,
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-end',
             alignSelf: 'center',
+            flex: 1,
           }}>
           {/* <View style={styles.profile_view}>
             <View style={styles.image_view}>
@@ -283,7 +282,7 @@ const RideRequest = ({route}) => {
                     size={moderateScale(16, 0.6)}
                     color={Color.darkBlue}
                   />
-                  <View style={{alignItems: 'flex-start'}}>
+                  <View style={{ alignItems: 'flex-start' }}>
                     <CustomText style={[styles.text1]}>pickup from</CustomText>
                     <CustomText isBold style={styles.text1}>
                       {data?.location_from}
@@ -299,7 +298,7 @@ const RideRequest = ({route}) => {
                       color: Color.veryLightGray,
                       top: 30,
                       marginLeft: moderateScale(-8, 0.6),
-                      transform: [{rotate: '-90deg'}],
+                      transform: [{ rotate: '-90deg' }],
                     },
                   ]}>
                   ------
@@ -315,7 +314,7 @@ const RideRequest = ({route}) => {
                     size={moderateScale(16, 0.6)}
                     color={Color.darkBlue}
                   />
-                  <View style={{alignItems: 'flex-start'}}>
+                  <View style={{ alignItems: 'flex-start' }}>
                     <CustomText style={styles.text1}>
                       {'DropOff Location'}
                     </CustomText>
@@ -403,15 +402,12 @@ export default RideRequest;
 
 const styles = StyleSheet.create({
   safe_are: {
-    width: windowWidth,
-    height: windowHeight,
+    flex: 1,
     paddingVertical: moderateScale(25, 0.6),
     backgroundColor: Color.white,
   },
   main_view: {
-    width: windowWidth,
-    height: windowHeight,
-    backgroundColor: Color.white,
+    flex: 1,
   },
 
   image: {
@@ -433,7 +429,7 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.9,
     height: windowHeight * 0.2,
     backgroundColor: Color.white,
-    alignSelf: 'center',
+    alignSelf: 'flex-end',
     borderRadius: moderateScale(20, 0.6),
     shadowColor: '#000',
     shadowOffset: {

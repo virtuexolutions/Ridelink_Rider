@@ -26,8 +26,8 @@ import { baseUrl } from '../Config';
 import navigationService from '../navigationService';
 import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
-const PassengerDetails = ({route}) => {
-  const {type, data, ride_status, fromdelivery, currentPosition} = route.params;
+const PassengerDetails = ({ route }) => {
+  const { type, data, ride_status, fromdelivery, currentPosition } = route.params;
   console.log("🚀 ~ PassengerDetails ~ type:", type)
 
   const token = useSelector(state => state.authReducer.token)
@@ -39,8 +39,9 @@ const PassengerDetails = ({route}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [updatedStatus, setUpdatedStatus] = useState('');
 
+  const amount = Number(data?.amount) || 0;
 
-  
+  const formattedAmount = '$ ' + (data?.amount ? Number(data.amount).toFixed(2) : '0.00');
 
   const rideUpdate = async status => {
     const url = `auth/rider/ride_update/${data?.ride_id}`;
@@ -276,7 +277,7 @@ const PassengerDetails = ({route}) => {
                           }}
                           source={
                             data?.photo
-                              ? {uri: `${baseUrl}${data?.photo}`}
+                              ? { uri: `${baseUrl}${data?.photo}` }
                               : require('../Assets/Images/parcelimage.png')
                           }
                         />
@@ -299,260 +300,58 @@ const PassengerDetails = ({route}) => {
             btn_text={'Decline'}
           />
         )}
-        {/* {type === 'passangerIdentity' ? (
-          <View>
-            <View
-              style={[
-                styles.text_view,
-                {
-                  width: '100%',
-                  marginTop: moderateScale(15, 0.6),
-                  borderBottomColor: Color.lightGrey,
-                  borderBottomWidth: 1,
-                  paddingBottom: moderateScale(12, 0.6),
-                },
-              ]}>
-              <View style={styles.text_view}>
-                <Icon
-                  name="calendar"
-                  as={Entypo}
-                  size={moderateScale(16, 0.6)}
-                  color={Color.black}
-                />
-                <CustomText
-                  isBold
-                  style={[
-                    styles.heading,
-                    {marginLeft: moderateScale(10, 0.6)},
-                  ]}>
-                  Booking Time
-                </CustomText>
-              </View>
-              <CustomText
-                style={[styles.heading, {color: Color.veryLightGray}]}>
-                03 : 00 pm
-              </CustomText>
-            </View>
-            <View
-              style={[
-                styles.text_view,
-                {
-                  width: '100%',
-                  marginTop: moderateScale(15, 0.6),
-                  borderBottomColor: Color.lightGrey,
-                  borderBottomWidth: 1,
-                  paddingBottom: moderateScale(12, 0.6),
-                },
-              ]}>
-              <View style={styles.text_view}>
-                <Icon
-                  name="user"
-                  as={Entypo}
-                  size={moderateScale(16, 0.6)}
-                  color={Color.black}
-                />
-                <CustomText
-                  isBold
-                  style={[
-                    styles.heading,
-                    {marginLeft: moderateScale(10, 0.6)},
-                  ]}>
-                  Passenger
-                </CustomText>
-              </View>
-              <CustomText
-                style={[styles.heading, {color: Color.veryLightGray}]}>
-                3 Passengers
-              </CustomText>
-            </View>
-            <View
-              style={[
-                styles.text_view,
-                {
-                  width: '100%',
-                  marginTop: moderateScale(15, 0.6),
-                  borderBottomColor: Color.lightGrey,
-                  borderBottomWidth: 1,
-                  paddingBottom: moderateScale(12, 0.6),
-                },
-              ]}>
-              <View style={styles.text_view}>
-                <Icon
-                  name="dollar"
-                  as={FontAwesome}
-                  size={moderateScale(16, 0.6)}
-                  color={Color.black}
-                />
-                <CustomText
-                  isBold
-                  style={[
-                    styles.heading,
-                    {marginLeft: moderateScale(10, 0.6)},
-                  ]}>
-                  payment Method
-                </CustomText>
-              </View>
-              <CustomText
-                style={[styles.heading, {color: Color.veryLightGray}]}>
-                Online
-              </CustomText>
-            </View>
-            <CustomButton
-              width={windowWidth * 0.9}
-              height={windowHeight * 0.07}
-              bgColor={Color.darkBlue}
-              borderRadius={moderateScale(30, 0.3)}
-              textColor={Color.white}
-              textTransform={'none'}
-              text={'CONFIRM'}
-              isBold
-              marginTop={moderateScale(20, 0.6)}
-              onPress={() =>
-                navigationService.navigate('RideRequest', {
-                  type: fromdelivery ? 'delivery' : 'fromIdentity',
-                  data: data,
-                  // fromdelivery : true
-                })
-              }
-            />
-            <CustomButton
-              width={windowWidth * 0.9}
-              height={windowHeight * 0.07}
-              bgColor={Color.white}
-              borderRadius={moderateScale(30, 0.3)}
-              textColor={Color.black}
-              textTransform={'none'}
-              text={'NAVIGATE'}
-              borderWidth={1}
-              borderColor={Color.darkBlue}
-              marginBottom={moderateScale(20, 0.6)}
-              isBold
-              marginTop={moderateScale(10, 0.6)}
-              onPress={() =>
-                navigationService.navigate('RideRequest', {
-                  type: 'fromIdentity',
-                })
-              }
-            />
+        <View style={styles.expensesContainer}>
+          <View style={styles.amountView}>
+            <CustomText>Trip Fare Breakdown</CustomText>
+            <CustomText>{'$ ' + formattedAmount}</CustomText>
           </View>
-        ) : (
-          <> */}
-            {/* <View style={styles.search_conatiner}>
-              <CustomText isBold style={styles.heading}>
-                Payment Method
-              </CustomText>
-              <CustomText
-                style={[styles.heading, {color: Color.veryLightGray}]}>
-                **** *** **** 2482
-              </CustomText>
-              <View style={styles.text_view}>
-                <View style={[styles.text_view, {width: '35%'}]}>
-                  <CustomText isBold style={styles.heading}>
-                    Expires On :
-                  </CustomText>
-                  <CustomText
-                    style={[styles.heading, {color: Color.veryLightGray}]}>
-                    12 / 12{' '}
-                  </CustomText>
-                </View>
-                <View style={[styles.text_view, {width: '30%'}]}>
-                  <CustomText
-                    isBold
-                    style={[styles.heading, {color: Color.red}]}>
-                    $ 50.25
-                  </CustomText>
-                  {data?.payment_method === 'visa' ? (
-                    <View style={styles.image_view}>
-                      <CustomImage
-                        style={styles.image}
-                        source={require('../Assets/Images/visa_logo.png')}
-                      />
-                    </View>
-                  ) : (
-                    <View style={styles.image_view}>
-                      <CustomImage
-                        style={styles.image}
-                        source={require('../Assets/Images/paypal.png')}
-                      />
-                    </View>
-                  )}
-                </View>
-              </View>
-            </View>
-
-            <View
-              style={[styles.search_conatiner, {height: windowHeight * 0.09}]}>
-              <CustomText isBold style={styles.heading}>
-                Promo Code
-              </CustomText>
-              <TextInput
-                editable={false}
-                placeholder="013244879498"
-                placeholderTextColor={Color.veryLightGray}
-                style={{borderBottomWidth: 0.5}}
-              />
-            </View> */}
-            <View style={styles.expensesContainer}>
-              <View style={styles.amountView}>
-                <CustomText>Trip Fare Breakdown</CustomText>
-                <CustomText>{'$ ' + data?.amount}</CustomText>
-              </View>
-              <View style={styles.amountView}>
-                <CustomText>Subtotal</CustomText>
-                <CustomText>{'$ ' + data?.amount}</CustomText>
-              </View>
-              <View style={styles.amountView}>
-                <CustomText>Promo Code</CustomText>
-                <CustomText>{'$ ' + data?.amount}</CustomText>
-              </View>
-              <View
-                style={[
-                  styles.amountView,
-                  {
-                    marginVertical: moderateScale(25, 0.6),
-                    borderTopColor: 'grey',
-                    borderTopWidth: 0.2,
-                    marginTop: 15,
-                  },
-                ]}>
-                <CustomText isBold style={{fontSize: moderateScale(24, 0.4)}}>
-                  Total
-                </CustomText>
-                <CustomText isBold style={{fontSize: moderateScale(24, 0.4)}}>
-                  {'$ ' + data?.amount}
-                </CustomText>
-              </View>
-            </View>
-            <CustomButton
-              width={windowWidth * 0.9}
-              height={windowHeight * 0.07}
-              bgColor={Color.darkBlue}
-              borderRadius={moderateScale(30, 0.3)}
-              textColor={Color.white}
-              textTransform={'none'}
-              text={type === 'delivery' ? 'NEXT' : 'START NAVIGATION TO PICKUP'}
-              marginBottom={moderateScale(60, 0.6)}
-              isBold
-              onPress={() => {
-                if (type === 'fromDecline' || fromdelivery) {
-                  navigationService.navigate('RideRequest', {
-                    type: 'delivery',
-                    data: data,
-                  });
-                } else {
-                  rideUpdate('riderOntheWay');
-                  // navigationService.navigate('RideScreen', {
-                  //   data: data,
-                  //   type: 'details',
-                  //   rider_arrived_time: rider_arrived_time,
-                  //   ride_status: ride_status,
-                  // });
-                }
-              }}
-            />
-            {/* </View> */}
-          {/* </> */}
-        {/* // )} */}
+          <View style={styles.amountView}>
+            <CustomText>Subtotal</CustomText>
+            <CustomText>{'$ ' + formattedAmount}</CustomText>
+          </View>
+          <View style={styles.amountView}>
+            <CustomText>Promo Code</CustomText>
+            <CustomText>{'$ ' + formattedAmount}</CustomText>
+          </View>
+          <View
+            style={[
+              styles.amountView,
+              {
+                marginVertical: moderateScale(25, 0.6),
+                borderTopColor: 'grey',
+                borderTopWidth: 0.2,
+                marginTop: 15,
+              },
+            ]}>
+            <CustomText isBold style={{ fontSize: moderateScale(24, 0.4) }}>
+              Total
+            </CustomText>
+            <CustomText isBold style={{ fontSize: moderateScale(24, 0.4) }}>
+              {'$ ' + formattedAmount}
+            </CustomText>
+          </View>
+        </View>
+        <CustomButton
+          width={windowWidth * 0.9}
+          height={windowHeight * 0.07}
+          bgColor={Color.darkBlue}
+          borderRadius={moderateScale(30, 0.3)}
+          textColor={Color.white}
+          textTransform={'none'}
+          text={type === 'delivery' ? 'NEXT' : 'START NAVIGATION TO PICKUP'}
+          marginBottom={moderateScale(60, 0.6)}
+          isBold
+          onPress={() => {
+            if (type === 'fromDecline' || fromdelivery) {
+              navigationService.navigate('RideRequest', {
+                type: 'delivery',
+                data: data,
+              });
+            } else {
+              rideUpdate('riderOntheWay');
+            }
+          }}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -565,7 +364,7 @@ const styles = StyleSheet.create({
     width: windowWidth,
     height: windowHeight,
     backgroundColor: Color.white,
-    paddingVertical : moderateScale(25,.6)
+    paddingVertical: moderateScale(25, .6)
   },
   main_view: {
     width: windowWidth,

@@ -1,8 +1,8 @@
 import messaging from '@react-native-firebase/messaging';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import {useNavigation} from '@react-navigation/native';
-import {Formik} from 'formik';
-import React, {useEffect, useState} from 'react';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useNavigation } from '@react-navigation/native';
+import { Formik } from 'formik';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Platform,
@@ -11,20 +11,20 @@ import {
   ToastAndroid,
   View,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {moderateScale} from 'react-native-size-matters';
-import {useDispatch, useSelector} from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { moderateScale } from 'react-native-size-matters';
+import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomStatusBar from '../Components/CustomStatusBar';
 import CustomText from '../Components/CustomText';
 import ImagePickerModal from '../Components/ImagePickerModal';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import {loginSchema} from '../Constant/schema';
-import {SetFCMToken, setUserToken} from '../Store/slices/auth-slice';
-import {setIsSiginWithGoogle, setUserData} from '../Store/slices/common';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { loginSchema } from '../Constant/schema';
+import { SetFCMToken, setUserToken } from '../Store/slices/auth-slice';
+import { setIsSiginWithGoogle, setUserData } from '../Store/slices/common';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 import ContactPassword from '../Components/ContactPassword';
 
 const LoginScreen = props => {
@@ -54,7 +54,7 @@ const LoginScreen = props => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const loginWithGoogle = async response1 => {
-    const body = {...response1?.data, role: 'rider'};
+    const body = { ...response1?.data, role: 'rider' };
 
     const url = 'google-login';
     setGoogleLoading(true);
@@ -62,7 +62,7 @@ const LoginScreen = props => {
     console.log('🚀 ~ loginWithGoogle ~ response:', response?.data);
     setGoogleLoading(false);
     if (response != undefined) {
-      dispatch(setUserToken({token: response?.data?.token}));
+      dispatch(setUserToken({ token: response?.data?.token }));
       dispatch(setUserData(response?.data?.user_info));
       dispatch(setIsSiginWithGoogle(true));
     }
@@ -83,7 +83,7 @@ const LoginScreen = props => {
     try {
       setGoogleLoading(true);
 
-      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
 
       // (optional) stuck state me helpful
       // await GoogleSignin.signOut();
@@ -131,7 +131,7 @@ const LoginScreen = props => {
     const response = await Post(url, body, apiHeader(token));
     setIsLoading(false);
     if (response != undefined) {
-      dispatch(setUserToken({token: response?.data?.token}));
+      dispatch(setUserToken({ token: response?.data?.token }));
       dispatch(setUserData(response?.data?.user_info));
     }
   };
@@ -142,13 +142,13 @@ const LoginScreen = props => {
       .then(_token => {
         console.log('🚀 Srrrrrrrrrrrrrrrrrr:', _token);
         setDeviceToken(_token);
-        dispatch(SetFCMToken({fcmToken: _token}));
+        dispatch(SetFCMToken({ fcmToken: _token }));
       })
       .catch(e => console.log('token error', e));
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <CustomStatusBar
         backgroundColor={Color.white}
         barStyle={'dark-content'}
@@ -176,7 +176,7 @@ const LoginScreen = props => {
             }}
             validationSchema={loginSchema}
             onSubmit={login}>
-            {({handleChange, handleSubmit, values, errors, touched}) => {
+            {({ handleChange, handleSubmit, values, errors, touched }) => {
               return (
                 <>
                   <TextInputWithTitle
@@ -195,7 +195,7 @@ const LoginScreen = props => {
                     borderColor={Color.lightGrey}
                     marginTop={moderateScale(10, 0.3)}
                     placeholderColor={Color.darkGray}
-                    titleStlye={{right: 10}}
+                    titleStlye={{ right: 10 }}
                   />
                   {touched.email && errors.email && (
                     <CustomText
@@ -223,7 +223,7 @@ const LoginScreen = props => {
                     borderColor={Color.lightGrey}
                     marginTop={moderateScale(10, 0.3)}
                     placeholderColor={Color.darkGray}
-                    titleStlye={{right: 10}}
+                    titleStlye={{ right: 10 }}
                   />
                   {touched.password && errors.password && (
                     <CustomText
@@ -243,7 +243,7 @@ const LoginScreen = props => {
                     style={styles.forgotpassword}>
                     Forgot password ?
                   </CustomText>
-                  <View style={{marginTop: moderateScale(10, 0.6)}} />
+                  <View style={{ marginTop: moderateScale(10, 0.6) }} />
                   <CustomButton
                     text={
                       isLoading ? (

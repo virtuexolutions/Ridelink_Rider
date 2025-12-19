@@ -1,8 +1,8 @@
-import {Pusher} from '@pusher/pusher-websocket-react-native';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {Icon} from 'native-base';
-import React, {useCallback, useEffect, useState} from 'react';
-import {KeyboardAvoidingView, SafeAreaView, View} from 'react-native';
+import { Pusher } from '@pusher/pusher-websocket-react-native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { Icon } from 'native-base';
+import React, { useCallback, useEffect, useState } from 'react';
+import { SafeAreaView } from 'react-native';
 import {
   Actions,
   Bubble,
@@ -11,23 +11,20 @@ import {
   InputToolbar,
   Send,
 } from 'react-native-gifted-chat';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Get, Post} from '../Axios/AxiosInterceptorFunction';
-import CustomImage from '../Components/CustomImage';
-import CustomText from '../Components/CustomText';
+import { Get, Post } from '../Axios/AxiosInterceptorFunction';
 import Header from '../Components/Header';
-import {baseUrl} from '../Config';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Entypo from 'react-native-vector-icons/Entypo';
+import { baseUrl } from '../Config';
 
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { apiHeader, windowWidth } from '../Utillity/utils';
 
-const MessagesScreen = ({route}) => {
-  const {data, from_delivery} = route.params;
+const MessagesScreen = ({ route }) => {
+  const { data, from_delivery } = route.params;
+  console.log(data, 'datadatadatadatadatadatadatadatadatadata')
   const userData = useSelector(state => state.commonReducer.userData);
   const token = useSelector(state => state.authReducer.token);
 
@@ -92,7 +89,7 @@ const MessagesScreen = ({route}) => {
 
     return () => {
       if (myChannel?.current) {
-        pusher.unsubscribe({channelName: `my-channel-${userData?.id}`});
+        pusher.unsubscribe({ channelName: `my-channel-${userData?.id}` });
       }
     };
   }, [isfocused]);
@@ -116,6 +113,7 @@ const MessagesScreen = ({route}) => {
   const getChatListingData = async () => {
     console.log('Fetching chat list...');
     const url = `auth/message_list?user_id=${userData?.id}&target_id=${data?.user?.id}&chat_id=${userData?.id}`;
+    console.log(url, 'urlurlurlurlurlurlurlurlurlurlurlurlurlurl')
     setIsLoading(true);
     try {
       const response = await Get(url, token);
@@ -132,6 +130,7 @@ const MessagesScreen = ({route}) => {
           name: JSON.parse(msg.user).name,
         },
       }));
+      console.log(formattedMessages, 'formattedMessages')
       setMessages(formattedMessages);
     } catch (error) {
       console.error('Chat List Fetch Failed:', error);
@@ -165,17 +164,17 @@ const MessagesScreen = ({route}) => {
     [messages],
   );
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: Color.white}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Color.white }}>
       <Header headerColor={['white', 'white']} title={'Chat'} showBack={true} />
-
       <GiftedChat
-        showUserAvatar={true}
         textInputStyle={{
           color: Color.black,
           marginTop: moderateScale(5, 0.3),
         }}
-        renderAvatar={() => null}
-        alwaysShowSend={true}
+        placeholderTextColor={Color.darkGray}
+        messages={messages}
+        isTyping={false}
+        alignTop
         renderActions={props => {
           return (
             <Actions
@@ -238,7 +237,7 @@ const MessagesScreen = ({route}) => {
                 marginHorizontal: moderateScale(6, 0.6),
                 borderRadius: moderateScale(12, 0.6),
                 bottom: 10,
-                marginTop: moderateScale(12, 0.6),
+                marginTop: moderateScale(15, 0.6),
               }}>
               <Composer
                 {...props}
@@ -292,15 +291,11 @@ const MessagesScreen = ({route}) => {
               }}></Bubble>
           );
         }}
-        placeholderTextColor={Color.darkGray}
-        messages={messages}
-        isTyping={false}
         onSend={text => onSend(text)}
-        alignTop={true}
+        alwaysShowSend={true}
         user={{
           _id: userData?.id,
           name: userData?.name,
-          // avatar: `${baseUrl}/${profileData?.photo}`,
         }}
       />
     </SafeAreaView>

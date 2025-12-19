@@ -30,7 +30,6 @@ const Header = props => {
   const notification = useSelector(state => state.commonReducer.notification);
   const cartData = useSelector(state => state.commonReducer.cart);
   const userData = useSelector(state => state.commonReducer.userData);
-  console.log("🚀 ~ Header ~ userData:", userData)
 
   const navigationN = useNavigation();
 
