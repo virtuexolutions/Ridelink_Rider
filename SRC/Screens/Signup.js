@@ -1,7 +1,7 @@
-import {useNavigation} from '@react-navigation/native';
-import {Formik} from 'formik';
-import {Icon} from 'native-base';
-import React, {useEffect, useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { Formik } from 'formik';
+import { Icon } from 'native-base';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {moderateScale, ScaledSheet} from 'react-native-size-matters';
+import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
@@ -22,29 +22,29 @@ import {
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
 import CountryPicker from 'react-native-country-picker-modal';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
-import {Post} from '../Axios/AxiosInterceptorFunction';
+import { Post } from '../Axios/AxiosInterceptorFunction';
 import CustomButton from '../Components/CustomButton';
 import CustomText from '../Components/CustomText';
 import ScreenBoiler from '../Components/ScreenBoiler';
 import SearchLocationModal from '../Components/SearchLocationModal';
 import TextInputWithTitle from '../Components/TextInputWithTitle';
-import {SignupSchema} from '../Constant/schema';
-import {setUserToken} from '../Store/slices/auth';
-import {setUserData} from '../Store/slices/common';
-import {apiHeader, windowHeight, windowWidth} from '../Utillity/utils';
+import { SignupSchema } from '../Constant/schema';
+import { setUserToken } from '../Store/slices/auth';
+import { setUserData } from '../Store/slices/common';
+import { apiHeader, windowHeight, windowWidth } from '../Utillity/utils';
 
 const Signup = () => {
   const dispatch = useDispatch();
 
-  const ref = useBlurOnFulfill({code, cellCount: CELL_COUNT});
+  const ref = useBlurOnFulfill({ code, cellCount: CELL_COUNT });
   const navigation = useNavigation();
   const [imagePicker, setImagePicker] = useState(false);
   const [image, setImage] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [loading, setloading] = useState(false);
-  const {user_type} = useSelector(state => state.authReducer);
+  // const { user_type } = useSelector(state => state.authReducer);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isContactVerified, setIsContactVerified] = useState(false);
   const [showNumberModal, setShowNumberModal] = useState(false);
@@ -116,9 +116,9 @@ const Signup = () => {
     if (!usPhoneRegex.test(`+1 ${number}`)) {
       Platform.OS === 'android'
         ? ToastAndroid.show(
-            'Please enter a valid US phone number',
-            ToastAndroid.SHORT,
-          )
+          'Please enter a valid US phone number',
+          ToastAndroid.SHORT,
+        )
         : Alert.alert('error', 'Please enter a valid US phone number');
       // return null
     }
@@ -133,7 +133,7 @@ const Signup = () => {
         ? ToastAndroid.show('Sign up successfully', ToastAndroid.SHORT)
         : Alert.alert('Sign up successfully');
       dispatch(setUserData(response?.data?.user_info));
-      dispatch(setUserToken({token: response?.data?.token}));
+      dispatch(setUserToken({ token: response?.data?.token }));
     }
   };
 
@@ -229,6 +229,7 @@ const Signup = () => {
       setNumber(formattedNumber);
     }
   }, [number]);
+
   return (
     <ScreenBoiler
       statusBarBackgroundColor={'white'}
@@ -285,7 +286,7 @@ const Signup = () => {
                   borderColor={Color.lightGrey}
                   marginTop={moderateScale(8, 0.3)}
                   placeholderColor={Color.mediumGray}
-                  titleStlye={{right: 10}}
+                  titleStlye={{ right: 10 }}
                 />
                 {touched.name && errors.name && (
                   <CustomText style={styles.schemaText}>
@@ -307,7 +308,7 @@ const Signup = () => {
                   borderColor={Color.lightGrey}
                   marginTop={moderateScale(8, 0.3)}
                   placeholderColor={Color.mediumGray}
-                  titleStlye={{right: 10}}
+                  titleStlye={{ right: 10 }}
                   disable={ismail || isEmailVerified}
                 />
                 {touched.email && errors.email && (
@@ -355,7 +356,7 @@ const Signup = () => {
                       keyboardType="number-pad"
                       textContentType="oneTimeCode"
                       onComp
-                      renderCell={({index, symbol, isFocused}) => (
+                      renderCell={({ index, symbol, isFocused }) => (
                         <View
                           onLayout={getCellOnLayoutHandler(index)}
                           key={index}
@@ -366,7 +367,7 @@ const Signup = () => {
                           <CustomText
                             style={[
                               styles.cellText,
-                              isFocused && {color: Color.white},
+                              isFocused && { color: Color.white },
                             ]}>
                             {symbol || (isFocused ? <Cursor /> : null)}
                           </CustomText>
@@ -375,7 +376,7 @@ const Signup = () => {
                     />
                     <View style={styles.row_con}>
                       <CustomText
-                        style={[styles.txt3, {width: windowWidth * 0.6}]}>
+                        style={[styles.txt3, { width: windowWidth * 0.6 }]}>
                         Didn’t get Code yet?
                       </CustomText>
                       {
@@ -437,7 +438,7 @@ const Signup = () => {
                   onPress={() => {
                     setShowNumberModal(true);
                   }}
-                  style={[styles.birthday, {justifyContent: 'flex-start'}]}>
+                  style={[styles.birthday, { justifyContent: 'flex-start' }]}>
                   <CountryPicker
                     {...{
                       countryCode,
@@ -515,7 +516,7 @@ const Signup = () => {
                   borderColor={Color.lightGrey}
                   marginTop={moderateScale(8, 0.3)}
                   placeholderColor={Color.mediumGray}
-                  titleStlye={{right: 10}}
+                  titleStlye={{ right: 10 }}
                 />
                 <TextInputWithTitle
                   disable={true}
@@ -533,7 +534,7 @@ const Signup = () => {
                   borderColor={Color.lightGrey}
                   marginTop={moderateScale(8, 0.3)}
                   placeholderColor={Color.mediumGray}
-                  titleStlye={{right: 10}}
+                  titleStlye={{ right: 10 }}
                 />
                 <TextInputWithTitle
                   disable={true}
@@ -551,7 +552,7 @@ const Signup = () => {
                   borderColor={Color.lightGrey}
                   marginTop={moderateScale(8, 0.3)}
                   placeholderColor={Color.mediumGray}
-                  titleStlye={{right: 10}}
+                  titleStlye={{ right: 10 }}
                 />
 
                 <TextInputWithTitle
@@ -572,10 +573,10 @@ const Signup = () => {
                   borderColor={Color.lightGrey}
                   marginTop={moderateScale(8, 0.3)}
                   placeholderColor={Color.mediumGray}
-                  titleStlye={{right: 10}}
+                  titleStlye={{ right: 10 }}
                   keyboardType={'numeric'}
                   maxLength={12}
-                  // disable={isnumber}
+                // disable={isnumber}
                 />
                 {/* {touched.contact && errors.contact && (
                   <CustomText style={styles.schemaText}>
@@ -630,7 +631,7 @@ const Signup = () => {
                       rootStyle={styles.codeFieldRoot}
                       keyboardType="number-pad"
                       textContentType="oneTimeCode"
-                      renderCell={({index, symbol, isFocused}) => (
+                      renderCell={({ index, symbol, isFocused }) => (
                         <View
                           onLayout={getCellOnLayoutHandler(index)}
                           key={index}
@@ -641,7 +642,7 @@ const Signup = () => {
                           <CustomText
                             style={[
                               styles.cellText,
-                              isFocused && {color: Color.white},
+                              isFocused && { color: Color.white },
                             ]}>
                             {symbol || (isFocused ? <Cursor /> : null)}
                           </CustomText>
@@ -650,7 +651,7 @@ const Signup = () => {
                     />
                     <View style={styles.row_con}>
                       <CustomText
-                        style={[styles.txt3, {width: windowWidth * 0.6}]}>
+                        style={[styles.txt3, { width: windowWidth * 0.6 }]}>
                         Didn’t get Code yet?
                       </CustomText>
                       {
@@ -709,7 +710,7 @@ const Signup = () => {
                   borderColor={Color.lightGrey}
                   marginTop={moderateScale(8, 0.3)}
                   placeholderColor={Color.mediumGray}
-                  titleStlye={{right: 10}}
+                  titleStlye={{ right: 10 }}
                 />
                 {touched.password && errors.password && (
                   <CustomText style={styles.schemaText}>
@@ -732,7 +733,7 @@ const Signup = () => {
                   borderColor={Color.lightGrey}
                   marginTop={moderateScale(8, 0.3)}
                   placeholderColor={Color.mediumGray}
-                  titleStlye={{right: 10}}
+                  titleStlye={{ right: 10 }}
                 />
                 {touched.password && errors.password && (
                   <CustomText style={styles.schemaText}>
@@ -757,12 +758,12 @@ const Signup = () => {
                   <CustomText style={styles.term_text}>
                     By Click You Agree To Our
                     <CustomText
-                      style={{fontSize: moderateScale(11, 0.6), color: 'red'}}>
+                      style={{ fontSize: moderateScale(11, 0.6), color: 'red' }}>
                       terms & conditions
                     </CustomText>
                     As Well As Our
                     <CustomText
-                      style={{fontSize: moderateScale(11, 0.6), color: 'red'}}>
+                      style={{ fontSize: moderateScale(11, 0.6), color: 'red' }}>
                       Privacy Policy.
                     </CustomText>
                   </CustomText>

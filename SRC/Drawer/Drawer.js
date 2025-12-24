@@ -1,9 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
-import { Icon } from 'native-base';
 import React, { useState } from 'react';
 import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
-import Entypo from 'react-native-vector-icons/Entypo';
 import { useDispatch, useSelector } from 'react-redux';
 import Color from '../Assets/Utilities/Color';
 import CustomImage from '../Components/CustomImage';
@@ -100,8 +98,9 @@ const Drawer = React.memo(() => {
       },
     },
   ];
+
   return (
-    <ScreenBoiler
+    <ScreenBoiler 
       statusBarBackgroundColor={'white'}
       statusBarContentStyle={'dark-content'}>
       <View style={styles.con}>
